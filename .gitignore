@@ -6,4 +6,8 @@
 *.toc
 *.out
 *_minted*
+*.fdb_latexmk
+*.fls
+*.synctex.gz
+auto
 .DS_STORE
