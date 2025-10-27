@@ -1,0 +1,25 @@
+\chapter{Particle-in-Cell}
+
+For plasma simulation to include kinetic effects, it somehow has to be able to describe
+evolution of the full distributions function. In PIC this is achieved by sampling
+it with macroparticles then evolving them based on Maxwell's equations.
+The electromagnetic fields are represented on a grid in which the particles move,
+thus giving the name particle-in-cell.
+
+PIC consists of many smaller tasks (e.g. pushing particles, evoling fields, etc.)
+for which there exists numerous algorithms with differing trade-offs.
+In this chapter we will describe the overall structure of PIC and go through
+a set of algorithms implemented in the GPU port of Runko.
+
+\section{Overall structure}
+\section{Particle pusher}
+\section{Field propagator}
+\section{Field interpolator}
+\section{Current depositer}
+\section{Current filter}
+
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "../gradu"
+%%% End:
