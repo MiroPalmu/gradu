@@ -87,7 +87,7 @@
 \ProcessOptions\relax
 \LoadClass{report}[2000/05/19]
 \RequirePackage[T1]{fontenc}[2000/08/30 v1.91 Standard LaTeX package]
-\RequirePackage[latin9]{inputenc}[2000/07/01 v0.996 Input encoding file ]
+\RequirePackage[utf8]{inputenc}[2000/07/01 v0.996 Input encoding file ]
 \RequirePackage{latexsym}[1998/08/17 v2.2e Standard LaTeX package (lasy symbols)]
 \if@finnish
   \RequirePackage[finnish]{babel}[2001/03/01 v3.7h The Babel package]
@@ -387,11 +387,6 @@
     \begin{minipage}[t]{5.95in}
       \setlength{\parskip}{2ex}
 }{
-
-      \if \@classification
-      \else
-        \ccs\ \@classification
-      \fi
     \end{minipage}
   \end{lrbox}
   \put(58, 625){\mbox{\usebox{\@abstract}}}
@@ -411,7 +406,8 @@
 \begin{picture}(580,820)(80,-64)%
 \fi
 \put(58,  744){\makebox(100, 8)[l]{\abst@small\@faculty}}
-\put(289, 744){\makebox(100, 8)[l]{\abst@small\@programme}}
+%\put(289, 744){\makebox(100, 8)[l]{\abst@small\@programme}}
+\put(212, 744){\makebox(100, 8)[l]{\abst@small\@programme}}
 %\put(289, 744){\makebox(100, 8)[l]{\abst@small\@subject}}
 \put(58,  714){\makebox(100, 8)[l]{\abst@small\@author}}
 \put(58,  684){\parbox[l]{450pt}{\renewcommand{\baselinestretch}{.9}\abst@small\@title}}
@@ -426,7 +422,8 @@
 {\end{@summary}
 
 \put(53,30){\framebox(462,746){}} % laatikko
-\put(284,739){\line(0,1){37}} % pystyviiva
+%\put(284,739){\line(0,1){37}} % pystyviiva
+\put(207,739){\line(0,1){37}} % pystyviiva
 \put(53,739){\line(1,0){462}} 
 \put(53,709){\line(1,0){462}}
 \put(53,679){\line(1,0){462}}
@@ -443,7 +440,8 @@
 
 \put(53,781){\makebox(100,8)[l]{\abst@small HELSINGIN YLIOPISTO --- HELSINGFORS UNIVERSITET --- UNIVERSITY OF HELSINKI}}
 \put(58,767){\makebox(150,6)[l]{\tiny Tiedekunta --- Fakultet --- Faculty}}
-\put(289,767){\makebox(100,6)[l]{\abst@tiny Koulutusohjelma --- Utbildningsprogram --- Degree programme}}
+%\put(289,767){\makebox(100,6)[l]{\abst@tiny Koulutusohjelma --- Utbildningsprogram --- Degree programme}}
+\put(212,767){\makebox(100,6)[l]{\abst@tiny Koulutusohjelma --- Utbildningsprogram --- Degree programme}}
 \put(58,730){\makebox(100,5)[l]{\abst@tiny Tekij\"a --- F\"orfattare --- Author}}
 \put(58,700){\makebox(100,5)[l]{\abst@tiny Ty\"on nimi --- Arbetets titel --- Title}}
 \put(58,670){\makebox(100,5)[l]{\abst@tiny Ty\"on laji --- Arbetets art --- Level}}
@@ -489,7 +487,7 @@
 \if@english
 \faculty{Faculty of Science}
 \level{Master's thesis}
-\programme{Master's Programme in Data Science}
+\programme{Master's Programme in Theoretical and Computational Methods}
 %\subject{Subprogramme}
 \address{P. O. Box 68 (Pietari Kalmin katu 5)\\00014 University of Helsinki}
 \fi
