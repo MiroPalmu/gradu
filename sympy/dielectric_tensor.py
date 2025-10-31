@@ -28,6 +28,7 @@ def gamma(v):
 def eq4(V0, V1, g):
     """
     Eq. 4 of [1].
+    Note that [1] defines q < 0.
     """
 
     lhs = sp.I * m * g * (k.dot(V0) - omega) * (V1 + g**2 / c**2 * V0.dot(V1) * V0)
