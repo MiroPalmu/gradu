@@ -24,3 +24,8 @@ and the Euler equation for cold plasma:
 
 where by cold plasma we mean that
 f$_j = n_j(\mathbf{x}, t)\delta(\mathbf{p} - \mathbf{p}_j(\mathbf{x}, t))$.
+
+# Potential references:
+
+- for relativistic vlasov moments (non-relativistic :/): https://link.springer.com/article/10.1007/s11464-015-0463-1
+- pic review: https://iopscience.iop.org/article/10.1088/0741-3335/47/5A/017
