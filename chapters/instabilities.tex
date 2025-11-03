@@ -40,9 +40,56 @@ After this many temperature-dependent investigations of the 2D spectrum have bee
 Comprehensive kinetic treatments have managed to provide
 a unified vision of the entire unstable spectrum
 including temperature effects.
-\section{Linear analysis}
 
-We'll investigate an arbitrary homogeneous and infinite beam plasma system composed of
+\section{Moments of Vlasov equation in cold-fluid limit}
+
+Derivation of the beam-plasma instabilities in the cold-fluid limit
+uses moments of the Vlasov eqaution. We will derive them here.
+
+Generally moment $M(\mathbf{p})$ of Vlasov equation is:
+\begin{align}
+\int M \left(
+\partial_t f
++ \mathbf{v} \cdot \nabla f
++ q ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f = 0
+\right) d\mathbf{p}
+\end{align}
+In the first two terms the derivatives can be trivially taken out of the integrant,
+but the third requires some manipulation.
+
+For brievity we'll define $a^i = qE^i + \frac{q}{c}\epsilon^i_{lk}v^l B^k$.
+Using the identity $ \partial_{p_i} v^l = \frac{\delta^l_i}{m \gamma} -  \frac{p^lp_i}{m^3c^2\gamma^3}$
+we get that $\partial_{p_i}a^i = 0$.
+After integration by parts and noting
+that physical distributions vanish at infinity, we can write the third term as:
+\begin{align}
+\int M \mathbf{a} \cdot \nabla_\mathbf{p} f d\mathbf{p}
+&= - \int a^i \partial_{p_i} M f d\mathbf{p}
+\end{align}
+Overall we get that:
+\begin{align}\label{eq:general-moment-of-vlasov}
+  \partial_t \int M f_\alpha d\mathbf{p}
++ \partial_i \int M v^i f_\alpha d\mathbf{p}
+= \int a^i \partial_{p_i} M f_\alpha d\mathbf{p}
+\end{align}
+
+A cold-fluid is characterized by a distribution function
+$f(\mathbf{x}, \mathbf{p}, t) = n(\mathbf{x}, t)\delta(\mathbf{p} - \mathbf{P}(\mathbf{x}, t))$,
+where $\mathbf{P}(\mathbf{x}, t) = m\gamma\mathbf{V}(\mathbf{x}, t)$
+is calculated from the bulk velocity $\mathbf{V}(\mathbf{x}, t)$ of the fluid
+and $n(\mathbf{x}, t)$ is its fuilds number density.
+Inserting this and $M = 1$ to \ref{eq:general-moment-of-vlasov} we obtain continuity equation:
+\begin{align}
+\label{eq:continuity-in-cold-limit}
+\partial_t n + \partial_i ( P^i n_\alpha ) = 0
+\end{align}
+For $M = \mathbf{p}$ and using the continuity equation we get:
+\begin{align}
+\partial_t \mathbf{P} + (\mathbf{V} \cdot \nabla) \mathbf{P}
+&= q (\mathbf{E} + c^{-1}\mathbf{V} \times \mathbf{B})
+\end{align}
+
+
 $N$ species of charge $q_j$, mass $m_j$, number density $n_j$ and mean velocity $\mathbf{v}_j$.
 The number densities are measured in the laboratory frame and not in the proper frame
 of the related species. Following shows the key points of a standard derivation
