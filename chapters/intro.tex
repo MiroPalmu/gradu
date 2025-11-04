@@ -13,6 +13,87 @@
   \end{itemize}
 \end{todo}
 
+\section{Linearizing Maxwell's equations}
+
+Maxwell's equations are set of partial differential equations which,
+together with the Lorentz force, govern classical electrodynamics.
+Written in Gaussian (CGS) units they read:
+
+\begin{align}
+  \label{eq:maxwells}
+  \nabla\times\ve E = -\frac1c \frac{\partial\ve B}{\partial t}, \qquad
+  \nabla\times\ve B = \frac{4\pi}c \ve J + \frac1c \frac{\partial\ve E}{\partial t}, \qquad
+  \nabla\cdot\ve E = 4\pi\rho, \qquad
+  \nabla\cdot\ve B = 0
+\end{equation}
+\end{align}
+
+Denoting Fourier transformed functions with hat and keeping perturbations to the first order
+combine equations \eqref{eq:maxwells}:
+
+\begin{align}
+  \ve k \times (\ve k \times \hat{\ve E})
+  + \frac{\omega^2}{c^2}\left(\hat{\ve E} _1 + \frac{4\pi i}{\omega}\hat{\ve J}\right) = 0
+\end{align}
+
+\section{Cold-fluid limit}
+
+For particle species $\alpha$ with distribution function $f_\alpha(\ve x, \ve p, t)$
+collisionless Vlasov equation reads in Gaussian units:
+
+\begin{align}
+  \label{eq:vlasov}
+  \partial_t f_\alpha
+  + \mathbf{v} \cdot \nabla f_\alpha
+  + q_\alpha ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f_\alpha = 0
+\end{align}
+where we have defined vector $\boldsymbol{\beta} = \frac{\ve v}{c}$.
+
+Generally moment $M(\mathbf{p})$ of Vlasov equation~\eqref{eq:vlasov} is:
+\begin{align}
+\int M \left(
+\partial_t f_\alpha
++ \mathbf{v} \cdot \nabla f_\alpha
++ q_\alpha ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f_\alpha = 0
+\right) d\mathbf{p}
+\end{align}
+In the first two terms the derivatives can be trivially taken out of the integrant,
+but the third requires some manipulation.
+
+For brievity we'll define $a_\alpha^i = q_\alphaE^i + \frac{q_\alpha}{c}\epsilon^i_{lk}v^l B^k$.
+Using the identity $ \partial_{p_i} v^l = \frac{\delta^l_i}{m \gamma} -  \frac{p^lp_i}{m^3c^2\gamma^3}$
+we get that $\partial_{p_i}a_\alpha^i = 0$.
+After integration by parts and noting
+that physical distributions vanish at infinity, we can write the third term as:
+\begin{align}
+\int M \mathbf{a_\alpha} \cdot \nabla_\mathbf{p} f_\alpha d\mathbf{p}
+&= - \int a^i \partial_{p_i} M f d\mathbf{p}
+\end{align}
+Overall we get that:
+\begin{align}\label{eq:general-moment-of-vlasov}
+  \partial_t \int M f_\alpha d\mathbf{p}
++ \partial_i \int M v^i f_\alpha d\mathbf{p}
+= \int a^i \partial_{p_i} M f_\alpha d\mathbf{p}
+\end{align}
+
+A cold-fluid is characterized by a distribution function
+$f(\mathbf{x}, \mathbf{p}, t) = n_\alpha(\ve x, t)\delta(\mathbf{p} - \mathbf{P}_\alpha(\mathbf{x}, t))$,
+where $\mathbf{P}_\alpha(\mathbf{x}, t) = m_\alpha\gamma_\alpha\mathbf{V}_\alpha(\mathbf{x}, t)$
+is calculated from the bulk velocity $\mathbf{V}_\alpha(\mathbf{x}, t)$ of the fluid
+and $n_\alpha(\mathbf{x}, t)$ is its fuilds number density.
+Inserting this and $M = 1$ to \ref{eq:general-moment-of-vlasov} we obtain continuity equation:
+\begin{align}
+\label{eq:continuity-in-cold-limit}
+\partial_t n_\alpha + \nabla \cdot ( \ve P_\alpha n_\alpha ) = 0
+\end{align}
+For $M = \mathbf{p}$ and using the continuity equation we get:
+\begin{align}
+\label{eq:momentum-transport-in-cold-limit}
+\partial_t \mathbf{P}_\alpha + (\mathbf{V}_\alpha \cdot \nabla) \mathbf{P}_\alpha
+&= q_\alpha (\mathbf{E} + c^{-1}\mathbf{V}_\alpha \times \mathbf{B})
+\end{align}
+
+
 
 %%% Local Variables:
 %%% mode: LaTeX
