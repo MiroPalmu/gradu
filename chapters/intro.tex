@@ -13,6 +13,65 @@
   \end{itemize}
 \end{todo}
 
+\section{Plasma}
+
+Plasma is quasi-neutral gas with enough free charges that the long range collective electromagnetic
+interactions dominate over the interactions between induvidual particles.
+This can happen for example when a gas is heated enough such that the atoms get ionized.
+Quasi-neutrality means that the gas is approximately neutral:
+\begin{align}
+  \rho = \sum_s n_s q_s \approx 0
+\end{align}
+where the sum is over all particle species, $n_s$ is particle density and $q_s$ is charge
+of particle species $s$.
+
+If a charge is introduced to a plasma the free charges quickly screen
+the resulting long range electric field away.
+This is also known as Debye screening/shielding.
+Phonomena gives rise to a length scale at which short range Coulomb interactions can happen.
+The scale is characterized by Debye length $\lambda_D$ which is given by:
+\begin{align}
+  \label{eq:debye-length}
+  \lambda_D^{-2} = \sum_s \left(\frac{\epsilon_0 k_b T_s}{n_s q_s}\right)^{-2}
+\end{align}
+where $T_s$, $n_s$ and $q_s$ are temperature, number density and charge of particle species $s$.
+
+Using debye length we can formalize the quasi-neutrality condition of plasma
+by requiring that it is much less than the spatial length scale $L$ of the plasma system:
+\begin{align}
+  \lambda_D \ll L
+\end{align}
+For Debye length to be statistically valid there has to be enough particles inside
+''Debye sphere'': $N_D = n \frac 43 \pi \labda_D^3 \gg 1$.
+Usually this requirement is expressed in terms of plasma parameter
+which is defined up to a constant factor as $\Lamda = n\lambda_D^3$
+and get:
+\begin{align}
+  \Lambda \gg 1
+\end{align}
+
+\section{Fundamental frequencies in plasma physics}
+
+There are couple frequencies that appear frequently in plasma physics.
+In plasma small displacement of charges oscillates around the neutral configuration.
+The frequency of this oscillation is called a plasma frequency.
+In a plasma the classical plasma frequency of particle species $s$ is given by:
+\begin{align}
+  \label{eq:classical-plasma-frequency}
+  \omega_{ps}^2 = \frac{n_s q_s^2}{\epsilon_0 m_s}
+\end{align}
+We note for electron-ion systems the electron plasma frequency is much larger than
+the ion plasma frequency and thus ion plasma oscillation can usually be neglected.
+
+If magnetic field is present in a plasma the charges gyrorotate around its field lines
+which is also kown as cyclotron motion. For particle species $s$
+the cyclotrone frequency is given by:
+\begin{align}
+  \label{eq:cyclotron-frequency}
+  \omega_B = \frac{q_sB}{m_sc\gamma}
+\end{align}
+where $B$ is magnitude of the magnetic field.
+
 \section{Linearizing Maxwell's equations}
 
 Maxwell's equations are set of partial differential equations which,
