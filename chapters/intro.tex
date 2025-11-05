@@ -93,6 +93,35 @@ For $M = \mathbf{p}$ and using the continuity equation we get:
 &= q_\alpha (\mathbf{E} + c^{-1}\mathbf{V}_\alpha \times \mathbf{B})
 \end{align}
 
+\subsection{Linearization}
+
+We want to linearize the equations \eqref{eq:continuity-in-cold-limit}
+and \eqref{eq:momentum-transport-in-cold-limit}
+in case where there is no initial electromagnetic fields.
+In order to do so we'll denote small perturbations with subscript $1$,
+so we can write:
+\begin{align}
+  \label{eq:preturbed-variables}
+  \ve V &= \ve V_0 + \ve V_1 \\
+  \ve E &= \ve E_1 \\
+  \ve B &= \ve B_1 \\
+  \ve P &= m\gamma(\ve V_0 + \ve V_1)(\ve V_0 + \ve V_1)
+\end{align}
+Keeping only the linear order terms the expression for the momentum simplifies to
+$\ve P = m\gamma\left(\ve V_0+\frac{\gamma^2}{c^2}(\ve V_0 \cdot \hat{\ve V}_1)\ve V_0 \right)$,
+where $\gamma = \gamma(\ve V_0)$.
+Inserting these and the inverse Fourier transforms
+$f = \int \hat{f} \exp(i(\ve k \cdot \ve x - \omega t))d\omega d^3k$
+of the perturbations
+to equations \eqref{eq:continuity-in-cold-limit} and \eqref{eq:momentum-transport-in-cold-limit}
+we get:
+\begin{align}
+  \label{eq:linearized-cold-fluid}
+  \hat{n}_1 &= \frac{n_0 \ve k \cdot \hat{V}_1}{\omega - \ve k \cdot \ve V_0} \\
+  im\gamma(\ve k \cdot \ve V_0 - \omega)
+  (\hat{\ve V}_1 + \frac{\gamma^2}{c^2}(\ve V_0 \cdot \hat{\ve V_1})\ve V_0)
+  &= q(\hat{E}_1 + \frac 1c \hat{\ve V}_1 \times \ve B_0 + \frac 1c \hat{\ve V}_0 \times \ve B_1)
+\end{align}
 
 
 %%% Local Variables:
