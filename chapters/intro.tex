@@ -47,6 +47,7 @@ Usually this requirement is expressed in terms of plasma parameter
 which is defined up to a constant factor as $\Lamda = n\lambda_D^3$
 and get:
 \begin{align}
+  \label{eq:plasma-param-condition}
   \Lambda \gg 1
 \end{align}
 
@@ -71,6 +72,64 @@ the cyclotrone frequency is given by:
   \omega_B = \frac{q_sB}{m_sc\gamma}
 \end{align}
 where $B$ is magnitude of the magnetic field.
+
+\section{Kinetic plasma description}
+
+As seen from the condition \eqref{eq:plasma-param-condition} the number of particles in plasma is large.
+This makes modeling plasma using just particles and coulomb forces between them unfeasible.
+In the kinetic plasma description the problem is solved by embracing the large number of particles
+and describinig statistically their collective behavious.
+
+For particle species $s$ the distribution function $f_s(\ve x, \ve p, t)$ describes
+number of particles in a phase space region spanned by time interval $[t, t + dt]$,
+location region $[\ve x , \ve x + d\ve x]$ and three-momentum region $[\ve p, \ve p + d\ve p]$.
+We assume that the distribution function is normalized such that
+\begin{align}
+  \label{eq:number-density}
+  \int f_s(\ve x, \ve p, t) d\ve p = n_j(\ve x, t)
+\end{align}
+where $n_j(\ve x, t)$ is the number density of particle species $s$.
+
+Summing over all of the particle species we get the total charge density of plasma:
+\begin{align}
+  \label{eq:charge-density}
+  \rho(\ve x, t) = \sum_s q_s n_s(\ve x, t)
+\end{align}
+Current density is given by:
+\begin{align}
+  \label{eq:current-density}
+  \ve J(\ve x, t) = \int \sum_s q_s \ve v f_s(\ve x, \ve p, t) d\ve p
+\end{align}
+With these definitions of charge and current densities we can solve the self-consistent
+electromagnetic fields from Maxwell's equations (in Gaussian CGS units):
+\begin{align}
+  \label{eq:maxwells}
+  \nabla\times\ve E = -\frac1c \frac{\partial\ve B}{\partial t}, \qquad
+  \nabla\times\ve B = \frac{4\pi}c \ve J + \frac1c \frac{\partial\ve E}{\partial t}, \qquad
+  \nabla\cdot\ve E = 4\pi\rho, \qquad
+  \nabla\cdot\ve B = 0
+\end{align}
+
+Evolution of the distribution function is governed by Boltzmann equation:
+\begin{align}
+  \label{eq:boltzmann}
+  \partial_t f_s + \ve v \cdot \nabla f_s + \frac{d\ve p}{dt} \cdot \nabla_{\ve p} f_s
+  = \left(\frac{\partial f_s}{\partial t}\right)_{\text{coll}}
+\end{align}
+where $\left(\frac{\partial f_s}{\partial t}\right)_{\text{coll}}$ is the collision term
+which contains interactions between induvidual particles.
+In case of plasmas $\frac{d\ve p}{dt}$ is given by the Lorentz force and
+due to condition \eqref{eq:plasma-param-condition} applying
+the short term collisions between the paritcles can be neglected and the collision term vanishes.
+With the vanishing collision term the equation is called Vlasov equation:
+\begin{align}
+  \label{eq:vlasov}
+  \partial_t f_\alpha
+  + \mathbf{v} \cdot \nabla f_\alpha
+  + q_\alpha ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f_\alpha = 0
+\end{align}
+where we have defined vector $\boldsymbol{\beta} = \frac{\ve v}{c}$.
+
 
 \section{Linearizing Maxwell's equations}
 
