@@ -1,18 +1,5 @@
 \chapter{Introduction}
 
-\begin{todo}
-  \begin{itemize}
-  \item plasmas
-  \item E and B
-  \item lorentz force
-  \item vlasov equation
-  \item maxwells eq
-  \item current
-  \item plasma oscillation
-  \item gyro freq
-  \end{itemize}
-\end{todo}
-
 \section{Plasma}
 
 Plasma is quasi-neutral gas with enough free charges that the long range collective electromagnetic
@@ -129,45 +116,16 @@ With the vanishing collision term the equation is called Vlasov equation:
   + q_\alpha ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f_\alpha = 0
 \end{align}
 where we have defined vector $\boldsymbol{\beta} = \frac{\ve v}{c}$.
-
-
-\section{Linearizing Maxwell's equations}
-
-Maxwell's equations are set of partial differential equations which,
-together with the Lorentz force, govern classical electrodynamics.
-Written in Gaussian (CGS) units they read:
-
-\begin{align}
-  \label{eq:maxwells}
-  \nabla\times\ve E = -\frac1c \frac{\partial\ve B}{\partial t}, \qquad
-  \nabla\times\ve B = \frac{4\pi}c \ve J + \frac1c \frac{\partial\ve E}{\partial t}, \qquad
-  \nabla\cdot\ve E = 4\pi\rho, \qquad
-  \nabla\cdot\ve B = 0
-\end{equation}
-\end{align}
-
-Denoting Fourier transformed functions with hat and keeping perturbations to the first order
-combine equations \eqref{eq:maxwells}:
-
-\begin{align}
-  \ve k \times (\ve k \times \hat{\ve E})
-  + \frac{\omega^2}{c^2}\left(\hat{\ve E} _1 + \frac{4\pi i}{\omega}\hat{\ve J}\right) = 0
-\end{align}
+Maxwell's equations together with the Vlasov equation form Vlasov-Maxwell system.
 
 \section{Cold-fluid limit}
 
-For particle species $\alpha$ with distribution function $f_\alpha(\ve x, \ve p, t)$
-collisionless Vlasov equation reads in Gaussian units:
+Solving Vlasov-Maxwell system is difficult.
+Fortunately in case of beam instabilities taking the cold-fluid limit of the system
+makes it possible to investigate the beam instabilities analytically.
+In order to do so, we have to calculate moments of the Vlasov equation.
 
-\begin{align}
-  \label{eq:vlasov}
-  \partial_t f_\alpha
-  + \mathbf{v} \cdot \nabla f_\alpha
-  + q_\alpha ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f_\alpha = 0
-\end{align}
-where we have defined vector $\boldsymbol{\beta} = \frac{\ve v}{c}$.
-
-Generally moment $M(\mathbf{p})$ of Vlasov equation~\eqref{eq:vlasov} is:
+Generally moment $M(\mathbf{p})$ of the Vlasov equation~\eqref{eq:vlasov} is:
 \begin{align}
 \int M \left(
 \partial_t f_\alpha
@@ -211,34 +169,54 @@ For $M = \mathbf{p}$ and using the continuity equation we get:
 &= q_\alpha (\mathbf{E} + c^{-1}\mathbf{V}_\alpha \times \mathbf{B})
 \end{align}
 
-\subsection{Linearization}
 
-We want to linearize the equations \eqref{eq:continuity-in-cold-limit}
-and \eqref{eq:momentum-transport-in-cold-limit}
-in case where there is no initial electromagnetic fields.
-In order to do so we'll denote small perturbations with subscript $1$,
-so we can write:
+\section{Linearization of the cold-fluid limit}
+
+Even in the cold-fluid limit solving for the general evolution of the system is difficult
+and we have to settle for solving it perturbatively to some order and
+in this theses the linear order solutions to equations \eqref{eq:continuity-in-cold-limit}
+and \eqref{eq:momentum-transport-in-cold-limit} are sufficient.
+Furthermore, we'll assume that the initial electromagnetic fields vanish\footnote{
+  The analysis could be done with initial magnetic field for which
+  $\ve V_0 \times \ve B_0 = 0$. However, this is unnecessary in context of this theses.
+}.
+
+Denoting equilibrium solutions with subscript $0$ and small perturbations with subscript $1$,
+we can write (dropping particle species labels for brievity):
 \begin{align}
   \label{eq:preturbed-variables}
+  n &= n_0 + n_1 \\
   \ve V &= \ve V_0 + \ve V_1 \\
   \ve E &= \ve E_1 \\
   \ve B &= \ve B_1 \\
-  \ve P &= m\gamma(\ve V_0 + \ve V_1)(\ve V_0 + \ve V_1)
+  \ve P &= m\gamma[\ve V_0 + \ve V_1](\ve V_0 + \ve V_1)
 \end{align}
+We'll use the Fourier representation for the perturbations,
+i.e. $g_1 = \int \hat{g}_1 \exp(i(\ve k \cdot \ve x - \omega t))d\omega d^3k$.
 Keeping only the linear order terms the expression for the momentum simplifies to
 $\ve P = m\gamma\left(\ve V_0+\frac{\gamma^2}{c^2}(\ve V_0 \cdot \hat{\ve V}_1)\ve V_0 \right)$,
-where $\gamma = \gamma(\ve V_0)$.
-Inserting these and the inverse Fourier transforms
-$f = \int \hat{f} \exp(i(\ve k \cdot \ve x - \omega t))d\omega d^3k$
-of the perturbations
-to equations \eqref{eq:continuity-in-cold-limit} and \eqref{eq:momentum-transport-in-cold-limit}
-we get:
+where we defined $\gamma = \gamma[\ve V_0]$.
+
+Inserting these to \eqref{eq:continuity-in-cold-limit} and \eqref{eq:momentum-transport-in-cold-limit}
+we get the linearized continuity equation and linearized momentum transport equation:
 \begin{align}
   \label{eq:linearized-cold-fluid}
-  \hat{n}_1 &= \frac{n_0 \ve k \cdot \hat{V}_1}{\omega - \ve k \cdot \ve V_0} \\
+  \hat{n}_1 &= \frac{n_0 \ve k \cdot \hat{\ve V}_1}{\omega - \ve k \cdot \ve V_0} \\
   im\gamma(\ve k \cdot \ve V_0 - \omega)
-  (\hat{\ve V}_1 + \frac{\gamma^2}{c^2}(\ve V_0 \cdot \hat{\ve V_1})\ve V_0)
+  (\hat{\ve V}_1 + \frac{\gamma^2}{c^2}(\ve V_0 \cdot \hat{\ve V}_1)\ve V_0)
   &= q(\hat{E}_1 + \frac 1c \hat{\ve V}_1 \times \ve B_0 + \frac 1c \hat{\ve V}_0 \times \ve B_1)
+\end{align}
+Additionally we'll utilize linearity of Maxwell's equations \eqref{eq:maxwells}
+and combine them to the linearized wave equation:
+\begin{align}
+  \ve k \times (\ve k \times \hat{\ve E}_1)
+  + \frac{\omega^2}{c^2}\left(\hat{\ve E} _1 + \frac{4\pi i}{\omega}\hat{\ve J}_1\right) = 0
+\end{align}
+where $\hat{\ve J}_1$ is read from:
+\begin{align}
+  \ve J_1 &= \int \sum_s q_s(n_{s0}\hat{\ve V}_{s1} + n_{s1}\hat{\ve V}_{s0})
+  \exp(i(\ve k \cdot \ve x - \omega t))d\omega d^3k \\
+  &= \int \hat{\ve J}_1 \exp(i(\ve k \cdot \ve x - \omega t))d\omega d^3k
 \end{align}
 
 
