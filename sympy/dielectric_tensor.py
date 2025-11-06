@@ -85,12 +85,17 @@ epsilon_sub = epsilon.subs(vp0z, -alpha * vb0z) \
 
 # Used to store wich terms are non-zero without Zz = 0 substitution
 m = sp.eye(3)
+# Used to calculate the index commutator
+n = sp.eye(3)
+for i in range(3):
+    for j in range(3):
+        m[i, j] = int(epsilon_sub[i, j] != 0)
+        n[i, j] = (epsilon_sub[i, j].expand() - epsilon_sub[j, i].expand()).simplify()
 
 # This has to be manually simplified to get nice expression.
 # But even this does not do everything.
 for i in range(3):
     for j in range(3):
-        m[i, j] = int(epsilon_sub[i, j] != 0)
         epsilon_sub[i, j] = epsilon_sub[i, j].subs(Zz, 0)
         epsilon_sub[i, j] = sp.Add(*[sp.simplify(sp.cancel(t)) for t in epsilon_sub[i, j].args])
 
@@ -98,3 +103,5 @@ sp.pprint(epsilon_sub)
 
 print("Which terms of epsilon are non-zero without substituing Zz = 0:")
 sp.pprint(m)
+print("e[i, j] - e[j, i]")
+sp.pprint(n)
