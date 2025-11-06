@@ -81,13 +81,20 @@ epsilon_sub = epsilon.subs(vp0z, -alpha * vb0z) \
                      .subs(kx, omega_pp * Zx / vb0z) \
                      .subs(omega_pb, sp.sqrt(alpha) * omega_pp) \
                      .subs(omega, x * omega_pp) \
-                     .subs(omega_b, 0) \
-                     .subs(Zz, 0)
+                     .subs(omega_b, 0)
+
+# Used to store wich terms are non-zero without Zz = 0 substitution
+m = sp.eye(3)
 
 # This has to be manually simplified to get nice expression.
 # But even this does not do everything.
 for i in range(3):
     for j in range(3):
+        m[i, j] = int(epsilon_sub[i, j] != 0)
+        epsilon_sub[i, j] = epsilon_sub[i, j].subs(Zz, 0)
         epsilon_sub[i, j] = sp.Add(*[sp.simplify(sp.cancel(t)) for t in epsilon_sub[i, j].args])
 
 sp.pprint(epsilon_sub)
+
+print("Which terms of epsilon are non-zero without substituing Zz = 0:")
+sp.pprint(m)
