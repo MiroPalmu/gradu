@@ -68,7 +68,6 @@ def E1_coeff_matrix(X):
 
 # k x (k x E1) || see eq. 6 of [1].
 kk = E1_coeff_matrix(k.cross(k.cross(E1)))
-sp.pprint(kk)
 
 # epsilon := E1 + 4 * i * pi * J / omega
 epsilon = E1_coeff_matrix(E1 + 4 * sp.I * sp.pi * J / omega)
@@ -92,16 +91,29 @@ for i in range(3):
         m[i, j] = int(epsilon_sub[i, j] != 0)
         n[i, j] = (epsilon_sub[i, j].expand() - epsilon_sub[j, i].expand()).simplify()
 
+for_implicit_plot = False
+
 # This has to be manually simplified to get nice expression.
 # But even this does not do everything.
 for i in range(3):
     for j in range(3):
-        epsilon_sub[i, j] = epsilon_sub[i, j].subs(Zz, 0)
+        if not for_implicit_plot:
+            epsilon_sub[i, j] = epsilon_sub[i, j].subs(Zz, 0)
         epsilon_sub[i, j] = sp.Add(*[sp.simplify(sp.cancel(t)) for t in epsilon_sub[i, j].args])
 
-sp.pprint(epsilon_sub)
+if for_implicit_plot:
+    e_xx, e_zz, e_xz = epsilon_sub[0, 0], epsilon_sub[2, 2], epsilon_sub[2, 0]
+    eta = x * omega_pp / c
+    lhs = (eta**2 * e_xx - kz**2) * (eta**2 * e_zz - kx**2)
+    rhs = (eta**2 * e_xz + kx * kz)**2
 
-print("Which terms of epsilon are non-zero without substituing Zz = 0:")
-sp.pprint(m)
-print("e[i, j] - e[j, i]")
-sp.pprint(n)
+    print("Dispersion equaion for custom_implicit_plot.py:")
+    print(lhs - rhs)
+else:
+    sp.pprint(kk)
+    sp.pprint(epsilon_sub)
+
+    print("Which terms of epsilon are non-zero without substituing Zz = 0:")
+    sp.pprint(m)
+    print("e[i, j] - e[j, i]")
+    sp.pprint(n)
