@@ -9,7 +9,7 @@ import sympy as sp
 x = sp.symbols("x")
 alpha, Z, gamma_b, gamma_p, beta = sp.symbols("alpha Z gamma_b gamma_p beta", real=True)
 e_xx = 1 - alpha / (x**2 * gamma_b) - 1 / (x**2 * gamma_p)
-e_zz = 1 - alpha / (x**2 * gamma_b) - 1 / (x**2 * gamma_p) \
+e_zz = 1 - alpha / (x**2 * gamma_b**3) - 1 / (x**2 * gamma_p**3) \
     - alpha * Z**2 / (x**4 * gamma_b) - alpha**2 * Z**2 / (x**4 * gamma_p)
 e_xz = alpha * Z / x**3 * (1 / gamma_p - 1 / gamma_b)
 
