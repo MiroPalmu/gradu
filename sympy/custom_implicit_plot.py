@@ -186,7 +186,7 @@ x_plot, _, Zx_plot, Zz_plot = solve(
 norm = matplotlib.colors.Normalize(vmin=0, vmax=np.max(np.imag(x_plot)))
 
 E = [np.min(Zz_plot), np.max(Zz_plot), np.min(Zx_plot), np.max(Zx_plot)]
-axs[0, 0].imshow(np.imag(x_plot), cmap='jet', extent=E, aspect='auto')
+axs[0, 0].imshow(np.flip(np.imag(x_plot), axis=0), cmap='jet', extent=E, aspect='auto')
 axs[0, 0].set(xlabel='$Z_z$', ylabel='$Z_x$')
 
 cbar = matplotlib.colorbar.ColorbarBase(baxs[0, 0],
@@ -207,7 +207,7 @@ x_plot, _, Zx_plot, Zz_plot = solve(
 )
 
 E = [np.min(Zz_plot), np.max(Zz_plot), np.min(Zx_plot), np.max(Zx_plot)]
-axs[0, 1].imshow(np.imag(x_plot), cmap='jet', extent=E, aspect='auto')
+axs[0, 1].imshow(np.flip(np.imag(x_plot), axis=0), cmap='jet', extent=E, aspect='auto')
 axs[0, 1].set(xlabel='$Z_z$', ylabel='$Z_x$')
 
 norm = matplotlib.colors.Normalize(vmin=0, vmax=np.max(np.imag(x_plot)))
