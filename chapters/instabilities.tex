@@ -41,52 +41,99 @@ Comprehensive kinetic treatments have managed to provide
 a unified vision of the entire unstable spectrum
 including temperature effects.
 
-\section{Linear analysis in the cold-fluid limit}
+\section{Growth rate in the cold-fluid limit}
 
-As stated at the beginning of the chapter our system consists of
-two homogeneous counter-streaming pair plasma populations.
-Ions are concidered as a fixed neutralizing background.
-We'll call the two populations the beam and the background plasma
-and denote their number densities as $n_b$ and $n_p$.
-Similarly we'll denote their bulk velocities as $\mathbf{V}_b$ and $\mathbf{V}_p$.
-Initially there are no electromagnetic fields.
-
-We will linearize 
-
-
-and corresponding Lorentz factors $\gamma_b$ and $\gamma_p$ respectively.
-and the system is initially charge and current neutral:
+As stated at the beginning of the chapter our system consists of two homogeneous
+counter-streaming pair plasma populations. Ions are concidered as a fixed neutralizing background.
+We’ll call the two populations the beam and the background plasma and
+denote their number densities as $n_b$ and $n_p$.
+Similarly we’ll denote their bulk velocities as $\ve V_b$ and $\ve V_p$.
+Initially system is current and charge neutral:
 
 \begin{align}
-  \label{eq:beam-neutrality}
-  n_b + n_p = n_i \\
-  
+  \label{eq:current-neutrality}
+  n_{b0}\ve V_{b0} = n_{p0}\ve V_{p0}
 \end{align}
 
+and without electromagnetic fields. We’ll define that the beam is along the x-axis.
+Without loss of generality we can assume in the following discussion
+that the wave vector is in the xy-plane.
+Following symbolic calculator technique from \cite{bret_beam-plasma_2007}
+we’ll solve $\ve V_{b1}$ and $\ve V_{p1}$ from the linearized momentum transport equation
+\eqref{eq:linearized-cold-fluid-momentum-transport} and insert them to the linearized
+continuity equation \eqref{eq:linearized-cold-fluid-continuity-eq} to give us $n_{b1}$ and $n_{p1}$.
+Likewise these are inserted to the linearized wave equation \eqref{eq:linearized-wave-eq}.
+The resulting equation can be manipulated to a matrix form:
+\begin{align}
+  \label{eq:dispersion-eq-vec}
+  \ve T(\ve k, \omega ) \hat{\ve E}_1 = 0
+\end{align}
+where $\ve T(\ve k, \omega ) \hat{\ve E}_1$ is a matrix-vector product between the matrix
+$\ve T(\ve k, \omega )$ and the electric field perturbation.
+The matric has following form:
+\begin{align}
+  \ve T(\ve k, \omega ) = \frac{\omega^2}{c^2} \boldsymbol{\epsilon}(\ve k, \omega)
+  + \ve k \otimes \ve k + k^2 \mathbb{I}
+\end{align}
+where $\mathbb{I}$ is the unit matrix and $\boldsymbol{\epsilon}(\ve k, \omega)$
+is the dielectric tensor:
+\begin{align}
+  \ve T(\ve k, \omega) =
+  \begin{bmatrix}
+\frac{\omega^2}{c^2}\epsilon_{xx} - k_z^2 & 0 & \frac{\omega^2}{c^2}\epsilon_{xz} + k_z k_x \\
+0 & \frac{\omega^2}{c^2}\epsilon_{yy} - k^2 & 0 \\
+\frac{\omega^2}{c^2}\epsilon_{xz} + k_x k_z & 0 & \frac{\omega^2}{c^2}\epsilon_{zz} - k_x^2
+\end{bmatrix}
+\end{align}
+Equation \eqref{eq:dispersion-eq-vec} admits solutions only when determinant of
+$\ve T(\ve k, \omega)$ vanishes which results in two branches:
+\begin{align}
+  \epsilon_{yy} = \frac{c^2k^2}{\omega^2}
+\end{align}
+and
+\begin{align}
+  \label{eq:dispersion-eq}
+  \left( \frac{\omega^2}{c^2}\epsilon_{xx} - k_z^2 \right)
+  \left( \frac{\omega^2}{c^2}\epsilon_{zz} - k_x^2 \right)
+  = \left( \frac{\omega^2}{c^2}\epsilon_{xz} + k_x k_z \right)^2
+\end{align}
 
+For the instabilities the first branch is not interesting as the second holds
+solutions the two-stream, the oblique and the filamentation instabilities.
+To investigate the nature of the solutions
+we'll first define standard dimensionless variables:
+\begin{align}
+  x = \frac{\omega}{\omega_{pp}} \qquad
+  \ve Z = \frac{\ve k V_{b0}}{\omega_{pp}} \qquad
+  \alpha = \frac{n_{b0}}{n_{p0}}
+\end{align}
+Now $x$ can be solved numerically from dispersion relation \eqref{eq:dispersion-eq}.
+Figure \ref{missing} plots the normalized growth rate (i.e. imaginary part of $x$)
+as a function of $\ve$ for two different cases.
+For the diluted case ($\alpha \ll 1$) we can see that the largest growth rate
+is the oblique angle regime while for the symmetric case ($\alpha = 1$)
+the largest growth is at $Z_z = 0$ and $Z_x \rightarrow \infty$
+corresponding to the filamentation instability.
 
+For the transverse case $k_z = Z_z = 0$ the components of dielectric tensor
+$\boldsymbol{\epsilon}(\ve k, \omega)$ simplify to:
+\begin{align}
+  \epsilon_{xx} &= 1 - \frac{\alpha}{\gamma_b x^2} - \frac{1}{\gamma_p x^2}, \\
+  \epsilon_{yy} &= 1 - \frac{\alpha}{\gamma_b x^2} - \frac{1}{\gamma_p x^2}, \\
+  \epsilon_{zz} &= 1 + \frac{Z_x x^2 \alpha^2}{\gamma_p x^4} - \frac{Z_x x^2 \alpha}{\gamma_b x^4}
+                  - \frac{\alpha}{\gamma_b^3 x^2} - \frac{1}{\gamma_p^3 x^2}, \\
+  \epsilon_{xz} &= \frac{Z_x \alpha}{x^3} \left( \gamma_p - \gamma_b \right)
+\end{align}
+Inserting these to the dispersion relation \eqref{eq:dispersion-eq}
+and taking the limit $Z_x \rightarrow \infty$ the growth rates for
+symmetric and diluted cases of filamentation instability can be solved exactly:
+\begin{align}
+  \label{eq:filamentation-growth-rate-diluted}
+  \Im (x) &= \frac{v_b}{c}\sqrt{\frac{\alpha}{\gamma_b}}, \quad \alpha \ll 1 \\
+  \label{eq:filamentation-growth-rate-symmetric}
+  &= \frac{v_b}{c}\sqrt{\frac{2}{\gamma_b}}, \quad \alpha = 1
+\end{align}
 
-The system is assumed j
-
-
-We'll investigate a homogeneous and infinite beam-plasma system is
-composed of a beam and a background plasma.
-Denoting the number density of the beam with $n_b$ and background with $n_p$,
-
-
-
-
-The cold-fluild is characterized with distribution function $f_\alpha (\mathbf{x}, \mathbf{p}, t)$
-
-$N$ species of charge $q_j$, mass $m_j$, number density $n_j$ and mean velocity $\mathbf{v}_j$.
-The number densities are measured in the laboratory frame and not in the proper frame
-of the related species. Following shows the key points of a standard derivation
-which details can be found in textbook
-\cite{bret_multidimensional_2010,infeld_basic_1975,rowlands_electrodynamics_1970,rosenbluth_handbook_1983}.
-
-Initially system is quasi-neutral $\sum_j q_j n_j = 0$ and without a current
-$\sum_j q_j n_j\mathbf{v}_j = 0$. It is also assumed that there is no initial
-electromagnetic fields.
 
 \section{Numerical validation}
 

@@ -200,8 +200,9 @@ where we defined $\gamma = \gamma[\ve V_0]$.
 Inserting these to \eqref{eq:continuity-in-cold-limit} and \eqref{eq:momentum-transport-in-cold-limit}
 we get the linearized continuity equation and linearized momentum transport equation:
 \begin{align}
-  \label{eq:linearized-cold-fluid}
+  \label{eq:linearized-cold-fluid-continuity-eq}
   \hat{n}_1 &= \frac{n_0 \ve k \cdot \hat{\ve V}_1}{\omega - \ve k \cdot \ve V_0} \\
+  \label{eq:linearized-cold-fluid-momentum-transport}
   im\gamma(\ve k \cdot \ve V_0 - \omega)
   (\hat{\ve V}_1 + \frac{\gamma^2}{c^2}(\ve V_0 \cdot \hat{\ve V}_1)\ve V_0)
   &= q(\hat{\ve E}_1 + \frac 1c \hat{\ve V}_1 \times \ve B_0 + \frac 1c \hat{\ve V}_0 \times \ve B_1)
@@ -209,6 +210,7 @@ we get the linearized continuity equation and linearized momentum transport equa
 Additionally we'll utilize linearity of Maxwell's equations \eqref{eq:maxwells}
 and combine them to the linearized wave equation:
 \begin{align}
+  \label{eq:linearized-wave-eq}
   \ve k \times (\ve k \times \hat{\ve E}_1)
   + \frac{\omega^2}{c^2}\left(\hat{\ve E} _1 + \frac{4\pi i}{\omega}\hat{\ve J}_1\right) = 0
 \end{align}
