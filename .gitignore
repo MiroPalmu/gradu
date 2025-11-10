@@ -1,6 +1,7 @@
 *.aux
 *.log
 *.pdf
+!chapters/*.pdf
 *.bbl
 *.blg
 *.toc
