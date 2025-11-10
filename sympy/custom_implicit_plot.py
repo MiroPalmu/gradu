@@ -50,6 +50,7 @@ def newton_solve_disperion_eq(
         return opt(x0, i, j)
 
     x_arr[i_g, j_g] = opt(x_g, i_g, j_g)
+    print(x_arr[i_g, j_g])
     x_arr[i_g + 1, j_g] = opt(x_g, i_g + 1, j_g)
     x_arr[i_g, j_g + 1] = opt(x_g, i_g, j_g + 1)
     x_arr[i_g + 1, j_g + 1] = opt(x_g, i_g + 1, j_g + 1)
@@ -78,59 +79,144 @@ def argfind_nearest(array, value):
     array = np.asarray(array)
     return (np.abs(array - value)).argmin()
 
-case = "A"
-
-if case == "A":
-    Zx_space = np.linspace(0, 4, 20)
-    Zz_space = np.linspace(0, 1.5, 40)
-
-    gamma_b = 3
-    alpha = 1e-2
-
-    Zx_good = 1.08
-    Zz_good = 1
+def solve(Zx_space,
+          Zz_space,
+          gamma_b,
+          alpha,
+          Zx_good,
+          Zz_good,
+          x_good,
+):
     Zx_good_idx = argfind_nearest(Zx_space, Zx_good)
     Zz_good_idx = argfind_nearest(Zz_space, Zz_good)
-    x_good = 0.972 + 0.094j
-
-    largest_value = np.sqrt(3) / 2**(4 / 3) * (alpha / gamma_b)**(1 / 3)
-
-elif case == "B":
-    Zx_space = np.linspace(0, 4, 20)
-    Zz_space = np.linspace(0, 1.5, 80)
-
-    gamma_b = 1.1
-    alpha = 1
-
-    Zx_good = 3
-    Zz_good = 1.1
-    Zx_good_idx = argfind_nearest(Zx_space, Zx_good)
-    Zz_good_idx = argfind_nearest(Zz_space, Zz_good)
-    x_good = 1 + 0.45j
-
-    vb = v(gamma_b)
-    largest_value = vb * np.sqrt(2 / gamma_b)
+    return newton_solve_disperion_eq(known_good=(x_good, Zx_good_idx, Zz_good_idx),
+                                     gamma_b=gamma_b,
+                                     alpha=alpha,
+                                     Zx_space=Zx_space,
+                                     Zz_space=Zz_space,
+                                     )
 
 
-x_plot, _, Zx_plot, Zz_plot = newton_solve_disperion_eq(known_good=(x_good,
-                                                                    Zx_good_idx,
-                                                                    Zz_good_idx),
-                                                        gamma_b=gamma_b,
-                                                        alpha=alpha,
-                                                        Zx_space=Zx_space,
-                                                        Zz_space=Zz_space,
-                                                        )
 
+
+import matplotlib
 import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
-fig = plt.figure()
+def setup_figure(columns=1,
+                 nrow_fig=1,
+                 ncol_fig=1,
+                 # control these (in units of [0,1]) to position the figure
+                 axleft=0.08,
+                 axbottom=0.24,
+                 axright=0.96,
+                 axtop=0.92,
+                 figsize_scale=1,
+                 colorbar=True,
+):
+    """
+    Based on: https://natj.github.io/teaching/figs/
+    """
 
-ax = fig.add_subplot(121, projection='3d')
-axre = fig.add_subplot(122, projection='3d')
+    if colorbar:
+        axtop *= 0.8
 
-ax.plot_surface(Zz_plot, Zx_plot, np.imag(x_plot))
-ax.plot_surface(Zz_plot, Zx_plot, np.ones_like(Zz_plot) * largest_value)
-axre.plot_surface(Zz_plot, Zx_plot, np.real(x_plot))
+    if columns == 1:
+        fig = plt.figure(1, figsize=(figsize_scale * 3.25, figsize_scale * 2.2))
+    elif columns == 2:
+        fig = plt.figure(1, figsize=(figsize_scale * 7.0, figsize_scale * 4))
+    else:
+        raise RuntimeError("This only supports single- or two-column figures")
+
+    # add ticks to both sides
+    plt.rc('xtick', top   = True)
+    plt.rc('ytick', right = True)
+
+    plt.rc('font',  family='serif',)
+    plt.rc('text',  usetex=False)
+
+    # make labels slightly smaller
+    plt.rc('xtick', labelsize=7)
+    plt.rc('ytick', labelsize=7)
+    plt.rc('axes', labelsize=8)
+    plt.rc('legend', handlelength=4.0)
+
+    gs = plt.GridSpec(nrow_fig, ncol_fig)
+    gs.update(wspace = 0.25)
+    gs.update(hspace = 0.35)
+
+    axs = np.empty((nrow_fig, ncol_fig), dtype=object)
+
+    for j in range(ncol_fig):
+        for i in range(nrow_fig):
+            axs[i,j] = plt.subplot(gs[i,j])
+            axs[i,j].minorticks_on()
+
+    fig.subplots_adjust(left=axleft, bottom=axbottom, right=axright, top=axtop)
+
+    if colorbar:
+        baxs = dict()
+        for j in range(ncol_fig):
+            for i in range(nrow_fig):
+                p = axs[i, j].get_position()
+                axwidth  = p.x1 - p.x0
+                axheight  = (p.y1 - p.y0) * 0.03
+                axpad = 0.02
+                baxs[i, j] = fig.add_axes([p.x0, p.y1 + axpad, axwidth, axheight])
+
+        return fig, axs, baxs
+
+
+    return fig, axs
+
+fig, axs, baxs = setup_figure(columns=2, ncol_fig=2, figsize_scale=0.7, colorbar=True)
+cmap = matplotlib.colormaps['jet']
+
+res = 80
+
+x_plot, _, Zx_plot, Zz_plot = solve(
+    Zx_space = np.linspace(0, 4, res),
+    Zz_space = np.linspace(0, 1.5, res),
+    gamma_b = 3,
+    alpha = 1,
+    Zx_good = 3,
+    Zz_good = 0.1,
+    x_good = 0 + 0.55j,
+)
+
+norm = matplotlib.colors.Normalize(vmin=0, vmax=np.max(np.imag(x_plot)))
+
+E = [np.min(Zz_plot), np.max(Zz_plot), np.min(Zx_plot), np.max(Zx_plot)]
+axs[0, 0].imshow(np.imag(x_plot), cmap='jet', extent=E, aspect='auto')
+axs[0, 0].set(xlabel='$Z_z$', ylabel='$Z_x$')
+
+cbar = matplotlib.colorbar.ColorbarBase(baxs[0, 0],
+                                        cmap=cmap,
+                                        norm=norm,
+                                        orientation='horizontal',
+                                        ticklocation='top')
+cbar.set_label('$\\Im(x)$')
+
+x_plot, _, Zx_plot, Zz_plot = solve(
+    Zx_space = np.linspace(0, 4, res),
+    Zz_space = np.linspace(0, 1.5, res),
+    gamma_b = 3,
+    alpha = 0.1,
+    Zx_good = 2.95,
+    Zz_good = 1.27,
+    x_good = 0.98 + 0.121j,
+)
+
+E = [np.min(Zz_plot), np.max(Zz_plot), np.min(Zx_plot), np.max(Zx_plot)]
+axs[0, 1].imshow(np.imag(x_plot), cmap='jet', extent=E, aspect='auto')
+axs[0, 1].set(xlabel='$Z_z$', ylabel='$Z_x$')
+
+norm = matplotlib.colors.Normalize(vmin=0, vmax=np.max(np.imag(x_plot)))
+cbar = matplotlib.colorbar.ColorbarBase(baxs[0, 1],
+                                        cmap=cmap,
+                                        norm=norm,
+                                        orientation='horizontal',
+                                        ticklocation='top')
+cbar.set_label('$\\Im(x)$')
 
 plt.show()
+fig.savefig('growth-rate.pdf', dpi=300)
