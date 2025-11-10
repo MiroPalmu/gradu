@@ -108,12 +108,20 @@ we'll first define standard dimensionless variables:
   \alpha = \frac{n_{b0}}{n_{p0}}
 \end{align}
 Now $x$ can be solved numerically from dispersion relation \eqref{eq:dispersion-eq}.
-Figure \ref{missing} plots the normalized growth rate (i.e. imaginary part of $x$)
-as a function of $\ve$ for two different cases.
+Figure \ref{fig:perp-growth-rates} plots the normalized growth rate (i.e. imaginary part of $x$)
+as a function of $\ve Z$ for two different cases.
 For the diluted case ($\alpha \ll 1$) we can see that the largest growth rate
 is the oblique angle regime while for the symmetric case ($\alpha = 1$)
 the largest growth is at $Z_z = 0$ and $Z_x \rightarrow \infty$
 corresponding to the filamentation instability.
+
+\begin{figure}
+  \centering
+  \includegraphics{chapters/growth-rate.pdf}
+  \caption{Growt rates from dispersion relation \eqref{eq:dispersion-eq} for $\gamma_b = 3$.
+    Left is the symmetric case $\alpha = 1$ and right is the diluted case $\alpha = 0.1$. }
+  \label{fig:perp-growth-rates}
+\end{figure}
 
 For the transverse case $k_z = Z_z = 0$ the components of dielectric tensor
 $\boldsymbol{\epsilon}(\ve k, \omega)$ simplify to:
@@ -122,7 +130,7 @@ $\boldsymbol{\epsilon}(\ve k, \omega)$ simplify to:
   \epsilon_{yy} &= 1 - \frac{\alpha}{\gamma_b x^2} - \frac{1}{\gamma_p x^2}, \\
   \epsilon_{zz} &= 1 + \frac{Z_x x^2 \alpha^2}{\gamma_p x^4} - \frac{Z_x x^2 \alpha}{\gamma_b x^4}
                   - \frac{\alpha}{\gamma_b^3 x^2} - \frac{1}{\gamma_p^3 x^2}, \\
-  \epsilon_{xz} &= \frac{Z_x \alpha}{x^3} \left( \gamma_p - \gamma_b \right)
+  \epsilon_{xz} &= \frac{Z_x \alpha}{x^3} \left( \frac 1\gamma_p - \frac 1\gamma_b \right)
 \end{align}
 Inserting these to the dispersion relation \eqref{eq:dispersion-eq}
 and taking the limit $Z_x \rightarrow \infty$ the growth rates for
@@ -133,7 +141,6 @@ symmetric and diluted cases of filamentation instability can be solved exactly:
   \label{eq:filamentation-growth-rate-symmetric}
   &= \frac{v_b}{c}\sqrt{\frac{2}{\gamma_b}}, \quad \alpha = 1
 \end{align}
-
 
 \section{Numerical validation}
 

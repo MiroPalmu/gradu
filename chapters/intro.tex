@@ -29,9 +29,9 @@ by requiring that it is much less than the spatial length scale $L$ of the plasm
   \lambda_D \ll L
 \end{align}
 For Debye length to be statistically valid there has to be enough particles inside
-''Debye sphere'': $N_D = n \frac 43 \pi \labda_D^3 \gg 1$.
+''Debye sphere'': $N_D = n \frac 43 \pi \lambda_D^3 \gg 1$.
 Usually this requirement is expressed in terms of plasma parameter
-which is defined up to a constant factor as $\Lamda = n\lambda_D^3$
+which is defined up to a constant factor as $\Lambda = n\lambda_D^3$
 and get:
 \begin{align}
   \label{eq:plasma-param-condition}
@@ -136,7 +136,7 @@ Generally moment $M(\mathbf{p})$ of the Vlasov equation~\eqref{eq:vlasov} is:
 In the first two terms the derivatives can be trivially taken out of the integrant,
 but the third requires some manipulation.
 
-For brievity we'll define $a_\alpha^i = q_\alphaE^i + \frac{q_\alpha}{c}\epsilon^i_{lk}v^l B^k$.
+For brievity we'll define $a_\alpha^i = q_\alpha E^i + \frac{q_\alpha}{c}\epsilon^i_{lk}v^l B^k$.
 Using the identity $ \partial_{p_i} v^l = \frac{\delta^l_i}{m \gamma} -  \frac{p^lp_i}{m^3c^2\gamma^3}$
 we get that $\partial_{p_i}a_\alpha^i = 0$.
 After integration by parts and noting
