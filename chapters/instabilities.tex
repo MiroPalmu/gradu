@@ -1,45 +1,50 @@
 \chapter{Electron Beam-Plasma Instabilities}
 
-\begin{todo}
-  Add references from \cite{bret_multidimensional_2010} intro
-\end{todo}
-
 Beam-plasma system consists of two homogeneous counter-streaming pair plasma populations.
 In this chapter we will give breaf overview of instabilities present in such system,
 derive the maximum growth rates in cold-fluid limit and show that these match
 to the measured growth rates from symmetric beam-plasma simulations done with RUNKO.
 In the cold-fluid limit and for symmetric beams
 the fastest growing instability is so called filamentation instability,
-which unstable modes are perturbations in both $\mathbf{E}$ and $\mathbf{B}$.
+which unstable modes are fully electromagnetic \cite{bret_collective_2004}.
 This means that matching growth rates demonstrates correctness in RUNKO's
 ability to probe the full set of Vlasov-Maxwell equations.
 
 \section{Overview}
 
 Beam-plasma systems have been studied since Langmuir first suggested in 1925,
-the existence of oscillations in beam-blasma systems.
+the existence of oscillations in beam-blasma
+systems \cite{langmuir_scattering_1925,briggs_electron-stream_1964}.
 Later in 1948 Pierce explained Langmuir's observations by demonstrating
-unstable oscillations can arise in such systems.
+unstable oscillations can arise in such systems \cite{pierce_possible_1948}.
 This prompted Bohm and Gross to develope the kinetic theory of ''two-stream instability'',
-which contains unstable waves propagating along the beam direction.
+which contains unstable waves propagating along the beam direction \cite{bohm_theory_1949}.
 It was Fried in 1959 who showed that there exists a second kind of instability,
-in which electromagnetic perturbations perpendicular to the flow are unstable.
+in which electromagnetic perturbations perpendicular to the flow are unstable \cite{fried_mechanism_1959}.
 These modes tend to break up an initially homogeneus beam profile into small-scale current filaments,
 which leads to the name ''filamentation instability''.
 Fried's article mentioned closely related work of Weible,
-who demonstrated the instability of an anistropic two-temperature Maxwellian plasma.
+who demonstrated the instability of
+an anistropic two-temperature Maxwellian plasma  \cite{weibel_spontaneously_1959}.
 In literature these two instabilities have become almost interchangable,
-even though they are technically not equivalent.
+even though they are technically not equivalent \cite{bret_multidimensional_2010}.
 In this theses we will use the term ''filamentation instability'' for clarity.
 
 Additionally to the parallel two-stream modes and perpendicular filamentation modes,
 the stability of oblique modes can be investigated.
 This was proptly done in the cold-fluid limit and it was found that
-the unstable spectrum is two-dimensional as the oblique perturbations are likely to be unstable.
-After this many temperature-dependent investigations of the 2D spectrum have been done.
-Comprehensive kinetic treatments have managed to provide
-a unified vision of the entire unstable spectrum
-including temperature effects.
+the unstable spectrum is two-dimensional as the oblique perturbations are likely to be unstable
+\cite{watson_statistical_1960,bludman_statistical_1960,fainberg_nonlinear_1970}.
+In 21st century Bret et al. have done comprehensive kinetic treatments
+that have managed to provide a unified vision of the entire unstable spectrum
+including temperature effects
+\cite{bret_collective_2004,bret_electromagnetic_2005,bret_characterization_2005},
+for which many supporting PIC simulations have been performed
+\cite{gremillet_linear_2007,
+  dieckmann_evolution_2006,
+  frederiksen_electromagnetic_2008,
+  kong_evolution_2009,
+  karmakar_detailed_2009}
 
 \section{Growth rate in the cold-fluid limit}
 
@@ -54,16 +59,16 @@ Initially system is current and charge neutral:
   \label{eq:current-neutrality}
   n_{b0}\ve V_{b0} = n_{p0}\ve V_{p0}
 \end{align}
-
 and without electromagnetic fields. We’ll define that the beam is along the x-axis.
 Without loss of generality we can assume in the following discussion
 that the wave vector is in the xy-plane.
-Following symbolic calculator technique from \cite{bret_beam-plasma_2007}
+
+Following the symbolic calculator technique from \cite{bret_beam-plasma_2007}
 we’ll solve $\ve V_{b1}$ and $\ve V_{p1}$ from the linearized momentum transport equation
 \eqref{eq:linearized-cold-fluid-momentum-transport} and insert them to the linearized
 continuity equation \eqref{eq:linearized-cold-fluid-continuity-eq} to give us $n_{b1}$ and $n_{p1}$.
 Likewise these are inserted to the linearized wave equation \eqref{eq:linearized-wave-eq}.
-The resulting equation can be manipulated to a matrix form:
+The resulting equation can be manipulated to a matrix form \cite{bret_collective_2004,bret_cfa_2012}:
 \begin{align}
   \label{eq:dispersion-eq-vec}
   \ve T(\ve k, \omega ) \hat{\ve E}_1 = 0
@@ -73,7 +78,7 @@ $\ve T(\ve k, \omega )$ and the electric field perturbation.
 The matric has following form:
 \begin{align}
   \ve T(\ve k, \omega ) = \frac{\omega^2}{c^2} \boldsymbol{\epsilon}(\ve k, \omega)
-  + \ve k \otimes \ve k + k^2 \mathbb{I}
+  + \ve k \otimes \ve k - k^2 \mathbb{I}
 \end{align}
 where $\mathbb{I}$ is the unit matrix and $\boldsymbol{\epsilon}(\ve k, \omega)$
 is the dielectric tensor:
@@ -124,12 +129,17 @@ corresponding to the filamentation instability.
 \end{figure}
 
 For the transverse case $k_z = Z_z = 0$ the components of dielectric tensor
-$\boldsymbol{\epsilon}(\ve k, \omega)$ simplify to:
+$\boldsymbol{\epsilon}(\ve k, \omega)$ simplify to \cite{bret_cfa_2012}\footnote{
+  Note that in \cite{bret_cfa_2012} powers of $-3$ are missing from equation \eqref{eq:mistake-a}
+  and there is extra $\gamma_p^{-1}$ in \eqref{eq:mistake-b}.
+}:
 \begin{align}
   \epsilon_{xx} &= 1 - \frac{\alpha}{\gamma_b x^2} - \frac{1}{\gamma_p x^2}, \\
   \epsilon_{yy} &= 1 - \frac{\alpha}{\gamma_b x^2} - \frac{1}{\gamma_p x^2}, \\
+  \label{eq:mistake-a}
   \epsilon_{zz} &= 1 + \frac{Z_x x^2 \alpha^2}{\gamma_p x^4} - \frac{Z_x x^2 \alpha}{\gamma_b x^4}
                   - \frac{\alpha}{\gamma_b^3 x^2} - \frac{1}{\gamma_p^3 x^2}, \\
+  \label{eq:mistake-b}
   \epsilon_{xz} &= \frac{Z_x \alpha}{x^3} \left( \frac 1\gamma_p - \frac 1\gamma_b \right)
 \end{align}
 Inserting these to the dispersion relation \eqref{eq:dispersion-eq}
