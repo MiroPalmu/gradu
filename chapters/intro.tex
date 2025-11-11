@@ -3,7 +3,8 @@
 \section{Plasma}
 
 Plasma is quasi-neutral gas with enough free charges that the long range collective electromagnetic
-interactions dominate over the interactions between induvidual particles.
+interactions dominate over the interactions between induvidual particles
+\cite{pert_foundations_2021,hazeltine_framework_2018}.
 This can happen for example when a gas is heated enough such that the atoms get ionized.
 Quasi-neutrality means that the gas is approximately neutral:
 \begin{align}
@@ -12,27 +13,31 @@ Quasi-neutrality means that the gas is approximately neutral:
 where the sum is over all particle species, $n_s$ is particle density and $q_s$ is charge
 of particle species $s$.
 
-If a charge is introduced to a plasma the free charges quickly screen
+If a charge is introduced to a plasma in thermal equilibrium the free charges quickly screen
 the resulting long range electric field away.
 This is also known as Debye screening/shielding.
 Phonomena gives rise to a length scale at which short range Coulomb interactions can happen.
 The scale is characterized by Debye length $\lambda_D$ which is given by:
 \begin{align}
   \label{eq:debye-length}
-  \lambda_D^{-2} = \sum_s \left(\frac{\epsilon_0 k_b T_s}{n_s q_s}\right)^{-2}
+  \lambda_D^{-2} = \sum_s \frac{n_sq_s^2}{\epsilon_0 k_B T_s}
 \end{align}
-where $T_s$, $n_s$ and $q_s$ are temperature, number density and charge of particle species $s$.
+where $T_s$, $n_s$ and $q_s$ are temperature, number density and charge of particle species $s$,
+$k_B$ is the Boltzmann constant and $\epsilon_0$ is the vacuum permittivity.
 
-Using debye length we can formalize the quasi-neutrality condition of plasma
-by requiring that it is much less than the spatial length scale $L$ of the plasma system:
+For plasma in a thermal equilibrium the scale of deviations from quasi-neutrality
+over a length scale $L$ due to thermal fluctuations is
+$\left(\frac{\lambda_D}{L}\right)^2$ \cite{wiesemann_short_2014,hazeltine_framework_2018}.
+Thus we can formulate the quasi-neutrality condition of plasma over length scale $L$
+as a requirement that the Debye length is much less than the scale $L$:
 \begin{align}
   \lambda_D \ll L
 \end{align}
-For Debye length to be statistically valid there has to be enough particles inside
+However, for Debye length to be statistically valid there has to be enough particles inside
 ''Debye sphere'': $N_D = n \frac 43 \pi \lambda_D^3 \gg 1$.
 Usually this requirement is expressed in terms of plasma parameter
 which is defined up to a constant factor as $\Lambda = n\lambda_D^3$
-and get:
+and written as:
 \begin{align}
   \label{eq:plasma-param-condition}
   \Lambda \gg 1
@@ -40,9 +45,10 @@ and get:
 
 \section{Fundamental frequencies in plasma physics}
 
-There are couple frequencies that appear frequently in plasma physics.
-In plasma small displacement of charges oscillates around the neutral configuration.
-The frequency of this oscillation is called a plasma frequency.
+There are couple frequencies that appear often in plasma physics.
+In plasma a small displacement of charges oscillates around the neutral configuration
+at frequency which is called plasma frequency
+\cite{wiesemann_short_2014,pert_foundations_2021,hazeltine_framework_2018}.
 In a plasma the classical plasma frequency of particle species $s$ is given by:
 \begin{align}
   \label{eq:classical-plasma-frequency}
@@ -51,14 +57,14 @@ In a plasma the classical plasma frequency of particle species $s$ is given by:
 We note for electron-ion systems the electron plasma frequency is much larger than
 the ion plasma frequency and thus ion plasma oscillation can usually be neglected.
 
-If magnetic field is present in a plasma the charges gyrorotate around its field lines
-which is also kown as cyclotron motion. For particle species $s$
-the cyclotrone frequency is given by:
+If magnetic field is present in a plasma the charges gyrorotate around the field lines
+at the cyclotrone frequency. For particle species $s$ the cyclotrone frequency is given by:
 \begin{align}
   \label{eq:cyclotron-frequency}
   \omega_B = \frac{q_sB}{m_sc\gamma}
 \end{align}
 where $B$ is magnitude of the magnetic field.
+This motion is also kown as cyclotron motion.
 
 \section{Kinetic plasma description}
 
@@ -69,7 +75,11 @@ and describinig statistically their collective behavious.
 
 For particle species $s$ the distribution function $f_s(\ve x, \ve p, t)$ describes
 number of particles in a phase space region spanned by time interval $[t, t + dt]$,
-location region $[\ve x , \ve x + d\ve x]$ and three-momentum region $[\ve p, \ve p + d\ve p]$.
+location region $[\ve x , \ve x + d\ve x]$ and three-momentum region $[\ve p, \ve p + d\ve p]$
+\cite{klimontovich_relativistic_1960,DeGroot:1980dk,hazeltine_framework_2018}.
+The particles live on a mass-shell defined by Lorentz factor
+$\gamma = \left(1-\frac{v^2}{c^2}\right)^{-1/2}$ where $v$ is the coordinate velocity
+and $c$ is the speed of light.
 We assume that the distribution function is normalized such that
 \begin{align}
   \label{eq:number-density}
@@ -130,8 +140,8 @@ Generally moment $M(\mathbf{p})$ of the Vlasov equation~\eqref{eq:vlasov} is:
 \int M \left(
 \partial_t f_\alpha
 + \mathbf{v} \cdot \nabla f_\alpha
-+ q_\alpha ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f_\alpha = 0
-\right) d\mathbf{p}
++ q_\alpha ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f_\alpha
+\right) d\mathbf{p} = 0
 \end{align}
 In the first two terms the derivatives can be trivially taken out of the integrant,
 but the third requires some manipulation.
@@ -156,8 +166,9 @@ A cold-fluid is characterized by a distribution function
 $f(\mathbf{x}, \mathbf{p}, t) = n_\alpha(\ve x, t)\delta(\mathbf{p} - \mathbf{P}_\alpha(\mathbf{x}, t))$,
 where $\mathbf{P}_\alpha(\mathbf{x}, t) = m_\alpha\gamma_\alpha\mathbf{V}_\alpha(\mathbf{x}, t)$
 is calculated from the bulk velocity $\mathbf{V}_\alpha(\mathbf{x}, t)$ of the fluid
-and $n_\alpha(\mathbf{x}, t)$ is its fuilds number density.
-Inserting this and $M = 1$ to \ref{eq:general-moment-of-vlasov} we obtain continuity equation:
+and $n_\alpha(\mathbf{x}, t)$ is its fuilds number density \cite{bret_multidimensional_2010,bret_collective_2004}.
+Inserting this and $M = 1$ to \ref{eq:general-moment-of-vlasov} we obtain continuity equation
+\cite{hazeltine_framework_2018}:
 \begin{align}
 \label{eq:continuity-in-cold-limit}
 \partial_t n_\alpha + \nabla \cdot ( \ve P_\alpha n_\alpha ) = 0
@@ -198,7 +209,8 @@ $\ve P = m\gamma\left(\ve V_0+\frac{\gamma^2}{c^2}(\ve V_0 \cdot \hat{\ve V}_1)\
 where we defined $\gamma = \gamma[\ve V_0]$.
 
 Inserting these to \eqref{eq:continuity-in-cold-limit} and \eqref{eq:momentum-transport-in-cold-limit}
-we get the linearized continuity equation and linearized momentum transport equation:
+we get the linearized continuity equation and linearized momentum transport equation
+\cite{bret_collective_2004,bret_cfa_2012}:
 \begin{align}
   \label{eq:linearized-cold-fluid-continuity-eq}
   \hat{n}_1 &= \frac{n_0 \ve k \cdot \hat{\ve V}_1}{\omega - \ve k \cdot \ve V_0} \\
