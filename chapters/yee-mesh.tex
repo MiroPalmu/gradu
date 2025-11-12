@@ -1,0 +1,59 @@
+\begin{figure}[!ht]
+\centering
+\resizebox{1\textwidth}{!}{%
+\begin{circuitikz}
+\tikzstyle{every node}=[font=\LARGE]
+\draw [line width=1.6pt, dashed] (6.25,17.75) -- (6.25,10.25);
+\draw [line width=1.6pt, dashed] (6.25,10.25) -- (13.75,10.25);
+\draw [line width=1.6pt, dashed] (13.75,10.25) -- (13.75,17.75);
+\draw [line width=1.6pt, dashed] (6.25,17.75) -- (13.75,17.75);
+\draw [line width=1.6pt, dashed] (6.25,10.25) -- (8.75,12.75);
+\draw [line width=1.6pt, dashed] (13.75,10.25) -- (16.25,12.75);
+\draw [line width=1.6pt, dashed] (8.75,12.75) -- (16.25,12.75);
+\draw [line width=1.6pt, dashed] (6.25,17.75) -- (8.75,20.25);
+\draw [line width=1.6pt, dashed] (13.75,17.75) -- (16.25,20.25);
+\draw [line width=1.6pt, dashed] (16.25,20.25) -- (16.25,12.75);
+\draw [line width=1.6pt, dashed] (8.75,20.25) -- (8.75,12.75);
+\draw [line width=1.6pt, dashed] (8.75,20.25) -- (16.25,20.25);
+\draw [ color={rgb,255:red,0; green,0; blue,127}, line width=2pt, ->, >=Stealth] (8.25,12.25) -- (6.75,10.75);
+\draw [ color={rgb,255:red,0; green,0; blue,127}, line width=2pt, ->, >=Stealth] (11.25,12.75) -- (13.5,12.75);
+\draw [ color={rgb,255:red,0; green,0; blue,127}, line width=2pt, ->, >=Stealth] (8.75,14.25) -- (8.75,16.25);
+\draw [ color={rgb,255:red,127; green,0; blue,0}, line width=2pt, ->, >=Stealth] (11.25,10.5) -- (11.25,12.5);
+\draw [ color={rgb,255:red,127; green,0; blue,0}, line width=2pt, ->, >=Stealth] (6.5,14) -- (8.5,14);
+\draw [ color={rgb,255:red,127; green,0; blue,0}, line width=2pt, ->, >=Stealth] (13.5,17.5) -- (11.5,15.5);
+\draw [ fill={rgb,255:red,0; green,0; blue,0} , line width=0.2pt ] (12.5,16.5) circle (0.15cm);
+\draw [ fill={rgb,255:red,0; green,0; blue,0} , line width=0.2pt ] (8.75,15.25) circle (0.15cm);
+\draw [ fill={rgb,255:red,0; green,0; blue,0} , line width=0.2pt ] (7.5,14) circle (0.15cm);
+\draw [ fill={rgb,255:red,0; green,0; blue,0} , line width=0.2pt ] (7.5,11.5) circle (0.15cm);
+\draw [ fill={rgb,255:red,0; green,0; blue,0} , line width=0.2pt ] (11.25,11.5) circle (0.15cm);
+\draw [ fill={rgb,255:red,0; green,0; blue,0} , line width=0.2pt ] (12.5,12.75) circle (0.15cm);
+\draw [line width=1.6pt, ->, >=Stealth] (17.5,12.75) -- (17.5,15.25);
+\draw [line width=1.6pt, ->, >=Stealth] (17.5,12.75) -- (16,11.25);
+\draw [line width=1.6pt, ->, >=Stealth] (17.5,12.75) -- (20,12.75);
+\node [font=\LARGE] at (17.5,11.75) {$\hat{\ve e}_2$};
+\node [font=\LARGE] at (18,14.25) {$\hat{\ve e}_1$};
+\node [font=\LARGE] at (19,13.25) {$\hat{\ve e}_0$};
+\node [font=\LARGE] at (12.5,13.5) {$E_0\text{, }J_0$};
+\node [font=\LARGE] at (9.9,15.2) {$E_1\text{, }J_1$};
+\node [font=\LARGE] at (8.5,11) {$E_2\text{, }J_2$};
+\node [font=\LARGE] at (7.5,15) {$B_0$};
+\node [font=\LARGE] at (12.25,11.5) {$B_1$};
+\node [font=\LARGE] at (11.25,16.5) {$B_3$};
+\node [font=\LARGE] at (11.25,16.5) {$B_3$};
+% \node [font=\LARGE] at (9.60,13.25) {$\ve x_{abc}$};
+\end{circuitikz}
+}%
+
+\caption{Fields on the Yee mesh. Component locations are shown with black circles.
+  Electric field $\ve E$ and current density $\ve F$ components are shown with blue arrows and
+  magnetic field $\ve B$ components are shown with red arrows.
+  Black dots shows the point at which each component is defined.
+}
+\label{fig:yee-mesh}
+\end{figure}
+
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "../gradu"
+%%% End:
