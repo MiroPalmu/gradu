@@ -233,6 +233,139 @@ where $\hat{\ve J}_1$ in the cold-fluid limit is read from:
   &= \int \hat{\ve J}_1 \exp(i(\ve k \cdot \ve x - \omega t))d\omega d^3k
 \end{align}
 
+\section{Finite difference}
+
+PIC scheme requires solving Maxwells equations numerically on a discretized grid.
+The most common way to discretize the derivatives is the centered finite-difference
+which then leads to finite-difference time domain method which is discussed later (ref?).
+Let the function $f(x)$ be discretized on a uniform grid of points $n h$
+where $n \in \mathbb{N}$ and $h$ is the constant grid spacing.
+For brevity we'll define notation $f_n = f(n h)$
+and $f'_n = \left.\frac{df}{dx}\right\vert_{x=nh}$.
+
+The second order accurate centered finite-difference discretizes the derivative as:
+\begin{align}
+  \label{eq:centered-fd}
+  f'_n \approx \frac{f_{n + 1} - f_{n - 1}}{2\Delta x}
+\end{align}
+The second order accuracy of the algorithm is seen by Taylor expanding
+the right-hand side of equation \eqref{eq:centered-fd}:
+\begin{align}
+  \frac{f_{n + 1} - f_{n - 1}}{2h}
+  = \frac{1}{2h} \left(\sum_{k=0}^\infty \frac{h^k}{!k}f^{(k)}_n
+  - \sum_{k=0}^\infty \frac{(-h)^k}{!k}f^{(k)}_n \right)
+  = f'_n + O(h^2)
+\end{align}
+Centered second order derivative can be obtained by applying the centered first order derivative twice:
+\begin{align}
+  \label{eq:second-fd}
+  f''_n \approx \frac{f'_{n + 1} - f'_{n - 1}}{2h} = \frac{f_{n+2} - 2 f_n + f_{n-2}}{4h^2}
+\end{align}
+Similarly to the first derivative we can see the second order accuracy from the Taylor expansion:
+\begin{align}
+  \label{eq:second-fd-accuracy}
+  \frac{f_{n+2} - 2 f_n + f_{n-2}}{4h^2}  = f''_h + O(h^2)
+\end{align}
+We note that the central finite-difference second order derivative \eqref{eq:second-fd}
+does not require the function values $f_{n+1}$ and $f_{n-1}$.
+Thus it is usually defined on a finer grid with grid points at $\frac{nh}{2}$ where $n \in \mathbb{N}$.
+This gives us the standard centered finite-difference second order derivative:
+\begin{align}
+  \label{eq:second-fd-correct}
+  f''_n \approx \frac{f_{n+1} - 2 f_n + f_{n-1}}{h^2}
+\end{align}
+which is still second order accurate because the change only modifies
+the constant coefficients in \eqref{eq:second-fd-accuracy}.
+
+There exists higher order accurate schemes for calculating the centered finite-difference
+but they are trade-off between higher numerical accuracy and computational cost.
+
+\subsection{Numerical dispersion relation}
+
+Stability of the centered finite-difference for the wave equation describes its accuracy
+and stability properties. One dimensional wave equation reads:
+\begin{align}
+  \label{eq:one-d-wave-eq}
+  \frac{\partial^2 \psi}{\partial t^2} = c^2 \frac{\partial^2 \psi}{\partial x^2}
+\end{align}
+Inserting the plane wave solution $\psi = e^{i(kx - \omega t)}$
+to the wave equation~\eqref{eq:one-d-wave-eq} gives a physical dispresion relation:
+\begin{align}
+  \label{eq:one-d-wave-dispersion-eq}
+  \omega = \pm ck
+\end{align}
+
+We'll discretize the function $\psi(x, t)$ on a uniform grid $(n \Delta x, m \Delta t)$
+where $n,m\in\mathbb{N}$ and we'll denote $\psi^m_n = \psi(n\Delta x, m\Delta t)$.
+Applying the centered finite-difference for second derivatives \eqref{eq:second-fd-correct}
+to both temporal and spatial derivatives in the wave equation \eqref{eq:one-d-wave-eq}
+and solving for $\psi_n^{m + 1}$ we'll get:
+\begin{align}
+  \label{eq:fd-intermediate}
+  \psi_n^{m + 1} = \left(c\frac{\Delta t}{\Delta x}\right)^2
+  (\psi_{n + 1}^m - 2\psi_n^m + \psi_{n-1}^m) + 2\psi_n^m - \psi_n^{m - 1}
+\end{align}
+Inserting plane wave $\psi_n^m = e^{i(k n \Delta x - \omega m \Delta t)}$
+to \eqref{eq:fd-intermediate} results in the numerical dispersion relation
+distictly different from the physical dispersion relation~\eqref{eq:one-d-wave-dispersion-eq}:
+\begin{align}
+  \label{eq:fd-dispersion}
+  \frac{\omega}{c} \Delta x =
+  \pm \frac{1}{\hat c}\cos^{-1}\left(\hat{c}^2 (\cos(k\Delta x) - 1) + 1\right)
+\end{align}
+where $\hat{c} \equiv c\frac{\Delta t}{\Delta x}$ is the Courant-Friedrichs-Lewy number
+or the Courant number for short.
+The solutions are periodic in $k$ with period of $\frac{2\pi}{\Delta x}$
+which means that the finite-difference wave equation~\eqref{eq:fd-intermediate}
+can not resolve waves past some wave number.
+
+The numerical dispersion relation \eqref{eq:fd-dispersion}
+reduces to the physical dispersion relation~\eqref{eq:one-d-wave-dispersion-eq}
+when $\hat{c} = 1$ or when both $\Delta t$ and $\Delta x$ approach zero
+but not when either one alone approaches zero.
+These limits are summarized in the table \ref{fig:numerical-dispersion-relation-limits}.
+
+\begin{table}
+  \centering
+  \begin{tabular}{|c|c|}
+    \hline
+    & \textbf{Equation \eqref{eq:fd-dispersion}} \\ \hline
+    $\hat{c} = 1$ & $\omega = \pm ck$ \\ \hline
+    $\Delta t \rightarrow 0$ & $\omega \Delta x = \pm c \sqrt{2(1-\cos(k\Delta x))}$ \\ \hline
+    $\Delta x \rightarrow 0$ & $\cos(\omega \Delta t) = -c^2k^2\frac{(\Delta t)^2}{2} + 1$ \\ \hline
+    $\Delta t \rightarrow 0$ and $\Delta x \rightarrow 0$ & $\omega = \pm ck$ \\ \hline
+  \end{tabular}
+  \caption{Summary of different limits for the numerical dispersion relation~\eqref{eq:fd-dispersion}.}
+  \label{fig:numerical-dispersion-relation-limits}
+\end{table}
+
+The Courant number $\hat{c}$ has a great importance for the stability of solutions to
+the finite-difference wave equation~\eqref{eq:fd-intermediate}.
+For $\hat{c} > 1$ the numerical dispersion relation~\eqref{eq:fd-dispersion}
+shows that $\omega$ has an positive imaginary part for some values of $k$
+which results exponentially growing mode.
+The condition for stablitiy $\hat c = c\frac{\Delta t}{\Delta x} \le 1$
+is called the Courant-Friedrchs-Lewy condition.
+In multiple dimensions the the criterior is given by~\cite{verboncoeur_particle_2005}:
+\begin{align}
+  \Delta t \le \frac{1}{c}\left( \sum_i \frac{1}{(\Delta x_i)^2} \right)^{-1/2}
+\end{align}
+The figure \ref{fig:cfl-plot} plots one period of
+the numerical dispersion relation~\eqref{eq:fd-dispersion}.
+
+\begin{figure}
+  \centering
+  \includegraphics{chapters/cfl-plot.pdf}
+  \caption{Plots over one period of the numerical dispersion relation ~\eqref{eq:fd-dispersion}
+    with different values for the Courant number $\hat c = \frac{c\Delta t}{\Delta x}$.
+    The real parts of $\frac{\omega}{c}\frac{\Delta x}{\pi}$ are plotted as a continuous lines
+    and the imaginary parts are plotted with dashed lines.
+    The Courant number which fulfill the Courant-Friedrchs-Lewy condition are plotted
+    with colors ranging from blue to green and which does not from red to yellow.
+    The black plot represents the transition point at which $\hat c = 1$.
+  }
+  \label{fig:cfl-plot}
+\end{figure}
 
 %%% Local Variables:
 %%% mode: LaTeX
