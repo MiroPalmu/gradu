@@ -5,17 +5,312 @@ evolution of the full distributions function. In PIC this is achieved by samplin
 it with macroparticles then evolving them based on Maxwell's equations.
 The electromagnetic fields are represented on a grid in which the particles move,
 thus giving the name particle-in-cell.
+PIC scheme was formalised in 1970s but has roots in work done by Buneman \cite{buneman_dissipation_1959}
+and Dawson \cite{dawson_one-dimensional_1962} in the late 1950s.
+Later two classic PIC text books were published
+by Hockney and Eastwood \cite{hockney_computer_1981} in 1981
+and by Birdsall and Langdon \cite{langdon_plasma_1991} in 1991
+from which the latter remains one of the most complete treatments of the PIC overall.
 
-PIC consists of many smaller tasks (e.g. pushing particles, evoling fields, etc.)
+Basic PIC consists of many smaller tasks
 for which there exists numerous algorithms with differing trade-offs.
-In this chapter we will describe the overall structure of PIC and go through
+High-level overview of a one PIC time step is given in figure \ref{fig:pic-scheme}.
+In this chapter we will describe the tasks seen in the figure in more detail and go through
 a set of algorithms implemented in the GPU port of Runko.
 
-\section{Overall structure}
-\section{Particle pusher}
-\section{Yee lattice}
+\input{chapters/pic-scheme}
+
+\section{Overview of underlying physics}
+
+In relativistic PIC particles are evolved according to the Newton-Lornetz equations of motion
+\cite{verboncoeur_particle_2005,vay_modeling_2014}:
+\begin{align}
+  \label{eq:newton-lorentz}
+  \frac{d(\gamma m \ve v)}{dt} &= \ve F = q(\ve E + \ve v \times \ve B) \\
+  \frac{d\ve x}{dt} &= \ve v
+\end{align}
+where $\gamma = \left(1 - \frac{v^2}{c^2}\right)^{-1/2}$ is the Lorentz factor
+of a particle with mass $m$, coordnate velocity $\ve v$ and charge $q$.
+The force $\ve F$ is given by the Lorentz force.
+
+Electric and magnetic fields $\ve E$ and $\ve B$ are evolved according to the Maxwell's equations
+\eqref{eq:maxwells}:
+\begin{align}
+  \label{eq:maxwell-faraday}
+  \frac{\partial\ve B}{\partial t} &= -c \nabla\times\ve E \\
+  \label{eq:ampere-maxwell-law}
+  \frac{\partial\ve E}{\partial t} &= c \nabla\times\ve B - 4\pi \ve J \\
+  \label{eq:gauss-law}
+  \nabla\cdot\ve E &= 4\pi\rho \\
+  \label{eq:gauss-law-for-B}
+  \nabla\cdot\ve B &= 0
+\end{align}
+When charge conserving current deposition scheme is used
+and the initial conditions fulfill Gauss's laws \eqref{eq:gauss-law} and \eqref{eq:gauss-law-for-B}
+then they are automatically fulfilled the rest of the simulation of as well.
+
 \section{Field propagator}
+
+Purpose of the field propagator is to evolve electric field $\ve E$ and magnetic field $\ve B$
+according to equations \eqref{eq:maxwell-faraday} and \eqref{eq:ampere-maxwell-law}.
+Typically this is achieved with finite-difference time domain (FDTD)
+discretizations on a Yee mesh \cite{yee_numerical_1966}.
+This means that the electromagnetic fields are staggered in time and space
+in order to calculate derivatives using centered finite-difference
+seen in the section~\ref{sec:finite-difference}.
+In this section we'll derive the second order accurate FDTD
+update equations for electric and magnetic fields.
+
+\subsection{Yee mesh\label{sec:yee-mesh}}
+
+In Yee mesh vertecies are located at:
+\begin{align}
+  \ve x_{m,n,l}
+  = m \Delta x_0 \hat{\ve e}_0 + n \Delta x_1\hat{\ve e}_1 + l \Delta x_2 \hat{\ve e}_2
+\end{align}
+where $\Delta x_i$ is the grid spacing in $\hat{\ve e}_i$ direction,
+$\hat{\ve e}_i$ denotes the orthogonal unit vectors and $m,n,l \in \mathbb{N}$.
+Electric field components $E_i$ and electric current density componentes $J_i$
+are stored at locations:
+\begin{align}
+  \label{eq:yee-E-locations}
+  \ve x^{E_i}_{m,n,l} = \ve x_{m,n,l} + \frac{1}{2}\Delta x_i \hat{\ve e}_i =
+  \begin{cases}
+    \ve x_{m+\frac12, n, l} \quad & i=0\\
+    \ve x_{m, n+\frac12, l} \quad & i=1 \\
+    \ve x_{m, n, l+\frac12} \quad & i=2
+  \end{cases}
+\end{align}
+and magnetic field components $B_i$ are stored at:
+\begin{align}
+  \label{eq:yee-B-locations}
+  \ve x^{B_i}_{m,n,l} =
+\ve x_{m,n,l} + \frac12 \sum_{r\in\{1, 2, 3\}/{i}}\Delta x_{i} \hat{\ve e}_{i} =
+  \begin{cases}
+    \ve x_{m, n+\frac12, l+\frac12} \quad & i=0\\
+    \ve x_{m+\frac12, n, l+\frac12} \quad & i=1 \\
+    \ve x_{m+\frac12, n+\frac12, l} \quad & i=2
+  \end{cases}
+\end{align}
+See figure \ref{fig:yee-mesh} for schematic picture of the Yee mesh.
+
+Most common way to solve equations \eqref{eq:maxwell-faraday} and \eqref{eq:ampere-maxwell-law}
+numerically is explicit leapfrog algorithm \cite{verboncoeur_particle_2005,langdon_plasma_1991}.
+With leapfrog algorithm in addition to space staggering the fields are staggered in time.
+Electric fields and current densitites are defined at times $s\Delta t$
+and magnetic fields are defined at times $\left(s + \frac12\right)\Delta t$
+where $s \in \mathbb{N}$ and $\Delta t$ is the lenght of a one time step.
+
+Because the components of electromagnetic fields are stored at different locations
+we can deduce the component solely from the location.
+Thus we'll adpot following short hand notation for componetns of
+$\ve E(t, \ve x)$ and $\ve B(t, \ve x)$:
+\begin{align}
+  \xi^{T}_{N,M,L} \equiv \xi\left(T\Delta t, \ve x_{N,M,L} \right)
+\end{align}
+where $\xi$ is either $E$ or $B$.
+For example $E^{s}_{n,m,l+\frac12}
+= E_2\left(s\Delta t, \ve x^{E_2}_{n,m,l}\right)$
+and $B^{s+\frac12}_{n+\frac12,m,l+\frac12}
+= B_1\left(\left(s+\frac12 \right)\Delta t, \ve x^{B_1}_{n,m,l}\right)$.
+With this notation we can generally write the second order accurate
+centered finite-difference temporal and spatial derivatives \eqref{eq:centered-fd}.
+For the temporal derivative $h = \frac12 \Delta t$ and
+for the spatial derivative in $\hat{\ve e}_i$ direction $h = \frac12 \Delta x_i$.
+Thus we generally get that:
+\begin{align}
+  \label{eq:yee-temporal-derivative}
+  \Delta t\partial_t\xi^{T}_{N,M,L} &\approx \xi^{T+\frac12}_{N,M,L} - \xi^{T-\frac12}_{N,M,L}\\
+  \label{eq:yee-spatial-derivative}
+  \begin{bmatrix}
+    \Delta x_0 \partial_{x_0} \\
+    \Delta x_1 \partial_{x_1} \\
+    \Delta x_2 \partial_{x_2}
+  \end{bmatrix}
+  \xi^{T}_{N,M,L} &\approx
+  \begin{bmatrix}
+    \xi^{T}_{N+\frac12,M,L} - \xi^{T}_{N-\frac12,M,L} \\
+    \xi^{T}_{N,M+\frac12,L} - \xi^{T}_{N,M-\frac12,L} \\
+    \xi^{T}_{N,M,L+\frac12} - \xi^{T}_{N,M,L-\frac12}
+  \end{bmatrix}
+\end{align}
+Note that in the next subsection we'll be evaluating derivatives $\partial_{\mu}\xi$
+at specific locations where on the Yee mesh there might not be $\xi$ at that location.
+However, we'll be using the centered finite-difference for the derivatives
+and it happens that we'll only need the field components at such locations
+that the components in the Yee mesh are precisely what we need.
+% \begin{align}
+%   E^s_{m+\frac12,n,l}
+%   &\equiv E_0\left(s\Delta t, \ve x_{m,n,l} + \frac12 \Delta x_0 \hat{\ve e}_0\right) \\
+%   E^s_{m,n+\frac12,l}
+%   &\equiv E_1\left(s\Delta t, \ve x_{m,n,l} + \frac12 \Delta x_1 \hat{\ve e}_1\right) \\
+%   E^s_{m,n,l+\frac12}
+%   &\equiv E_2\left(s\Delta t, \ve x_{m,n,l} + \frac12 \Delta x_2 \hat{\ve e}_2\right) \\
+%   B^{s + \frac12}_{m,n+\frac12,l+\frac12} &\equiv B_0\left(
+%                                 \left(s + \frac 12 \right)\Delta t,
+%                                 \ve x_{m,n,l}
+%                                 + \frac12 \Delta x_1 \hat{\ve e}_1
+%                                 + \frac12 \Delta x_2 \hat{\ve e}_2\right) \\
+%   B^{s + \frac12}_{m+\frac12,n,l+\frac12} &\equiv B_1\left(
+%                                 \left(s + \frac 12 \right)\Delta t,
+%                                 \ve x_{m,n,l}
+%                                 + \frac12 \Delta x_0 \hat{\ve e}_0
+%                                 + \frac12 \Delta x_2 \hat{\ve e}_2\right) \\
+%   B^{s + \frac12}_{m+\frac12,n+\frac12,l} &\equiv B_2\left(
+%                                 \left(s + \frac 12 \right)\Delta t,
+%                                 \ve x_{m,n,l}
+%                                 + \frac12 \Delta x_0 \hat{\ve e}_0
+%                                 + \frac12 \Delta x_1 \hat{\ve e}_1\right)
+% \end{align}
+
+\subsection{Finite-difference time domain}
+
+We want now to apply the finite-difference derivatives~\eqref{eq:yee-temporal-derivative}
+and~\eqref{eq:yee-spatial-derivative} to the dynamical Maxwell's equations~\eqref{eq:maxwell-faraday}
+and~\eqref{eq:ampere-maxwell-law} inorder to get rules for updating the fields in time.
+Forgetting the current density for a while\footnote{We can always add the current to the electric field
+  as they are stored at the same location and time in the Yee mesh.}
+they both are in form which at time $T\Delta t$ and point $\ve x_{N,M,L}$ can be written as:
+\begin{align}
+  \partial_t
+  \begin{bmatrix}
+    \alpha^T_{N,M,L} \\ \beta^T_{N,M,L} \\ \gamma^T_{N,M,L}
+  \end{bmatrix}
+  = \pm c \nabla \times
+  \begin{bmatrix}
+    \mu^T_{N,M,L} \\ \nu^T_{N,M,L} \\ \rho^T_{N,M,L}
+  \end{bmatrix}
+  = \pm c
+  \begin{bmatrix}
+    \partial_{x_1}\rho^T_{N,M,L} - \partial_{x_2}\nu^T_{N,M,L} \\
+    \partial_{x_2}\mu^T_{N,M,L} - \partial_{x_0}\rho^T_{N,M,L} \\
+    \partial_{x_0}\nu^T_{N,M,L} - \partial_{x_1}\mu^T_{N,M,L}
+  \end{bmatrix}
+\end{align}
+Now we can apply the second order accurate central finite-difference
+derivatives~\eqref{eq:yee-temporal-derivative} and~\eqref{eq:yee-spatial-derivative}
+on the Yee mesh and obtain update equations:
+\begin{align}
+  \label{eq:fdtd2-generic-update}
+  \begin{bmatrix}
+    \alpha^{T+\frac12}_{N,M,L} \\ \beta^{T+\frac12}_{N,M,L} \\ \gamma^{T+\frac12}_{N,M,L}
+  \end{bmatrix}
+  \approx
+  \begin{bmatrix}
+    \alpha^{T-\frac12}_{N,M,L} \\ \beta^{T-\frac12}_{N,M,L} \\ \gamma^{T-\frac12}_{N,M,L}
+  \end{bmatrix}
+  \pm \hat{c}
+  \begin{bmatrix}
+    \rho^T_{N,M+\frac12,L} - \rho^T_{N,M-\frac12,L}
+    - \left(\nu^T_{N,M,L+\frac12} - \nu^T_{N,M,L-\frac12}\right) \\
+    \mu^T_{N,M,L+\frac12} - \mu^T_{N,M,L-\frac12}
+    - \left(\rho^T_{N+\frac12,M,L} - \rho^T_{N-\frac12,M,L}\right) \\
+    \nu^T_{N+\frac12,M,L} - \nu^T_{N-\frac12,M,L}
+    - \left(\mu^T_{N,M+\frac12,L} - \mu^T_{N,M-\frac12,L}\right)
+  \end{bmatrix}
+\end{align}
+
+Now we can read the actual update equations for $\ve E$ and $\ve B$
+from equation~\eqref{eq:fdtd2-generic-update} by evaluating its components
+at specific locations in time and space.
+Firstly we'll subtitute:
+\begin{align}
+  \begin{bmatrix}
+    \alpha \\ \beta \\ \gamma
+  \end{bmatrix}
+  = \ve B
+  \quad
+  \begin{bmatrix}
+    \mu \\ \nu \\ \rho
+  \end{bmatrix}
+  = \ve E \quad
+  (T, N, M, L) =
+  \begin{cases}
+    (s, n, m+\frac12, l+\frac12) \quad & \text{on row 0} \\
+    (s, n+\frac12, m, l+\frac12) \quad & \text{on row 1} \\
+    (s, n+\frac12, m+\frac12, l) \quad & \text{on row 2}
+  \end{cases}
+\end{align}
+and obtain:
+\begin{equation}
+\label{eq:fdtd2-B-update}
+\begin{split}
+  \begin{bmatrix}
+    B^{s+\frac12}_{n,m+\frac12,l+\frac12} \\
+    B^{s+\frac12}_{n+\frac12,m,l+\frac12} \\
+    B^{s+\frac12}_{n+\frac12,m+\frac12,l}
+  \end{bmatrix}
+  & \approx
+  \begin{bmatrix}
+    B^{s-\frac12}_{n,m+\frac12,l+\frac12} \\
+    B^{s-\frac12}_{n+\frac12,m,l+\frac12} \\
+    B^{s-\frac12}_{n+\frac12,m+\frac12,l}
+  \end{bmatrix}\\
+  & - \hat{c}
+  \begin{bmatrix}
+    E^{s}_{n,m+1,l+\frac12} - E^{s}_{n,m,l+\frac12}
+    - \left(E^{s}_{n,m+\frac12,l+1} - E^{s}_{n,m+\frac12,l}\right) \\
+    E^{s}_{n+\frac12,m,l+1} - E^{s}_{n+\frac12,m,l}
+    - \left(E^{s}_{n+1,m,l+\frac12} - E^{s}_{n,m,l+\frac12}\right) \\
+    E^{s}_{n+1,m+\frac12,l} - E^{s}_{n,m+\frac12,l}
+    - \left(E^{s}_{n+\frac12,m+1,l} - E^{s}_{n+\frac12,m,l}\right)
+  \end{bmatrix}
+\end{split}
+\end{equation}
+and secondly we'll substitute:
+\begin{align}
+  \begin{bmatrix}
+    \alpha \\ \beta \\ \gamma
+  \end{bmatrix}
+  = \ve E
+  \quad
+  \begin{bmatrix}
+    \mu \\ \nu \\ \rho
+  \end{bmatrix}
+  = \ve B \quad
+  (T, N, M, L) =
+  \begin{cases}
+    (s+\frac12, n+\frac12, m, l) \quad & \text{on row 0} \\
+    (s+\frac12, n, m+\frac12, l) \quad & \text{on row 1} \\
+    (s+\frac12, n, m, l+\frac12) \quad & \text{on row 2}
+  \end{cases}
+\end{align}
+and obtain (with the current density added back in):
+\begin{equation}
+\label{eq:fdtd2-E-update}
+\begin{split}
+  \begin{bmatrix}
+    E^{s+1}_{n+\frac12,m,l} \\ E^{s+1}_{n,m+\frac12,l} \\ E^{s+1}_{n,m,l+\frac12}
+  \end{bmatrix}
+  & \approx
+  \begin{bmatrix}
+    E^{s}_{n+\frac12,m,l} \\ E^{s}_{n,m+\frac12,l} \\ E^{s}_{n,m,l+\frac12}
+  \end{bmatrix}
+  + 4\pi\Delta t
+  \begin{bmatrix}
+    J^{s}_{n+\frac12,m,l} \\ J^{s}_{n,m+\frac12,l} \\ J^{s}_{n,m,l+\frac12}
+  \end{bmatrix} \\
+  & + \hat{c}
+  \begin{bmatrix}
+    B^{s+\frac12}_{n+\frac12,m+\frac12,l} - B^{s+\frac12}_{n+\frac12,m-\frac12,l}
+    - \left(B^{s+\frac12}_{n+\frac12,m,l+\frac12} - B^{s+\frac12}_{n+\frac12,m,l-\frac12}\right) \\
+    B^{s+\frac12}_{n,m+\frac12,l+\frac12} - B^{s+\frac12}_{n,m+\frac12,l-\frac12}
+    - \left(B^{s+\frac12}_{n+\frac12,m+\frac12,l} - B^{s+\frac12}_{n-\frac12,m+\frac12,l}\right) \\
+    B^{s+\frac12}_{n+\frac12,m,l+\frac12} - B^{s+\frac12}_{n-\frac12,m,l+\frac12}
+    - \left(B^{s+\frac12}_{n,m+\frac12,l+\frac12} - B^{s+\frac12}_{n,m-\frac12,l+\frac12}\right)
+  \end{bmatrix}
+\end{split}
+\end{equation}
+
+As already noted at the end of Yee mesh subsection \ref{sec:yee-mesh}
+we note that the update equations \eqref{eq:fdtd2-B-update} and \eqref{eq:fdtd2-E-update}
+do not contain values that would not be present on a Yee mesh.
+
+
+\input{chapters/yee-mesh}
+
 \section{Field interpolator}
+\section{Particle pusher}
 \section{Current deposition}
 \section{Current filter}
 

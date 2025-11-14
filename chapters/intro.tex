@@ -234,6 +234,7 @@ where $\hat{\ve J}_1$ in the cold-fluid limit is read from:
 \end{align}
 
 \section{Finite difference}
+\label{sec:finite-difference}
 
 PIC scheme requires solving Maxwells equations numerically on a discretized grid.
 The most common way to discretize the derivatives is the centered finite-difference
@@ -246,8 +247,9 @@ and $f'_n = \left.\frac{df}{dx}\right\vert_{x=nh}$.
 The second order accurate centered finite-difference discretizes the derivative as:
 \begin{align}
   \label{eq:centered-fd}
-  f'_n \approx \frac{f_{n + 1} - f_{n - 1}}{2\Delta x}
+  f'_n \approx \frac{f_{n + 1} - f_{n - 1}}{2h}
 \end{align}
+
 The second order accuracy of the algorithm is seen by Taylor expanding
 the right-hand side of equation \eqref{eq:centered-fd}:
 \begin{align}
