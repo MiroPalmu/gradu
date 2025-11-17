@@ -190,25 +190,29 @@ they both are in form which at time $T\Delta t$ and point $\ve x_{N,M,L}$ can be
 Now we can apply the second order accurate central finite-difference
 derivatives~\eqref{eq:yee-temporal-derivative} and~\eqref{eq:yee-spatial-derivative}
 on the Yee mesh and obtain update equations:
-\begin{align}
+\begin{equation}
   \label{eq:fdtd2-generic-update}
+  \begin{split} 
   \begin{bmatrix}
     \alpha^{T+\frac12}_{N,M,L} \\ \beta^{T+\frac12}_{N,M,L} \\ \gamma^{T+\frac12}_{N,M,L}
   \end{bmatrix}
-  \approx
+  & \approx
   \begin{bmatrix}
     \alpha^{T-\frac12}_{N,M,L} \\ \beta^{T-\frac12}_{N,M,L} \\ \gamma^{T-\frac12}_{N,M,L}
-  \end{bmatrix}
-  \pm \hat{c}
+  \end{bmatrix} \\
+  & \pm
   \begin{bmatrix}
-    \rho^T_{N,M+\frac12,L} - \rho^T_{N,M-\frac12,L}
-    - \left(\nu^T_{N,M,L+\frac12} - \nu^T_{N,M,L-\frac12}\right) \\
-    \mu^T_{N,M,L+\frac12} - \mu^T_{N,M,L-\frac12}
-    - \left(\rho^T_{N+\frac12,M,L} - \rho^T_{N-\frac12,M,L}\right) \\
-    \nu^T_{N+\frac12,M,L} - \nu^T_{N-\frac12,M,L}
-    - \left(\mu^T_{N,M+\frac12,L} - \mu^T_{N,M-\frac12,L}\right)
+    \hat{c}_1\left(\rho^T_{N,M+\frac12,L} - \rho^T_{N,M-\frac12,L}\right)
+    - \hat{c}_2\left(\nu^T_{N,M,L+\frac12} - \nu^T_{N,M,L-\frac12}\right) \\
+    \hat{c}_2\left(\mu^T_{N,M,L+\frac12} - \mu^T_{N,M,L-\frac12}\right)
+    - \hat{c}_0\left(\rho^T_{N+\frac12,M,L} - \rho^T_{N-\frac12,M,L}\right) \\
+    \hat{c}_0\left(\nu^T_{N+\frac12,M,L} - \nu^T_{N-\frac12,M,L}\right)
+    - \hat{c}_1\left(\mu^T_{N,M+\frac12,L} - \mu^T_{N,M-\frac12,L}\right)
   \end{bmatrix}
-\end{align}
+  \end{split}
+\end{equation}
+where we have used the one dimensional Courant numbers for different direction
+$\hat{c}_i\equiv \frac{c\Delta t}{\Delta x_i}$.
 
 Now we can read the actual update equations for $\ve E$ and $\ve B$
 from equation~\eqref{eq:fdtd2-generic-update} by evaluating its components
@@ -246,14 +250,14 @@ and obtain:
     B^{s-\frac12}_{n+\frac12,m,l+\frac12} \\
     B^{s-\frac12}_{n+\frac12,m+\frac12,l}
   \end{bmatrix}\\
-  & - \hat{c}
+  & -
   \begin{bmatrix}
-    E^{s}_{n,m+1,l+\frac12} - E^{s}_{n,m,l+\frac12}
-    - \left(E^{s}_{n,m+\frac12,l+1} - E^{s}_{n,m+\frac12,l}\right) \\
-    E^{s}_{n+\frac12,m,l+1} - E^{s}_{n+\frac12,m,l}
-    - \left(E^{s}_{n+1,m,l+\frac12} - E^{s}_{n,m,l+\frac12}\right) \\
-    E^{s}_{n+1,m+\frac12,l} - E^{s}_{n,m+\frac12,l}
-    - \left(E^{s}_{n+\frac12,m+1,l} - E^{s}_{n+\frac12,m,l}\right)
+    \hat{c}_{1}\left(E^{s}_{n,m+1,l+\frac12} - E^{s}_{n,m,l+\frac12}\right)
+    - \hat{c}_{2}\left(E^{s}_{n,m+\frac12,l+1} - E^{s}_{n,m+\frac12,l}\right) \\
+    \hat{c}_{2}\left(E^{s}_{n+\frac12,m,l+1} - E^{s}_{n+\frac12,m,l}\right)
+    - \hat{c}_{0}\left(E^{s}_{n+1,m,l+\frac12} - E^{s}_{n,m,l+\frac12}\right) \\
+    \hat{c}_{0}\left(E^{s}_{n+1,m+\frac12,l} - E^{s}_{n,m+\frac12,l}\right)
+    - \hat{c}_{1}\left(E^{s}_{n+\frac12,m+1,l} - E^{s}_{n+\frac12,m,l}\right)
   \end{bmatrix}
 \end{split}
 \end{equation}
@@ -290,26 +294,29 @@ and obtain (with the current density added back in):
   \begin{bmatrix}
     J^{s}_{n+\frac12,m,l} \\ J^{s}_{n,m+\frac12,l} \\ J^{s}_{n,m,l+\frac12}
   \end{bmatrix} \\
-  & + \hat{c}
+  & +
   \begin{bmatrix}
-    B^{s+\frac12}_{n+\frac12,m+\frac12,l} - B^{s+\frac12}_{n+\frac12,m-\frac12,l}
-    - \left(B^{s+\frac12}_{n+\frac12,m,l+\frac12} - B^{s+\frac12}_{n+\frac12,m,l-\frac12}\right) \\
-    B^{s+\frac12}_{n,m+\frac12,l+\frac12} - B^{s+\frac12}_{n,m+\frac12,l-\frac12}
-    - \left(B^{s+\frac12}_{n+\frac12,m+\frac12,l} - B^{s+\frac12}_{n-\frac12,m+\frac12,l}\right) \\
-    B^{s+\frac12}_{n+\frac12,m,l+\frac12} - B^{s+\frac12}_{n-\frac12,m,l+\frac12}
-    - \left(B^{s+\frac12}_{n,m+\frac12,l+\frac12} - B^{s+\frac12}_{n,m-\frac12,l+\frac12}\right)
+    \hat{c}_1\left(B^{s+\frac12}_{n+\frac12,m+\frac12,l} - B^{s+\frac12}_{n+\frac12,m-\frac12,l}\right)
+    - \hat{c}_2\left(B^{s+\frac12}_{n+\frac12,m,l+\frac12} - B^{s+\frac12}_{n+\frac12,m,l-\frac12}\right) \\
+    \hat{c}_2\left(B^{s+\frac12}_{n,m+\frac12,l+\frac12} - B^{s+\frac12}_{n,m+\frac12,l-\frac12}\right)
+    - \hat{c}_0\left(B^{s+\frac12}_{n+\frac12,m+\frac12,l} - B^{s+\frac12}_{n-\frac12,m+\frac12,l}\right) \\
+    \hat{c}_0\left(B^{s+\frac12}_{n+\frac12,m,l+\frac12} - B^{s+\frac12}_{n-\frac12,m,l+\frac12}\right)
+    - \hat{c}_1\left(B^{s+\frac12}_{n,m+\frac12,l+\frac12} - B^{s+\frac12}_{n,m-\frac12,l+\frac12}\right)
   \end{bmatrix}
 \end{split}
 \end{equation}
 
 As already noted at the end of Yee mesh subsection \ref{sec:yee-mesh}
 we note that the update equations \eqref{eq:fdtd2-B-update} and \eqref{eq:fdtd2-E-update}
-do not contain values that would not be present on a Yee mesh.
+do not contain any values that would not be present on a Yee mesh.
 
 
 \input{chapters/yee-mesh}
 
 \section{Field interpolator}
+
+
+
 \section{Particle pusher}
 \section{Current deposition}
 \section{Current filter}
