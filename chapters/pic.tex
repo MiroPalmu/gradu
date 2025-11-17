@@ -65,6 +65,7 @@ update equations for electric and magnetic fields.
 
 In Yee mesh vertecies are located at:
 \begin{align}
+  \label{eq:yee-vertex-locations}
   \ve x_{m,n,l}
   = m \Delta x_0 \hat{\ve e}_0 + n \Delta x_1\hat{\ve e}_1 + l \Delta x_2 \hat{\ve e}_2
 \end{align}
@@ -315,7 +316,64 @@ do not contain any values that would not be present on a Yee mesh.
 
 \section{Field interpolator}
 
+Before the paritcle velocities can be updated according to~\eqref{eq:newton-lorentz}
+the electromagnetic fields on the discrete Yee mesh
+have to interpolated to the continuous particle locations.
+There exists different interpolation schemes with varying accuracy and computational costs.
+GPU port of Runko uses linear interpolation.
 
+The interpolation is done for the fields $\ve E$ and $\ve B$ which are located
+on the Yee mesh according to~\eqref{eq:yee-E-locations} and \eqref{eq:yee-B-locations}.
+The interpolation could be done directly from those locations to the particle positions.
+However, it common to first compute $\ve E$ and $\ve B$
+at the Yee mesh vertex locations~\eqref{eq:yee-vertex-locations},
+for example via simple spatial averaging.
+This make defining and implementing interpolators simpler
+in addition to reducing short wavelength noise~\cite{langdon_plasma_1991}.
+
+We can now write interpolation of a generic function $f$
+defined on the grid vertecies~\eqref{eq:yee-vertex-locations}
+to a arbitrary point $\ve x$:
+\begin{align}
+  f(\ve x) =
+  \Delta V \sum_{n,m,l} f_{n,m,l} S'\left(\ve x_{n, m, l}, \ve x\right)
+\end{align}
+where $\Delta V = \prod_i \Delta x_i$, $f_{n,m,l} \equiv f(\ve x_{n,m,l})$ and
+and $S'$ is the weighing function which is normalized such that at every position\footnote{
+  This normalization is the convention used in~\cite{langdon_plasma_1991} which
+  makes the grid contain the same amount of charge as the particles have:
+  \begin{align}
+  \int_V \rho dV \approx
+  \Delta V\sum_{n,m,l}\rho_{n,m,l} =
+  \Delta V\sum_{n,m,l}\sum_j q_j S'(\ve x_{n,m,l}, \ve x_j) = \sum_j q_j
+  \end{align}
+  where sum over $j$ is over all particles and $\ve x_j$ are the particle positions.
+}:
+\begin{align}
+  \Delta V \sum_{n,m,l}S' \left(\ve x_{n, m, l}, \ve x\right) = 1
+\end{align}
+The choise of the shape function $S'$ determines the interpolation scheme.
+Usually the interpolation is done independently in every direction.
+In such cases:
+\begin{align}
+  S'(\ve X, \ve x) = S(X_0 - x_0)S(X_1 - x_1)S(X_2 - x_2)
+\end{align}
+
+B-splines are commonly used as the weighing functions $S(x)$.
+Starting from zeroth order B-spline one can calculate B-splines with arbitrary high order
+but usually only the lowest order splines are used.
+The first four are plotted in the figure \ref{fig:spline-plot}.
+Choise of the zeroth order B-spline is equivalent to just using the value from the nearest grid point
+and in turn choise of the first order B-spline is eqivalent to linear interpolation.
+
+\begin{figure}
+  \centering
+  \includegraphics{chapters/spline.pdf}
+  \caption{Zeroth, first, second and third order B-spline weighing functions $S$.
+    The higher the order the smoother the B-spline is.
+  }
+  \label{fig:spline-plot}
+\end{figure}
 
 \section{Particle pusher}
 \section{Current deposition}
