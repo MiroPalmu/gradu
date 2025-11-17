@@ -101,6 +101,10 @@ With leapfrog algorithm in addition to space staggering the fields are staggered
 Electric fields and current densitites are defined at times $s\Delta t$
 and magnetic fields are defined at times $\left(s + \frac12\right)\Delta t$
 where $s \in \mathbb{N}$ and $\Delta t$ is the lenght of a one time step.
+The time staggering creates the problem for pushing particles,
+because it needs them from the same point in time.
+To achive this magnetic field is usually updated in two steps with time steps $\half12\Delta t$.
+Particle pushing is performed between these two updates.
 
 Because the components of electromagnetic fields are stored at different locations
 we can deduce the component solely from the location.
