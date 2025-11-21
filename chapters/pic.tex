@@ -22,16 +22,17 @@ a set of algorithms implemented in the GPU port of Runko.
 
 \section{Overview of underlying physics}
 
-In relativistic PIC particles are evolved according to the Newton-Lornetz equations of motion
-\cite{verboncoeur_particle_2005,vay_modeling_2014}:
+In relativistic PIC the equations of motion for a particle
+with three-velocity $\ve u$, coordinate velocity $\ve v(\ve u)$, mass $m$ and charge $q$
+are~\cite{verboncoeur_particle_2005,vay_modeling_2014}:
 \begin{align}
+  \label{eq:newton-lorentz-vel}
+  \frac{d\ve x}{dt} &= \ve v(\ve u) = \frac{\ve u}{\gamma} \\
   \label{eq:newton-lorentz}
-  \frac{d(\gamma m \ve v)}{dt} &= \ve F = q(\ve E + \ve v \times \ve B) \\
-  \frac{d\ve x}{dt} &= \ve v
+  m\frac{d\ve u}{dt} &= \ve F = q\left(\ve E + \frac{\ve v(\ve u)}{c} \times \ve B\right)
 \end{align}
-where $\gamma = \left(1 - \frac{v^2}{c^2}\right)^{-1/2}$ is the Lorentz factor
-of a particle with mass $m$, coordnate velocity $\ve v$ and charge $q$.
-The force $\ve F$ is given by the Lorentz force.
+where $\gamma = \sqrt{1 + \frac{\ve u^2}{c^2}}$ is the Lorentz factor
+and the force $\ve F$ is given by the Lorentz force.
 
 Electric and magnetic fields $\ve E$ and $\ve B$ are evolved according to the Maxwell's equations
 \eqref{eq:maxwells}:
@@ -95,7 +96,7 @@ and magnetic field components $B_i$ are stored at:
 \end{align}
 See figure \ref{fig:yee-mesh} for schematic picture of the Yee mesh.
 
-Most common way to solve equations \eqref{eq:maxwell-faraday} and \eqref{eq:ampere-maxwell-law}
+Most common way to solve equations Eq.~\eqref{eq:maxwell-faraday} and \eqref{eq:ampere-maxwell-law}
 numerically is explicit leapfrog algorithm \cite{verboncoeur_particle_2005,langdon_plasma_1991}.
 With leapfrog algorithm in addition to space staggering the fields are staggered in time.
 Electric fields and current densitites are defined at times $s\Delta t$
@@ -103,7 +104,7 @@ and magnetic fields are defined at times $\left(s + \frac12\right)\Delta t$
 where $s \in \mathbb{N}$ and $\Delta t$ is the lenght of a one time step.
 The time staggering creates the problem for pushing particles,
 because it needs them from the same point in time.
-To achive this magnetic field is usually updated in two steps with time steps $\half12\Delta t$.
+To achive this magnetic field is usually updated in two steps with time steps $\frac12\Delta t$.
 Particle pushing is performed between these two updates.
 
 Because the components of electromagnetic fields are stored at different locations
@@ -111,7 +112,8 @@ we can deduce the component solely from the location.
 Thus we'll adpot following short hand notation for componetns of
 $\ve E(t, \ve x)$ and $\ve B(t, \ve x)$:
 \begin{align}
-  \xi^{T}_{N,M,L} \equiv \xi\left(T\Delta t, \ve x_{N,M,L} \right)
+  \label{eq:shorthad-index-notation}
+  \xi^{T}_{N,M,L} \equiv \xi\left(T\Delta t, \ve x^\xi_{N,M,L} \right)
 \end{align}
 where $\xi$ is either $E$ or $B$.
 For example $E^{s}_{n,m,l+\frac12}
@@ -297,8 +299,7 @@ do not contain any values that would not be present on a Yee mesh.
 
 \section{Field interpolator}
 
-Before the paritcle velocities can be updated according to~\eqref{eq:newton-lorentz}
-the electromagnetic fields on the discrete Yee mesh
+Before the paritcle can be pushed the electromagnetic fields on the discrete Yee mesh
 have to interpolated to the continuous particle locations.
 There exists different interpolation schemes with varying accuracy and computational costs.
 GPU port of Runko uses linear interpolation.
@@ -347,7 +348,7 @@ The first four are plotted in the figure \ref{fig:spline-plot}.
 Choise of the zeroth order B-spline is equivalent to just using the value from the nearest grid point
 and in turn choise of the first order B-spline is eqivalent to linear interpolation.
 
-\begin{figure}
+\begin{figure}[h]
   \centering
   \includegraphics{chapters/spline.pdf}
   \caption{Zeroth, first, second and third order B-spline weighing functions $S$.
@@ -357,6 +358,162 @@ and in turn choise of the first order B-spline is eqivalent to linear interpolat
 \end{figure}
 
 \section{Particle pusher}
+
+The positions and velocities of particles are updated according to
+equations~\eqref{eq:newton-lorentz-vel} and~\eqref{eq:newton-lorentz}.
+This procedure is called particle pushing and different numerical methods
+for doing it are called particle pushers.
+Similar to the fields the particle pushers often utilize the leapfrog scheme
+so the particle positions are stored at times $s\Delta t$ and velocities at
+times $\left(s+\frac12\right)\Delta t$.
+Applying the second order accurate centered finite-difference~\eqref{eq:centered-fd}
+to the equations~\eqref{eq:newton-lorentz} and~\eqref{eq:newton-lorentz-vel}
+with $h=\frac12 \Delta t$ we can solve for the update equations:
+\begin{align}
+  \label{eq:particle-update-pos}
+  \ve x^{s+1} &= \ve x^{s} + \Delta t \ve v(\ve u^{s+\frac12}) = \\
+  \label{eq:particle-update-vel}
+  \ve u^{s+\frac12} &= \ve u^{s-\frac12}
+                      + \Delta t\frac{q}{m}\left(\ve E^s + \bar{\ve v}^s\times\ve B^s\right)
+\end{align}
+where the superscripts denote the time step similar to equation~\eqref{eq:shorthad-index-notation}
+and $\bar{\ve v}^s$ is a some average for coordinate velocity at time $s\Delta t$.
+In order to close the system it has to be expressed as a function of the other quantaties.
+
+There are multiple different options for calculating $\bar{\ve v}^s$
+corresponding to the different particle pushers.
+The common problem is that the expressions usually contain $\ve u^{s+\frac12}$
+which seem to make the update equation~\eqref{eq:particle-update-vel} implicit.
+However, different pushers have procedures which enable to solve~\eqref{eq:particle-update-vel}
+in steps such that the methods stay explicit.
+
+In this section we will compare properties Boris pusher (1960)~\cite{boris_relativistic_1960},
+Vay's method (2008)~\cite{vay_simulation_2008} and
+Higuera-Cary method (2017)~\cite{higuera_structure-preserving_2017}.
+As the pusher implemented in the GPU port of Runko,
+we will go through the Boris pusher in more detail.
+
+\subsection{Properties}
+
+We begin by listing the choises for $\bar{\ve v}^s$.
+The Boris pusher uses:
+\begin{align}
+  \label{eq:boris-avg-vel}
+  \bar{\ve v}^s_b \equiv \frac{\ve u^{s+\frac12} + \ve u^{s-\frac12}}{2\gamma^s}
+\end{align}
+Vay's method uses:
+\begin{align}
+  \bar{\ve v}^s_v \equiv
+  \frac{ \ve v^{s-\frac12}  + \ve v^{s+\frac12}}{2}
+\end{align}
+And lastly Higuera-Cary method uses:
+\begin{align}
+  \bar{\ve v}^s_{hc} \equiv \ve v \left( \frac{\ve u^{s-\frac12} + \ve u^{s+\frac12}}{2} \right)
+\end{align}
+
+The choises for $\bar{\ve v}^s$ seems to be very similar but
+the methods have different properties which are important for physical accuracy.
+As the underlying physical system is Hamiltonian
+the solutions residue on a symplectic manifold in phase space~\cite{goldstein_classical_2014}.
+Symplectic integrators are those which solutions are on the symplectic manifold.
+Kolmogrov-Arnold-Moser theorem provides them with guarantee
+that the long term evolutions stay physically accurate\footnote{
+  Defining what symplectic manifold
+  and what physicaslly accurate long term evolution of Hamiltonian system
+  means is outside of the scope of this theses.
+}.
+Unfortunately there is no known explicit sympletic integrator
+for charged particle motion in arbitrary electromagnetic fields~\cite{higuera_structure-preserving_2017}.
+However, integrators can be phase space volume-preserving
+which prevents attractors and repellers in the integrated system.
+
+The Boris pusher is volume-preserving while Vay's method is not.
+Conversly Vay's method computes the $\ve E \times \ve B$ drift correctly while The Boris pusher does not.
+Higuera-Cary method on the other hand posses both of these properties.
+What is common between these is that they all conserve energy in absent of electric field
+and that they are second order accurate in time.
+Computationally the Boris pusher is the simplest while Vay's and Higuera-Cary methods
+have similar complexity.
+
+\subsection{Boris pusher}
+
+We begin by inserting~\eqref{eq:boris-avg-vel} to~\eqref{eq:particle-update-vel}
+while switching to a notation where we drop superscripts $s$ and change superscripts
+$s+\frac12\rightarrow f$ and $s-\frac12 \rightarrow i$:
+\begin{align}
+  \label{eq:boris-derivation-1}
+  \ve u^f - \ve u^i
+  %&= \frac{q\Delta t}{m}\left(\ve E + \frac{\ve u^f + \ve u^i}{2c\gamma}\times\ve B\right) \\
+  &= 2\boldsymbol{\epsilon} + \eta(\ve u^f + \ve u^i) \times \hat{\ve B}
+\end{align}
+where we have defined $\boldsymbol{\epsilon} = \frac{q\Delta t\ve E}{2m}$,
+$\eta = \frac{q\Delta t B}{2mv\gamma}$ and the unit vector $\hat{\ve B} = \ve BB^{-1}$.
+We want to find a way to evaluate~\eqref{eq:boris-derivation-1}
+without using implicit methods, i.e. we want to find a way to evaluate the RHS
+without actually needing $\ve u^f$.
+
+We will define vectors $\ve u_+ = \ve u^f - \boldsymbol{\epsilon}$
+and $\ve u_- = \ve u^i + \boldsymbol{\epsilon}$,
+thus equation \eqref{eq:boris-derivation-1} can be written as:
+\begin{align}
+  \ve u_+ - \ve u_- &= \eta(\ve u_+ + \ve u_-) \times \hat{\ve B}
+\end{align}
+We note that the above equation does not contain any components along $\hat{\ve B}$.
+Denoting vector components in the plane perpendicular to $\hat{\ve B}$ with prime
+we can write:
+\begin{align}
+  \label{eq:boris-derivation-2}
+  \ve u_+ - \ve u_- = \ve u'_+ - \ve u'_- &= \eta(\ve u'_+ + \ve u'_-) \times \hat{\ve B}
+\end{align}
+We can deduce that vectors $\ve u'_+ - \ve u'_-$ and $\ve u'_+ + \ve u'_-$
+are perpendicular to each other
+and by taking dot product of the equation with $\ve u'_+ + \ve u'_-$
+we can deduce that $u'_+ = u'_-$.
+Denoting angle between vectors $\ve u'_+$ and $\ve u'_-$ with $\theta$
+we can draw diagram of the vectors which can be seen in the figure~\ref{fig:boris}
+to which we have added helper vectors $\ve h$, $\ve L_0$, $\ve L_1$ and $\ve u'_- \times \ve b$
+such that $\ve L_0$ and $\ve L_1$ are perependicular to each other,
+$\ve b = b \hat{\ve B}$
+and that $\ve L_0 + \ve L_1 = \ve u'_- + \ve u'_- \times \ve b$.
+Using these definitions we can note that $b = \tan\frac{\theta}{2} = \frac{h}{L_1}$
+and $L_0 = L_1 b^2$.
+
+
+\input{chapters/boris}
+
+We can now try to express $\ve u'_+ - \ve u'_-$
+using another way than in~\eqref{eq:boris-derivation-2}.
+Particularly we can write:
+\begin{equation}
+\begin{split}
+  \ve u'_+ - \ve u'_- &= 2h \hat{\ve L}_1 \times \hat{\ve B}
+  = \frac{2}{1+b^2}(\ve L_0 + \ve L_1) \times \ve b \\
+  &= \frac{2}{1+b^2}(\ve u'_- + \ve u'_- \times \ve b)\times \ve b
+\end{split}
+\end{equation}
+where $\hat{\ve L}_1$ is the unit vector along $\ve L_1$.
+We can now go back to $\ve u^f$ and $\ve u^i$ to obtain the Boris pusher update equation:
+\begin{equation}
+\begin{split}
+  \ve u^f &= \ve u^i + 2 \boldsymbol{\epsilon}
+            + \frac{2}{1+b^2}(\ve u'_- + \ve u'_- \times \ve b)\times \ve b \\
+          &= \ve u^i + \frac{q\Delta t \ve E}{m}
+            + \frac{2}{1+b^2}\left(\ve u^i + \frac{q\Delta t \ve E}{2m}
+            + \left(\ve u^i + \frac{q\Delta t \ve E}{2m}\right) \times \ve b\right)\times \ve b
+\end{split}
+\end{equation}
+Only thing left is to determine the angle $\theta$ between $\ve u_+$ and $\ve u_-$
+in order to calculate $\ve b$. To do this we use physical argument.
+Namely that the angle should correspond to the gyrotation due to the magnetic field.
+Thus using the cyclotrone frequency~\eqref{eq:cyclotron-frequency}:
+\begin{align}
+  \theta \approx \Delta t \omega_B = \frac{qB\Delta t}{mc\gamma}
+\end{align}
+Assuming that the time step is small:
+\begin{align}
+  b  = \tan\frac\theta 2 = \frac\theta 2 + O(\Delta t^3) = \frac{qB\Delta t}{2mc\gamma} + O(\Delta t^3)
+\end{align}
+
 \section{Current deposition}
 \section{Current filter}
 

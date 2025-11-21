@@ -1,0 +1,61 @@
+\newcommand\rightAngle[4]{
+  \pgfmathanglebetweenpoints{\pgfpointanchor{#2}{center}}{\pgfpointanchor{#1}{center}}
+  \coordinate (tmpRA) at ($(#2)+(\pgfmathresult+45:#4)$);
+  \draw[black] ($(#2)!(tmpRA)!(#1)$) -- (tmpRA) -- ($(#2)!(tmpRA)!(#3)$);
+}
+
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[scale=3]
+    % Define lengths
+    \def\L{4} % length of base vectors
+    \def\h{\L/4} % height of parallelogram
+    \def\dx{2*\h*\h/\L}
+
+    % Coordinates
+    \coordinate (O) at (0,0);
+    \coordinate (Up) at (\L/2,\h);
+    \coordinate (Um) at (\L/2,-\h);
+    \coordinate (Uppm) at (\L, 0);
+    \coordinate (Upmm) at (0, 2*\h);
+    \coordinate (X) at (\L/2+\dx,0);
+    \coordinate (mid) at (\L/2,0);
+    \coordinate (H) at (0, -\h);
+
+    % Parallelogram vectors
+    \draw[->,red] (O) -- (Up) node[midway,above left] {$\ve {u'_+}$};
+    \draw[->,red] (O) -- (Um) node[midway,below left] {$\ve {u'_-}$};
+    \draw[-,red] (Up) -- (Uppm);
+    \draw[-,red] (Um) -- (Uppm);
+
+    \draw[->,black] (Um) -- (X) node[below right] {$\ve u'_- \times \ve b$};
+    \draw[dashed,black] (Up) -- (X);
+    \draw[dashed,black] (Up) -- (Um);
+
+    % Angle markers
+    \pic [draw, "$\frac{\theta}{2}$", angle eccentricity=2.7] {angle = Uppm--O--Up};
+    \pic [draw, "$\frac{\theta}{2}$", angle eccentricity=2.7] {angle = Um--O--Uppm};
+    \pic [draw, "$\frac{\theta}{2}$", angle eccentricity=2.7] {angle = Um--Up--X};
+    \pic [draw, "$\frac{\theta}{2}$", angle eccentricity=2.7] {angle = X--Um--Up};
+
+    \rightAngle{X}{Um}{O}{\L/12}
+    \rightAngle{O}{Up}{X}{\L/12}
+    \rightAngle{Uppm}{O}{Upmm}{\L/12}
+
+    \draw[->,blue] (O) -- (Uppm) node[right] {$\ve {u'_+} + \ve {u'_-}$};
+    \draw[->,blue] (O) -- (Upmm) node[below right] {$\ve {u'_+} - \ve {u'_-}$};
+
+    \draw[->,orange] (O) -- (mid) node[midway, above] {$\ve L_1$};
+    \draw[|->,orange] (mid) -- (X) node[midway, above] {$\ve L_0$};
+    \draw[->,orange] (O) -- (H) node[above right] {$\ve h$};
+
+\end{tikzpicture}
+\caption{Vectors perpendicular to the magnetic field which are used to derive the Boris pusher.}
+\label{fig:boris}
+\end{figure}
+
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "../gradu"
+%%% End:
