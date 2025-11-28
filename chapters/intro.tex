@@ -1,51 +1,50 @@
 \chapter{Introduction}
 
-This these is based on the work done by the author to port Particle-in-Cell (PIC) simulation
+This thesis is based on the work carried out by the author to port Particle-in-Cell (PIC) simulation
 Runko~\cite{nattila_runko:_2022} to run on GPUs.
-In this section required backround theory is given
-and in the following section different aspects of Particle-in-Cell simulation are presented.
-In the third section the GPU port of Runko is used to simulate
-electron beam-plasma filamentation instability which is then compared to the analytical result.
-The last section contains discussion of further avenues for the GPU port of Runko.
+In this chapter, the required background theory is presented,
+and in the following chapter, different aspects of Particle-in-Cell simulation are discussed.
+In the third chapter, the GPU port of Runko is used to simulate
+the electron beam–plasma filamentation instability, which is then compared to the analytical result.
+The final chapter contains a discussion of further development avenues for the GPU port of Runko.
 
 \section{Plasma}
 
-Plasma is quasi-neutral gas with enough free charges that the long range collective electromagnetic
-interactions dominate over the interactions between induvidual particles
-\cite{pert_foundations_2021,hazeltine_framework_2018}.
-This can happen for example when a gas is heated enough such that the atoms get ionized.
-Quasi-neutrality means that the gas is approximately neutral:
+Plasma is a quasi-neutral gas containing enough free charges
+that long-range collective electromagnetic interactions dominate
+over interactions between individual particles~\cite{pert_foundations_2021,hazeltine_framework_2018}.
+This can occur, for example, when a gas is heated sufficiently for its atoms to become ionized.
+Quasi-neutrality means that the gas is approximately electrically neutral:
 \begin{align}
   \rho = \sum_s n_s q_s \approx 0
 \end{align}
-where the sum is over all particle species, $n_s$ is particle density and $q_s$ is charge
-of particle species $s$.
+where the sum is taken over all particle species, $n_s$ denotes the number density
+and $q_s$ is the charge of species $s$.
 
-If a charge is introduced to a plasma in thermal equilibrium the free charges quickly screen
-the resulting long range electric field away.
-This is also known as Debye screening/shielding.
-Phonomena gives rise to a length scale at which short range Coulomb interactions can happen.
-The scale is characterized by Debye length $\lambda_D$ which is given by:
+If a charge is introduced into a plasma in thermal equilibrium,
+the free charges quickly screen the resulting long-range electric field.
+This phenomenon is known as Debye screening (or Debye shielding).
+It gives rise to a characteristic length scale over which short-range Coulomb interactions can occur.
+This scale is defined by the Debye length, $\lambda_D$ which is given by:
 \begin{align}
   \label{eq:debye-length}
   \lambda_D^{-2} = \sum_s \frac{n_sq_s^2}{\epsilon_0 k_B T_s}
 \end{align}
-where $T_s$, $n_s$ and $q_s$ are temperature, number density and charge of particle species $s$,
-$k_B$ is the Boltzmann constant and $\epsilon_0$ is the vacuum permittivity.
+where $T_s$, $n_s$ and $q_s$ are the temperature, number density and charge of particle species $s$;
+$k_B$ is the Boltzmann constant; and $\epsilon_0$ is the vacuum permittivity.
 
-For plasma in a thermal equilibrium the scale of deviations from quasi-neutrality
-over a length scale $L$ due to thermal fluctuations is
-$\left(\frac{\lambda_D}{L}\right)^2$ \cite{wiesemann_short_2014,hazeltine_framework_2018}.
-Thus we can formulate the quasi-neutrality condition of plasma over length scale $L$
-as a requirement that the Debye length is much less than the scale $L$:
+For a plasma in thermal equilibrium,
+the scale of deviations from quasi-neutrality over a length $L$ due to thermal fluctuations is
+$\left(\frac{\lambda_D}{L}\right)^2$~\cite{wiesemann_short_2014,hazeltine_framework_2018}.
+Thus, we can express the quasi-neutrality condition for a plasma over the length scale $L$
+as the requirement that the Debye length is much smaller than $L$:
 \begin{align}
   \lambda_D \ll L
 \end{align}
-However, for Debye length to be statistically valid there has to be enough particles inside
-''Debye sphere'': $N_D = n \frac 43 \pi \lambda_D^3 \gg 1$.
-Usually this requirement is expressed in terms of plasma parameter
-which is defined up to a constant factor as $\Lambda = n\lambda_D^3$
-and written as:
+However, for the Debye length to be statistically valid, there must be enough particles inside
+the ''Debye sphere'': $N_D = n \frac 43 \pi \lambda_D^3 \gg 1$.
+This requirement is usually expressed in terms of the plasma parameter,
+which is defined (up to a constant factor) as $\Lambda = n\lambda_D^3$ and written as:
 \begin{align}
   \label{eq:plasma-param-condition}
   \Lambda \gg 1
@@ -53,60 +52,62 @@ and written as:
 
 \section{Fundamental frequencies in plasma physics}
 
-There are couple frequencies that appear often in plasma physics.
-In plasma a small displacement of charges oscillates around the neutral configuration
-at frequency which is called plasma frequency
-\cite{wiesemann_short_2014,pert_foundations_2021,hazeltine_framework_2018}.
-In a plasma the classical plasma frequency of particle species $s$ is given by:
+There are a few characteristic frequencies that appear frequently in plasma physics.
+In a plasma, a small displacement of charges oscillates around the neutral configuration at a frequency
+known as the plasma frequency~\cite{wiesemann_short_2014,pert_foundations_2021,hazeltine_framework_2018}.
+For a particle species $s$, the classical plasma frequency is given by:
 \begin{align}
   \label{eq:classical-plasma-frequency}
   \omega_{ps}^2 = \frac{n_s q_s^2}{\epsilon_0 m_s}
 \end{align}
-We note for electron-ion systems the electron plasma frequency is much larger than
-the ion plasma frequency and thus ion plasma oscillation can usually be neglected.
+For electron–ion systems, the electron plasma frequency is much larger than the ion plasma frequency;
+therefore, ion plasma oscillations can usually be neglected.
 
-If magnetic field is present in a plasma the charges gyrorotate around the field lines
-at the cyclotrone frequency. For particle species $s$ the cyclotrone frequency is given by:
+If a magnetic field is present in a plasma,
+the charges gyrate around the field lines at the cyclotron frequency.
+For a particle species $s$, the cyclotrone frequency is given by:
 \begin{align}
   \label{eq:cyclotron-frequency}
   \omega_B = \frac{q_sB}{m_sc\gamma}
 \end{align}
-where $B$ is magnitude of the magnetic field.
-This motion is also kown as cyclotron motion.
+where $B$ is the magnitude of the magnetic field.
+This motion is also known as cyclotron motion.
 
 \section{Kinetic plasma description}
 
-As seen from the condition \eqref{eq:plasma-param-condition} the number of particles in plasma is large.
-This makes modeling plasma using just particles and coulomb forces between them unfeasible.
-In the kinetic plasma description the problem is solved by embracing the large number of particles
-and describinig statistically their collective behavious.
+As seen from condition~\eqref{eq:plasma-param-condition}, the number of particles in plasma is large.
+This makes modeling a plasma
+using only particles and Coulomb forces between them computationally unfeasible.
+In the kinetic description of plasma,
+the problem is addressed by embracing the large number of particles
+and statistically describing their collective behavior.
 
-For particle species $s$ the distribution function $f_s(\ve x, \ve p, t)$ describes
-number of particles in a phase space region spanned by time interval $[t, t + dt]$,
-location region $[\ve x , \ve x + d\ve x]$ and three-momentum region $[\ve p, \ve p + d\ve p]$
-\cite{klimontovich_relativistic_1960,DeGroot:1980dk,hazeltine_framework_2018}.
-The particles live on a mass-shell defined by Lorentz factor
-$\gamma = \left(1-\frac{v^2}{c^2}\right)^{-1/2}$ where $v$ is the coordinate velocity
+For a particle species $s$, the distribution function $f_s(\ve x, \ve p, t)$ describes
+the number of particles in a phase space region spanned by the time interval $[t, t + dt]$,
+spatial region $[\ve x , \ve x + d\ve x]$ and three-momentum region
+$[\ve p, \ve p + d\ve p]$~\cite{klimontovich_relativistic_1960,DeGroot:1980dk,hazeltine_framework_2018}.
+The particles lie on a mass-shell defined by the Lorentz factor
+$\gamma^{-1} = \sqrt{1-\frac{v^2}{c^2}}$ where $v$ is the coordinate velocity
 and $c$ is the speed of light.
 We assume that the distribution function is normalized such that
 \begin{align}
   \label{eq:number-density}
   \int f_s(\ve x, \ve p, t) d\ve p = n_s(\ve x, t)
 \end{align}
-where $n_s(\ve x, t)$ is the number density of particle species $s$.
-
-Summing over all of the particle species we get the total charge density of plasma:
+where $n_s(\ve x, t)$ is the number density of a particle species $s$.
+Summing over all particle species, we obtain the total charge density of the plasma:
 \begin{align}
   \label{eq:charge-density}
   \rho(\ve x, t) = \sum_s q_s n_s(\ve x, t)
 \end{align}
-Current density is given by:
+Current density of the plasma is given by:
 \begin{align}
   \label{eq:current-density}
   \ve J(\ve x, t) = \int \sum_s q_s \ve v f_s(\ve x, \ve p, t) d\ve p
 \end{align}
-With these definitions of charge and current densities we can solve the self-consistent
-electromagnetic fields from Maxwell's equations (in Gaussian CGS units):
+With these definitions of charge and current densities,
+we can determine the self-consistent electromagnetic fields using Maxwell’s equations
+(in Gaussian CGS units):
 \begin{align}
   \label{eq:maxwells}
   \nabla\times\ve E = -\frac1c \frac{\partial\ve B}{\partial t}, \qquad
@@ -115,35 +116,35 @@ electromagnetic fields from Maxwell's equations (in Gaussian CGS units):
   \nabla\cdot\ve B = 0
 \end{align}
 
-Evolution of the distribution function is governed by Boltzmann equation:
+The evolution of the distribution function is governed by the Boltzmann equation:
 \begin{align}
   \label{eq:boltzmann}
   \partial_t f_s + \ve v \cdot \nabla f_s + \frac{d\ve p}{dt} \cdot \nabla_{\ve p} f_s
   = \left(\frac{\partial f_s}{\partial t}\right)_{\text{coll}}
 \end{align}
-where $\left(\frac{\partial f_s}{\partial t}\right)_{\text{coll}}$ is the collision term
-which contains interactions between induvidual particles.
-In case of plasmas $\frac{d\ve p}{dt}$ is given by the Lorentz force and
-due to condition \eqref{eq:plasma-param-condition} applying
-the short term collisions between the paritcles can be neglected and the collision term vanishes.
-With the vanishing collision term the equation is called Vlasov equation:
+where $\left(\frac{\partial f_s}{\partial t}\right)_{\text{coll}}$ is the collision term,
+which accounts for interactions between individual particles.
+In the case of plasmas, $\frac{d\ve p}{dt}$ is given by the Lorentz force.
+Due to condition \eqref{eq:plasma-param-condition},
+short-range collisions between paritcles can be neglected, and the collision term vanishes.
+When the collision term vanishes, the equation is called the Vlasov equation:
 \begin{align}
   \label{eq:vlasov}
   \partial_t f_\alpha
   + \mathbf{v} \cdot \nabla f_\alpha
   + q_\alpha ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f_\alpha = 0
 \end{align}
-where we have defined vector $\boldsymbol{\beta} = \frac{\ve v}{c}$.
-Maxwell's equations together with the Vlasov equation form Vlasov-Maxwell system.
+where we have defined the vector $\boldsymbol{\beta} = \frac{\ve v}{c}$.
+Maxwell's equations together with the Vlasov equation form the Vlasov-Maxwell system.
 
 \section{Cold-fluid limit}
 
-Solving Vlasov-Maxwell system is difficult.
-Fortunately in case of beam instabilities taking the cold-fluid limit of the system
-makes it possible to investigate the beam instabilities analytically.
-In order to do so, we have to calculate moments of the Vlasov equation.
+Solving the Vlasov–Maxwell system is challenging.
+Fortunately, in the case of beam instabilities,
+taking the cold-fluid limit of the system allows us to investigate these instabilities analytically.
+To do so, we calculate the moments of the Vlasov equation.
 
-Generally moment $M(\mathbf{p})$ of the Vlasov equation~\eqref{eq:vlasov} is:
+In general, the moment $M(\mathbf{p})$ of the Vlasov equation~\eqref{eq:vlasov} is:
 \begin{align}
 \int M \left(
 \partial_t f_\alpha
@@ -151,19 +152,20 @@ Generally moment $M(\mathbf{p})$ of the Vlasov equation~\eqref{eq:vlasov} is:
 + q_\alpha ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f_\alpha
 \right) d\mathbf{p} = 0
 \end{align}
-In the first two terms the derivatives can be trivially taken out of the integrant,
-but the third requires some manipulation.
+where the integration is carried out over momentum space.
+In the first two terms, the derivatives can be trivially taken outside the integrand,
+but the third term requires some manipulation.
 
-For brievity we'll define $a_\alpha^i = q_\alpha E^i + \frac{q_\alpha}{c}\epsilon^i_{lk}v^l B^k$.
+For brevity, we define $a_\alpha^i = q_\alpha E^i + \frac{q_\alpha}{c}\epsilon^i_{lk}v^l B^k$.
 Using the identity $ \partial_{p_i} v^l = \frac{\delta^l_i}{m \gamma} -  \frac{p^lp_i}{m^3c^2\gamma^3}$
-we get that $\partial_{p_i}a_\alpha^i = 0$.
+we find that $\partial_{p_i}a_\alpha^i = 0$.
 After integration by parts and noting
 that physical distributions vanish at infinity, we can write the third term as:
 \begin{align}
 \int M \mathbf{a_\alpha} \cdot \nabla_\mathbf{p} f_\alpha d\mathbf{p}
 &= - \int a^i \partial_{p_i} M f d\mathbf{p}
 \end{align}
-Overall we get that:
+Overall we obtain:
 \begin{align}\label{eq:general-moment-of-vlasov}
   \partial_t \int M f_\alpha d\mathbf{p}
 + \partial_i \int M v^i f_\alpha d\mathbf{p}
@@ -173,35 +175,36 @@ Overall we get that:
 A cold-fluid is characterized by a distribution function
 $f(\mathbf{x}, \mathbf{p}, t) = n_\alpha(\ve x, t)\delta(\mathbf{p} - \mathbf{P}_\alpha(\mathbf{x}, t))$,
 where $\mathbf{P}_\alpha(\mathbf{x}, t) = m_\alpha\gamma_\alpha\mathbf{V}_\alpha(\mathbf{x}, t)$
-is calculated from the bulk velocity $\mathbf{V}_\alpha(\mathbf{x}, t)$ of the fluid
-and $n_\alpha(\mathbf{x}, t)$ is its fuilds number density \cite{bret_multidimensional_2010,bret_collective_2004}.
-Inserting this and $M = 1$ to \ref{eq:general-moment-of-vlasov} we obtain continuity equation
-\cite{hazeltine_framework_2018}:
+is calculated from the bulk velocity $\mathbf{V}_\alpha(\mathbf{x}, t)$ of the fluid,
+and $n_\alpha(\mathbf{x}, t)$
+is its fuilds number density~\cite{bret_multidimensional_2010,bret_collective_2004}.
+Inserting this and $M = 1$ into equation~\eqref{eq:general-moment-of-vlasov},
+we obtain the continuity equation~\cite{hazeltine_framework_2018}:
 \begin{align}
 \label{eq:continuity-in-cold-limit}
 \partial_t n_\alpha + \nabla \cdot ( \ve V_\alpha n_\alpha ) = 0
 \end{align}
-For $M = \mathbf{p}$ and using the continuity equation we get:
+Using the continuity equation for $M = \mathbf{p}$, we obtain:
 \begin{align}
 \label{eq:momentum-transport-in-cold-limit}
 \partial_t \mathbf{P}_\alpha + (\mathbf{V}_\alpha \cdot \nabla) \mathbf{P}_\alpha
 &= q_\alpha (\mathbf{E} + c^{-1}\mathbf{V}_\alpha \times \mathbf{B})
 \end{align}
 
-
 \section{Linearization of the cold-fluid limit}
 
-Even in the cold-fluid limit solving for the general evolution of the system is difficult
-and we have to settle for solving it perturbatively to some order and
-in this theses the linear order solutions to equations \eqref{eq:continuity-in-cold-limit}
-and \eqref{eq:momentum-transport-in-cold-limit} are sufficient.
-Furthermore, we'll assume that the initial electromagnetic fields vanish\footnote{
-  The analysis could be done with initial magnetic field for which
-  $\ve V_0 \times \ve B_0 = 0$. However, this is unnecessary in context of this theses.
+Even in the cold-fluid limit,
+solving for the general evolution of the system is challenging,
+so we resort to solving it perturbatively to a certain order.
+In this thesis, linear-order solutions to
+equations~\eqref{eq:continuity-in-cold-limit} and~\eqref{eq:momentum-transport-in-cold-limit}
+are sufficient. Furthermore, we assume that the initial electromagnetic fields vanish\footnote{
+  The analysis could be done with non-zero initial magnetic field for which
+  $\ve V_0 \times \ve B_0 = 0$. However, this is unnecessary in context of this thesis.
 }.
 
-Denoting equilibrium solutions with subscript $0$ and small perturbations with subscript $1$,
-we can write (dropping particle species labels for brievity):
+Denoting equilibrium solutions with the subscript $0$ and small perturbations with the subscript $1$,
+we can write (dropping particle species labels for brevity):
 \begin{align}
   \label{eq:preturbed-variables}
   n &= n_0 + n_1 \\
@@ -210,15 +213,16 @@ we can write (dropping particle species labels for brievity):
   \ve B &= \ve B_1 \\
   \ve P &= m\gamma[\ve V_0 + \ve V_1](\ve V_0 + \ve V_1)
 \end{align}
-We'll use the Fourier representation for the perturbations,
-i.e. $g_1 = \int \hat{g}_1 \exp(i(\ve k \cdot \ve x - \omega t))d\omega d^3k$.
-Keeping only the linear order terms the expression for the momentum simplifies to
+where $\gamma[\ve V]$ denotes the Lorentz factor corresponding to the coordinate velocity $\ve V$.
+We use the Fourier representation for the perturbations,
+i.e., $g_1 = \int \hat{g}_1 \exp(i(\ve k \cdot \ve x - \omega t))d\omega d^3k$.
+Keeping only the linear-order terms, the expression for the momentum simplifies to
 $\ve P = m\gamma\left(\ve V_0+\frac{\gamma^2}{c^2}(\ve V_0 \cdot \hat{\ve V}_1)\ve V_0 \right)$,
-where we defined $\gamma = \gamma[\ve V_0]$.
+where we defnie $\gamma \equiv \gamma[\ve V_0]$.
 
-Inserting these to \eqref{eq:continuity-in-cold-limit} and \eqref{eq:momentum-transport-in-cold-limit}
-we get the linearized continuity equation and linearized momentum transport equation
-\cite{bret_collective_2004,bret_cfa_2012}:
+Inserting these into \eqref{eq:continuity-in-cold-limit} and \eqref{eq:momentum-transport-in-cold-limit},
+we obtain the linearized continuity equation
+and the linearized momentum transport equation~\cite{bret_collective_2004,bret_cfa_2012}:
 \begin{align}
   \label{eq:linearized-cold-fluid-continuity-eq}
   \hat{n}_1 &= \frac{n_0 \ve k \cdot \hat{\ve V}_1}{\omega - \ve k \cdot \ve V_0} \\
@@ -227,8 +231,8 @@ we get the linearized continuity equation and linearized momentum transport equa
   (\hat{\ve V}_1 + \frac{\gamma^2}{c^2}(\ve V_0 \cdot \hat{\ve V}_1)\ve V_0)
   &= q(\hat{\ve E}_1 + \frac 1c \hat{\ve V}_1 \times \ve B_0 + \frac 1c \hat{\ve V}_0 \times \ve B_1)
 \end{align}
-Additionally we'll utilize linearity of Maxwell's equations \eqref{eq:maxwells}
-and combine them to the linearized wave equation:
+Additionally, we utilize linearity of Maxwell's equations~\eqref{eq:maxwells}
+and combine them to obtain the linearized wave equation:
 \begin{align}
   \label{eq:linearized-wave-eq}
   \ve k \times (\ve k \times \hat{\ve E}_1)
@@ -244,21 +248,20 @@ where $\hat{\ve J}_1$ in the cold-fluid limit is read from:
 \section{Finite difference}
 \label{sec:finite-difference}
 
-PIC scheme requires solving Maxwells equations numerically on a discretized grid.
-The most common way to discretize the derivatives is the centered finite-difference
-which then leads to finite-difference time domain method which is discussed later (ref?).
-Let the function $f(x)$ be discretized on a uniform grid of points $n h$
+The PIC scheme requires solving Maxwell's equations numerically on a discretized grid.
+The most common way to discretize the derivatives is the centered finite-difference method,
+which leads to finite-difference time domain method which is discussed in the next section.
+Let the function $f(x)$ be discretized on a uniform grid of points $n h$,
 where $n \in \mathbb{N}$ and $h$ is the constant grid spacing.
-For brevity we'll define notation $f_n = f(n h)$
+For brevity, we define the notation $f_n = f(n h)$
 and $f'_n = \left.\frac{df}{dx}\right\vert_{x=nh}$.
 
-The second order accurate centered finite-difference discretizes the derivative as:
+The second-order accurate centered finite-difference discretizes the derivative as:
 \begin{align}
   \label{eq:centered-fd}
   f'_n \approx \frac{f_{n + 1} - f_{n - 1}}{2h}
 \end{align}
-
-The second order accuracy of the algorithm is seen by Taylor expanding
+The second-order accuracy of the algorithm is observed by Taylor expanding
 the right-hand side of equation \eqref{eq:centered-fd}:
 \begin{align}
   \frac{f_{n + 1} - f_{n - 1}}{2h}
@@ -266,74 +269,74 @@ the right-hand side of equation \eqref{eq:centered-fd}:
   - \sum_{k=0}^\infty \frac{(-h)^k}{!k}f^{(k)}_n \right)
   = f'_n + O(h^2)
 \end{align}
-Centered second order derivative can be obtained by applying the centered first order derivative twice:
+A centered second-order derivative can be obtained by applying the centered first-order derivative twice:
 \begin{align}
   \label{eq:second-fd}
   f''_n \approx \frac{f'_{n + 1} - f'_{n - 1}}{2h} = \frac{f_{n+2} - 2 f_n + f_{n-2}}{4h^2}
 \end{align}
-Similarly to the first derivative we can see the second order accuracy from the Taylor expansion:
+Similarly to the first derivative, we can see the second-order accuracy from the Taylor expansion:
 \begin{align}
   \label{eq:second-fd-accuracy}
   \frac{f_{n+2} - 2 f_n + f_{n-2}}{4h^2}  = f''_h + O(h^2)
 \end{align}
-We note that the central finite-difference second order derivative \eqref{eq:second-fd}
+We note that the central finite-difference second-order derivative \eqref{eq:second-fd}
 does not require the function values $f_{n+1}$ and $f_{n-1}$.
-Thus it is usually defined on a finer grid with grid points at $\frac{nh}{2}$ where $n \in \mathbb{N}$.
-This gives us the standard centered finite-difference second order derivative:
+Thus, it is usually defined on a finer grid with grid points at $\frac{nh}{2}$, where $n \in \mathbb{N}$.
+This gives us the standard centered finite-difference second-order derivative:
 \begin{align}
   \label{eq:second-fd-correct}
   f''_n \approx \frac{f_{n+1} - 2 f_n + f_{n-1}}{h^2}
 \end{align}
-which is still second order accurate because the change only modifies
+which is still second-order accurate because the change only modifies
 the constant coefficients in \eqref{eq:second-fd-accuracy}.
 
-There exists higher order accurate schemes for calculating the centered finite-difference
-but they are trade-off between higher numerical accuracy and computational cost.
+There exist higher-order accurate schemes for calculating the centered finite-difference,
+but they involve a trade-off between improved numerical accuracy andincreased computational cost.
 
 \subsection{Numerical dispersion relation}
 
-Stability of the centered finite-difference for the wave equation describes its accuracy
-and stability properties. One dimensional wave equation reads:
+The stability of the centered finite-difference scheme for the wave equation determines
+its accuracy and stability properties. The one-dimensional wave equation is given by:
 \begin{align}
   \label{eq:one-d-wave-eq}
   \frac{\partial^2 \psi}{\partial t^2} = c^2 \frac{\partial^2 \psi}{\partial x^2}
 \end{align}
 Inserting the plane wave solution $\psi = e^{i(kx - \omega t)}$
-to the wave equation~\eqref{eq:one-d-wave-eq} gives a physical dispresion relation:
+to the wave equation~\eqref{eq:one-d-wave-eq} gives the physical dispersion relation:
 \begin{align}
   \label{eq:one-d-wave-dispersion-eq}
   \omega = \pm ck
 \end{align}
 
-We'll discretize the function $\psi(x, t)$ on a uniform grid $(n \Delta x, m \Delta t)$
-where $n,m\in\mathbb{N}$ and we'll denote $\psi^m_n = \psi(n\Delta x, m\Delta t)$.
-Applying the centered finite-difference for second derivatives \eqref{eq:second-fd-correct}
-to both temporal and spatial derivatives in the wave equation \eqref{eq:one-d-wave-eq}
-and solving for $\psi_n^{m + 1}$ we'll get:
+We discretize the function $\psi(x, t)$ on a uniform grid $(n \Delta x, m \Delta t)$,
+where $n,m\in\mathbb{N}$, and denote $\psi^m_n = \psi(n\Delta x, m\Delta t)$.
+Applying the centered finite-difference for second derivatives~\eqref{eq:second-fd-correct}
+to both the temporal and spatial derivatives in the wave equation~\eqref{eq:one-d-wave-eq},
+and solving for $\psi_n^{m + 1}$, we obtain:
 \begin{align}
   \label{eq:fd-intermediate}
   \psi_n^{m + 1} = \left(c\frac{\Delta t}{\Delta x}\right)^2
   (\psi_{n + 1}^m - 2\psi_n^m + \psi_{n-1}^m) + 2\psi_n^m - \psi_n^{m - 1}
 \end{align}
-Inserting plane wave $\psi_n^m = e^{i(k n \Delta x - \omega m \Delta t)}$
-to \eqref{eq:fd-intermediate} results in the numerical dispersion relation
-distictly different from the physical dispersion relation~\eqref{eq:one-d-wave-dispersion-eq}:
+Inserting the discretized plane wave $\psi_n^m = e^{i(k n \Delta x - \omega m \Delta t)}$
+into equation~\eqref{eq:fd-intermediate} results in a numerical dispersion relation
+that is distinctly different from the physical dispersion relation~\eqref{eq:one-d-wave-dispersion-eq}:
 \begin{align}
   \label{eq:fd-dispersion}
   \frac{\omega}{c} \Delta x =
   \pm \frac{1}{\hat c}\cos^{-1}\left(\hat{c}^2 (\cos(k\Delta x) - 1) + 1\right)
 \end{align}
-where $\hat{c} \equiv c\frac{\Delta t}{\Delta x}$ is the Courant-Friedrichs-Lewy number
+where $\hat{c} \equiv c\frac{\Delta t}{\Delta x}$ is the Courant-Friedrichs-Lewy number,
 or the Courant number for short.
-The solutions are periodic in $k$ with period of $\frac{2\pi}{\Delta x}$
+The solutions are periodic in $k$ with a period of $\frac{2\pi}{\Delta x}$,
 which means that the finite-difference wave equation~\eqref{eq:fd-intermediate}
-can not resolve waves past some wave number.
+cannot resolve waves beyond a certain wavenumber.
 
-The numerical dispersion relation \eqref{eq:fd-dispersion}
+The numerical dispersion relation~\eqref{eq:fd-dispersion}
 reduces to the physical dispersion relation~\eqref{eq:one-d-wave-dispersion-eq}
-when $\hat{c} = 1$ or when both $\Delta t$ and $\Delta x$ approach zero
+when $\hat{c} = 1$ or when both $\Delta t$ and $\Delta x$ approach zero,
 but not when either one alone approaches zero.
-These limits are summarized in the table \ref{fig:numerical-dispersion-relation-limits}.
+These limits are summarized in table \ref{fig:numerical-dispersion-relation-limits}.
 
 \begin{table}
   \centering
@@ -349,30 +352,31 @@ These limits are summarized in the table \ref{fig:numerical-dispersion-relation-
   \label{fig:numerical-dispersion-relation-limits}
 \end{table}
 
-The Courant number $\hat{c}$ has a great importance for the stability of solutions to
+The Courant number $\hat{c}$ is crucial for the stability of solutions to
 the finite-difference wave equation~\eqref{eq:fd-intermediate}.
-For $\hat{c} > 1$ the numerical dispersion relation~\eqref{eq:fd-dispersion}
-shows that $\omega$ has an positive imaginary part for some values of $k$
-which results exponentially growing mode.
-The condition for stablitiy $\hat c = c\frac{\Delta t}{\Delta x} \le 1$
-is called the Courant-Friedrchs-Lewy condition.
-In multiple dimensions the the criterior is given by~\cite{verboncoeur_particle_2005}:
+For $\hat{c} > 1$, the numerical dispersion relation~\eqref{eq:fd-dispersion}
+shows that $\omega$ has an positive imaginary part for some values of $k$,
+which results in an exponentially growing mode.
+The condition for stability, $\hat c = c\frac{\Delta t}{\Delta x} \le 1$,
+is called the Courant-Friedrichs-Lewy condition.
+In multiple dimensions, the condition is given by~\cite{verboncoeur_particle_2005}:
 \begin{align}
   \Delta t \le \frac{1}{c}\left( \sum_i \frac{1}{(\Delta x_i)^2} \right)^{-1/2}
 \end{align}
-The figure \ref{fig:cfl-plot} plots one period of
-the numerical dispersion relation~\eqref{eq:fd-dispersion}.
+Figure \ref{fig:cfl-plot} shows one period of
+the numerical dispersion relation given in equation~\eqref{eq:fd-dispersion}.
 
 \begin{figure}
   \centering
   \includegraphics{chapters/cfl-plot.pdf}
-  \caption{Plots over one period of the numerical dispersion relation ~\eqref{eq:fd-dispersion}
-    with different values for the Courant number $\hat c = \frac{c\Delta t}{\Delta x}$.
-    The real parts of $\frac{\omega}{c}\frac{\Delta x}{\pi}$ are plotted as a continuous lines
-    and the imaginary parts are plotted with dashed lines.
-    The Courant number which fulfill the Courant-Friedrchs-Lewy condition are plotted
-    with colors ranging from blue to green and which does not from red to yellow.
-    The black plot represents the transition point at which $\hat c = 1$.
+  \caption{Plots over one period of the numerical dispersion relation~\eqref{eq:fd-dispersion}
+    for different values of the Courant number $\hat c = \frac{c\Delta t}{\Delta x}$.
+    The real parts of $\frac{\omega}{c}\frac{\Delta x}{\pi}$ are shown as continuous lines,
+    while the imaginary parts are shown as dashed lines.
+    Courant numbers satisfy the Courant-Friedrichs-Lewy condition are plotted
+    with colors ranging from blue to green,
+    whereas those that do not satisfy the condition are plotted in colors ranging from red to yellow.
+    The black curve represents the transition point at $\hat c = 1$.
   }
   \label{fig:cfl-plot}
 \end{figure}
