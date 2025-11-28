@@ -1,29 +1,31 @@
-
 \chapter{Particle-in-Cell}
-For plasma simulation to include kinetic effects, it somehow has to be able to describe
-evolution of the full distributions function. In PIC this is achieved by sampling
-it with macroparticles then evolving them based on Maxwell's equations.
-The electromagnetic fields are represented on a grid in which the particles move,
-thus giving the name particle-in-cell.
-PIC scheme was formalised in 1970s but has roots in work done by Buneman \cite{buneman_dissipation_1959}
-and Dawson \cite{dawson_one-dimensional_1962} in the late 1950s.
-Later two classic PIC text books were published
-by Hockney and Eastwood \cite{hockney_computer_1981} in 1981
-and by Birdsall and Langdon \cite{langdon_plasma_1991} in 1991
-from which the latter remains one of the most complete treatments of the PIC overall.
+To include kinetic effects in plasma simulations,
+the method must be able to describe the evolution of the full distribution function.
+With PIC, this is achieved by sampling the distribution function with macroparticles
+and evolving them according to Maxwell’s equations.
+The electromagnetic fields are represented on a grid through which the particles move,
+giving rise to the name particle-in-cell.
 
-Basic PIC consists of many smaller tasks
-for which there exists numerous algorithms with differing trade-offs.
-High-level overview of a one PIC time step is given in figure \ref{fig:pic-scheme}.
-In this chapter we will describe the tasks seen in the figure in more detail and go through
-a set of algorithms implemented in the GPU port of Runko.
+The PIC scheme was formalised in 1970s
+but has its roots in work by Buneman \cite{buneman_dissipation_1959}
+and Dawson \cite{dawson_one-dimensional_1962} in the late 1950s.
+Later, two classic PIC text books were published:
+one by Hockney and Eastwood \cite{hockney_computer_1981} in 1981
+and another by Birdsall and Langdon \cite{langdon_plasma_1991} in 1991,
+the latter remains one of the most complete treatments of PIC to date.
+
+Basic PIC consists of many smaller tasks, for which numerous algorithms exist with varying trade-offs.
+A high-level overview of a single PIC time step is shown in figure~\ref{fig:pic-scheme}.
+In this chapter,
+we describe the tasks illustrated in the figure in more detail
+and discuss the set of algorithms implemented in the GPU port of Runko.
 
 \input{chapters/pic-scheme}
 
 \section{Physical model}\label{sec:pic-physical-model}
 
-In relativistic PIC the equations of motion for a particle
-with three-velocity $\ve u$, coordinate velocity $\ve v(\ve u)$, mass $m$ and charge $q$
+In relativistic PIC, the equations of motion for a particle
+with three-velocity $\ve u$, coordinate velocity $\ve v(\ve u)$, mass $m$, and charge $q$
 are~\cite{verboncoeur_particle_2005,vay_modeling_2014}:
 \begin{align}
   \label{eq:newton-lorentz-vel}
@@ -31,11 +33,11 @@ are~\cite{verboncoeur_particle_2005,vay_modeling_2014}:
   \label{eq:newton-lorentz}
   m\frac{d\ve u}{dt} &= \ve F = q\left(\ve E + \frac{\ve v(\ve u)}{c} \times \ve B\right)
 \end{align}
-where $\gamma = \sqrt{1 + \frac{\ve u^2}{c^2}}$ is the Lorentz factor
+where $\gamma = \sqrt{1 + \frac{\ve u^2}{c^2}}$ is the Lorentz factor,
 and the force $\ve F$ is given by the Lorentz force.
 
-Electric and magnetic fields $\ve E$ and $\ve B$ are evolved according to the Maxwell's equations
-\eqref{eq:maxwells}:
+Electric and magnetic fields, $\ve E$ and $\ve B$, are evolved according to
+Maxwell's equations~\eqref{eq:maxwells}:
 \begin{align}
   \label{eq:maxwell-faraday}
   \frac{\partial\ve B}{\partial t} &= -c \nabla\times\ve E \\
@@ -47,33 +49,34 @@ Electric and magnetic fields $\ve E$ and $\ve B$ are evolved according to the Ma
   \nabla\cdot\ve B &= 0
 \end{align}
 When charge conserving current deposition scheme is used
-and the initial conditions fulfill Gauss's laws \eqref{eq:gauss-law} and \eqref{eq:gauss-law-for-B}
-then they are automatically fulfilled the rest of the simulation of as well.
+and the initial conditions satisfy Gauss's laws \eqref{eq:gauss-law} and \eqref{eq:gauss-law-for-B},
+then they are automatically satisfied throughout the rest of the simulation as well.
 
 \section{Field propagator}
 
-Purpose of the field propagator is to evolve electric field $\ve E$ and magnetic field $\ve B$
+The purpose of the field propagator is to evolve the electric field $\ve E$ and magnetic field $\ve B$
 according to equations \eqref{eq:maxwell-faraday} and \eqref{eq:ampere-maxwell-law}.
-Typically this is achieved with finite-difference time domain (FDTD)
-discretizations on a Yee mesh \cite{yee_numerical_1966}.
-This means that the electromagnetic fields are staggered in time and space
-in order to calculate derivatives using centered finite-difference
-seen in the section~\ref{sec:finite-difference}.
-In this section we'll derive the second order accurate FDTD
-update equations for electric and magnetic fields.
+This is typically achieved using finite-difference time-domain (FDTD)
+discretizations on a Yee mesh~\cite{yee_numerical_1966}..
+In this approach,
+the electromagnetic fields are staggered in both time
+and space to compute derivatives using centered finite differences,
+as described in section~\ref{sec:finite-difference}.
+In this section, we derive the second-order accurate FDTD
+update equations for the electric and magnetic fields.
 
 \subsection{Yee mesh\label{sec:yee-mesh}}
 
-In Yee mesh vertecies are located at:
+In a Yee mesh, the vertices are located at:
 \begin{align}
   \label{eq:yee-vertex-locations}
   \ve x_{m,n,l}
   = m \Delta x_0 \hat{\ve e}_0 + n \Delta x_1\hat{\ve e}_1 + l \Delta x_2 \hat{\ve e}_2
 \end{align}
-where $\Delta x_i$ is the grid spacing in $\hat{\ve e}_i$ direction,
-$\hat{\ve e}_i$ denotes the orthogonal unit vectors and $m,n,l \in \mathbb{N}$.
-Electric field components $E_i$ and electric current density componentes $J_i$
-are stored at locations:
+where $\Delta x_i$ is the grid spacing in the $\hat{\ve e}_i$ direction,
+$\hat{\ve e}_i$ denotes the orthogonal unit vectors, and $m,n,l \in \mathbb{N}$.
+Electric field components $E_i$ and current density componentes $J_i$
+are stored at:
 \begin{align}
   \label{eq:yee-E-locations}
   \ve x^{E_i}_{m,n,l} = \ve x_{m,n,l} + \frac{1}{2}\Delta x_i \hat{\ve e}_i =
@@ -94,37 +97,37 @@ and magnetic field components $B_i$ are stored at:
     \ve x_{m+\frac12, n+\frac12, l} \quad & i=2
   \end{cases}
 \end{align}
-See figure \ref{fig:yee-mesh} for schematic picture of the Yee mesh.
+See figure \ref{fig:yee-mesh} for a schematic picture of the Yee mesh.
 
-Most common way to solve equations Eq.~\eqref{eq:maxwell-faraday} and \eqref{eq:ampere-maxwell-law}
-numerically is explicit leapfrog algorithm \cite{verboncoeur_particle_2005,langdon_plasma_1991}.
-With leapfrog algorithm in addition to space staggering the fields are staggered in time.
-Electric fields and current densitites are defined at times $s\Delta t$
-and magnetic fields are defined at times $\left(s + \frac12\right)\Delta t$
-where $s \in \mathbb{N}$ and $\Delta t$ is the lenght of a one time step.
-The time staggering creates the problem for pushing particles,
-because it needs them from the same point in time.
-To achive this magnetic field is usually updated in two steps with time steps $\frac12\Delta t$.
-Particle pushing is performed between these two updates.
+The most common way to solve equations~\eqref{eq:maxwell-faraday} and~\eqref{eq:ampere-maxwell-law}
+numerically is the explicit leapfrog algorithm~\cite{verboncoeur_particle_2005,langdon_plasma_1991}.
+In the leapfrog algorithm, in addition to spatial staggering, the fields are also staggered in time.
+Electric fields and current densities are defined at times $s\Delta t$,
+while magnetic fields are defined at times $\left(s + \frac12\right)\Delta t$,
+where $s \in \mathbb{N}$ and $\Delta t$ is the length of one time step.
+This time staggering creates a challenge for particle pushing,
+which requires both fields at the same point in time.
+To address this, the magnetic field is usually updated in two half-steps of $\frac12\Delta t$,
+and particle pushing is performed between these updates.
 
-Because the components of electromagnetic fields are stored at different locations
-we can deduce the component solely from the location.
-Thus we'll adpot following short hand notation for componetns of
-$\ve E(t, \ve x)$ and $\ve B(t, \ve x)$:
+Because the components of the electromagnetic fields are stored at different locations,
+we can deduce the component solely from its position.
+Thus, we adopt the following shorthand notation for the components
+of $\ve E(t, \ve x)$ and $\ve B(t, \ve x)$:
 \begin{align}
   \label{eq:shorthad-index-notation}
   \xi^{T}_{N,M,L} \equiv \xi\left(T\Delta t, \ve x^\xi_{N,M,L} \right)
 \end{align}
-where $\xi$ is either $E$ or $B$.
+where $\xi$ denotes either $E$ or $B$.
 For example $E^{s}_{n,m,l+\frac12}
 = E_2\left(s\Delta t, \ve x^{E_2}_{n,m,l}\right)$
 and $B^{s+\frac12}_{n+\frac12,m,l+\frac12}
 = B_1\left(\left(s+\frac12 \right)\Delta t, \ve x^{B_1}_{n,m,l}\right)$.
-With this notation we can generally write the second order accurate
+With this notation, we can generally write the second-order accurate
 centered finite-difference temporal and spatial derivatives \eqref{eq:centered-fd}.
-For the temporal derivative $h = \frac12 \Delta t$ and
-for the spatial derivative in $\hat{\ve e}_i$ direction $h = \frac12 \Delta x_i$.
-Thus we generally get that:
+For the temporal derivative, $h = \frac12 \Delta t$,
+and for the spatial derivative, in the $\hat{\ve e}_i$ direction, $h = \frac12 \Delta x_i$.
+Thus, we obtain:
 \begin{align}
   \label{eq:yee-temporal-derivative}
   \Delta t\partial_t\xi^{T}_{N,M,L} &\approx \xi^{T+\frac12}_{N,M,L} - \xi^{T-\frac12}_{N,M,L}\\
@@ -141,20 +144,21 @@ Thus we generally get that:
     \xi^{T}_{N,M,L+\frac12} - \xi^{T}_{N,M,L-\frac12}
   \end{bmatrix}
 \end{align}
-Note that in the next subsection we'll be evaluating derivatives $\partial_{\mu}\xi$
-at specific locations where on the Yee mesh there might not be $\xi$ at that location.
-However, we'll be using the centered finite-difference for the derivatives
-and it happens that we'll only need the field components at such locations
-that the components in the Yee mesh are precisely what we need.
+
+Note that in the next subsection we will evaluate derivatives $\partial_{\mu}\xi$
+at specific locations where, on the Yee mesh,the field $\xi$ may not be directly defined.
+However, we will use centered finite differences for these derivatives,
+and it turns out that we only require field components
+at positions where the Yee mesh provides exactly the components we need.
 
 \subsection{Finite-difference time domain}
 
-We want now to apply the finite-difference derivatives~\eqref{eq:yee-temporal-derivative}
-and~\eqref{eq:yee-spatial-derivative} to the dynamical Maxwell's equations~\eqref{eq:maxwell-faraday}
-and~\eqref{eq:ampere-maxwell-law} inorder to get rules for updating the fields in time.
-Forgetting the current density for a while\footnote{We can always add the current to the electric field
-  as they are stored at the same location and time in the Yee mesh.}
-they both are in form which at time $T\Delta t$ and point $\ve x_{N,M,L}$ can be written as:
+We now apply the finite-difference derivatives~\eqref{eq:yee-temporal-derivative}
+and~\eqref{eq:yee-spatial-derivative} to the dynamical Maxwell equations~\eqref{eq:maxwell-faraday}
+and~\eqref{eq:ampere-maxwell-law} in order to derive rules for updating the fields in time.
+Ignoring the current density for the moment\footnote{We can always add the current to the electric field,
+  as they are stored at the same location and time in the Yee mesh.},
+both equations can be written in a form that, at time $T\Delta t$ and position $\ve x_{N,M,L}$ becomes:
 \begin{align}
   \partial_t
   \begin{bmatrix}
@@ -171,9 +175,9 @@ they both are in form which at time $T\Delta t$ and point $\ve x_{N,M,L}$ can be
     \partial_{x_0}\nu^T_{N,M,L} - \partial_{x_1}\mu^T_{N,M,L}
   \end{bmatrix}
 \end{align}
-Now we can apply the second order accurate central finite-difference
+Now we apply the second-order accurate centered finite-difference
 derivatives~\eqref{eq:yee-temporal-derivative} and~\eqref{eq:yee-spatial-derivative}
-on the Yee mesh and obtain update equations:
+on the Yee mesh to obtain the update equations:
 \begin{equation}
   \label{eq:fdtd2-generic-update}
   \begin{split} 
@@ -195,13 +199,12 @@ on the Yee mesh and obtain update equations:
   \end{bmatrix}
   \end{split}
 \end{equation}
-where we have used the one dimensional Courant numbers for different direction
-$\hat{c}_i\equiv \frac{c\Delta t}{\Delta x_i}$.
+where we have used the one-dimensional Courant numbers for different directions,
+defined as $\hat{c}_i\equiv \frac{c\Delta t}{\Delta x_i}$.
 
-Now we can read the actual update equations for $\ve E$ and $\ve B$
-from equation~\eqref{eq:fdtd2-generic-update} by evaluating its components
-at specific locations in time and space.
-Firstly we'll subtitute:
+Now we can extract the actual update equations for $\ve E$ and $\ve B$
+from equation~\eqref{eq:fdtd2-generic-update}
+by evaluating their components at specific locations in time and space. First, we substitute:
 \begin{align}
   \begin{bmatrix}
     \alpha \\ \beta \\ \gamma
@@ -245,7 +248,7 @@ and obtain:
   \end{bmatrix}
 \end{split}
 \end{equation}
-and secondly we'll substitute:
+and second, we substitute:
 \begin{align}
   \begin{bmatrix}
     \alpha \\ \beta \\ \gamma
@@ -290,107 +293,106 @@ and obtain (with the current density added back in):
 \end{split}
 \end{equation}
 
-As already noted at the end of Yee mesh subsection \ref{sec:yee-mesh}
-we note that the update equations \eqref{eq:fdtd2-B-update} and \eqref{eq:fdtd2-E-update}
-do not contain any values that would not be present on a Yee mesh.
+As noted at the end of subsection \ref{sec:yee-mesh} on the Yee mesh,
+the update equations \eqref{eq:fdtd2-B-update} and \eqref{eq:fdtd2-E-update}
+do not require any values that are not already present on the Yee mesh.
 
 \input{chapters/yee-mesh}
 
 \section{Field interpolator}\label{sec:field-interpolator}
 
-Before the paritcle can be pushed the electromagnetic fields on the discrete Yee mesh
-have to interpolated to the continuous particle locations.
-There exists different interpolation schemes with varying accuracy and computational costs.
-GPU port of Runko uses linear interpolation.
+Before a particle can be pushed, the electromagnetic fields on the discrete Yee mesh
+must be interpolated to the continuous particle positions.
+Various interpolation schemes exists,offering different levels of accuracy and computational cost.
+The GPU port of Runko uses linear interpolation.
 
-The interpolation is done for the fields $\ve E$ and $\ve B$ which are located
+The interpolation is performed for the fields $\ve E$ and $\ve B$, which are located
 on the Yee mesh according to~\eqref{eq:yee-E-locations} and \eqref{eq:yee-B-locations}.
-The interpolation could be done directly from those locations to the particle positions.
-However, it common to first compute $\ve E$ and $\ve B$
+Wile interpolation could be done directly from those locations to the particle locations,
+it is common practice to first compute $\ve E$ and $\ve B$
 at the Yee mesh vertex locations~\eqref{eq:yee-vertex-locations},
 for example via simple spatial averaging.
-This make defining and implementing interpolators simpler
-in addition to reducing short wavelength noise~\cite{langdon_plasma_1991}.
+This approach simplifies the definition and implementation of interpolators
+and helps reduce short-wavelength noise~\cite{langdon_plasma_1991}.
 
-We can now write interpolation of a generic function $f$
-defined on the grid vertecies~\eqref{eq:yee-vertex-locations}
-to a arbitrary point $\ve x$:
+We can now express the interpolation of a generic function $f$,
+defined on the grid vertices~\eqref{eq:yee-vertex-locations},
+to an arbitrary point $\ve x$:
 \begin{align}
   f(\ve x) =
   \Delta V \sum_{n,m,l} f_{n,m,l} S'\left(\ve x_{n, m, l}, \ve x\right)
 \end{align}
-where $\Delta V = \prod_i \Delta x_i$, $f_{n,m,l} \equiv f(\ve x_{n,m,l})$ and
-and $S'$ is the weighing function which is normalized such that at every position\footnote{
-  This normalization is the convention used in~\cite{langdon_plasma_1991} which
-  makes the grid contain the same amount of charge as the particles have:
+where $\Delta V = \prod_i \Delta x_i$, $f_{n,m,l} \equiv f(\ve x_{n,m,l})$, and
+and $S'$ is the weighting function, normalized such that at every position\footnote{
+  This normalization follows the convention used in~\cite{langdon_plasma_1991},
+  ensuring that the grid contains the same total charge as the particles:
   \begin{align}
   \int_V \rho dV \approx
   \Delta V\sum_{n,m,l}\rho_{n,m,l} =
   \Delta V\sum_{n,m,l}\sum_j q_j S'(\ve x_{n,m,l}, \ve x_j) = \sum_j q_j
   \end{align}
-  where sum over $j$ is over all particles and $\ve x_j$ are the particle positions.
+  where the sum over $j$ runs over all particles, and $\ve x_j$ denotes the particle positions.
 }:
 \begin{align}
   \Delta V \sum_{n,m,l}S' \left(\ve x_{n, m, l}, \ve x\right) = 1
 \end{align}
-The choise of the shape function $S'$ determines the interpolation scheme.
-Usually the interpolation is done independently in every direction.
+The choice of the shape function $S'$ determines the interpolation scheme.
+Typically, the interpolation is performed independently in each spatial direction.
 In such cases:
 \begin{align}
   S'(\ve X, \ve x) = S(X_0 - x_0)S(X_1 - x_1)S(X_2 - x_2)
 \end{align}
 
 B-splines are commonly used as the weighing functions $S(x)$.
-Starting from zeroth order B-spline one can calculate B-splines with arbitrary high order
-but usually only the lowest order splines are used.
-The first four are plotted in the figure \ref{fig:spline-plot}.
-Choise of the zeroth order B-spline is equivalent to just using the value from the nearest grid point
-and in turn choise of the first order B-spline is eqivalent to linear interpolation.
+Starting from the zeroth-order B-spline, one can construct B-splines with arbitrary high order,
+although typically only the lowest-order splines are used.
+The first four are shown in figure \ref{fig:spline-plot}.
+Choosing the zeroth order B-spline is equivalent to using the value from the nearest grid point,
+while choosing the first-order B-spline corresponds to linear interpolation.
 
 \begin{figure}[h]
   \centering
   \includegraphics{chapters/spline.pdf}
-  \caption{Zeroth, first, second and third order B-spline weighing functions $S$.
-    The higher the order the smoother the B-spline is.
+  \caption{Zeroth-, first-, second-, and third-order B-spline weighing functions $S$.
+    Higher-order B-splines produce smoother interpolation.
   }
   \label{fig:spline-plot}
 \end{figure}
 
 \section{Particle pusher}
 
-The positions and velocities of particles are updated according to
+The positions and velocities of particles are updated according to equations
 equations~\eqref{eq:newton-lorentz-vel} and~\eqref{eq:newton-lorentz}.
-This procedure is called particle pushing and different numerical methods
-for doing it are called particle pushers.
-Similar to the fields the particle pushers often utilize the leapfrog scheme
-so the particle positions are stored at times $s\Delta t$ and velocities at
+This procedure is called particle pushing,
+and the numerical methods used for it are referred to as particle pushers.
+Similar to the field updates, particle pushers often employ the leapfrog scheme,
+so particle positions are stored at times $s\Delta t$ and velocities at
 times $\left(s+\frac12\right)\Delta t$.
-Applying the second order accurate centered finite-difference~\eqref{eq:centered-fd}
-to the equations~\eqref{eq:newton-lorentz} and~\eqref{eq:newton-lorentz-vel}
-with $h=\frac12 \Delta t$ we can solve for the update equations:
+Applying the second-order accurate centered finite-difference~\eqref{eq:centered-fd}
+to equations~\eqref{eq:newton-lorentz} and~\eqref{eq:newton-lorentz-vel}
+with $h=\frac12 \Delta t$, we can solve for the update equations:
 \begin{align}
   \label{eq:particle-update-pos}
-  \ve x^{s+1} &= \ve x^{s} + \Delta t \ve v(\ve u^{s+\frac12}) = \\
+  \ve x^{s+1} &= \ve x^{s} + \Delta t \ve v(\ve u^{s+\frac12}) \\
   \label{eq:particle-update-vel}
   \ve u^{s+\frac12} &= \ve u^{s-\frac12}
                       + \Delta t\frac{q}{m}\left(\ve E^s + \bar{\ve v}^s\times\ve B^s\right)
 \end{align}
-where the superscripts denote the time step similar to equation~\eqref{eq:shorthad-index-notation}
-and $\bar{\ve v}^s$ is a some average for coordinate velocity at time $s\Delta t$.
-In order to close the system it has to be expressed as a function of the other quantaties.
+where the superscripts denote the time step, similar to equation~\eqref{eq:shorthad-index-notation},
+and $\bar{\ve v}^s$ represents some average for coordinate velocity at times $s\Delta t$.
+To close the system, this average must be expressed as a function of the other quantaties.
 
 There are multiple different options for calculating $\bar{\ve v}^s$
 corresponding to the different particle pushers.
-The common problem is that the expressions usually contain $\ve u^{s+\frac12}$
-which seem to make the update equation~\eqref{eq:particle-update-vel} implicit.
-However, different pushers have procedures which enable to solve~\eqref{eq:particle-update-vel}
-in steps such that the methods stay explicit.
+The common challenge is that the expressions often involve $\ve u^{s+\frac12}$,
+which appears to make the update equation~\eqref{eq:particle-update-vel} implicit.
+However, various pushers have procedures that allow solving~\eqref{eq:particle-update-vel}
+in steps, keeping the method explicit.
 
-In this section we will compare properties Boris pusher (1960)~\cite{boris_relativistic_1960},
-Vay's method (2008)~\cite{vay_simulation_2008} and
+In this section, we compare properties of the Boris pusher (1960)~\cite{boris_relativistic_1960},
+Vay's method (2008)~\cite{vay_simulation_2008}, and
 Higuera-Cary method (2017)~\cite{higuera_structure-preserving_2017}.
-As the pusher implemented in the GPU port of Runko,
-we will go through the Boris pusher in more detail.
+Since the GPU port of Runko uses the Boris pusher, we will examine it in more detail.
 
 \subsection{Properties}
 
@@ -398,91 +400,100 @@ We begin by listing the choises for $\bar{\ve v}^s$.
 The Boris pusher uses:
 \begin{align}
   \label{eq:boris-avg-vel}
-  \bar{\ve v}^s_b \equiv \frac{\ve u^{s+\frac12} + \ve u^{s-\frac12}}{2\gamma^s}
+  \bar{\ve v}^s_b \equiv \frac{\ve v(u^{s+\frac12} - \boldsymbol{\epsilon}^{s+\frac12})
+  + \ve v(u^{s-\frac12} + \boldsymbol{\epsilon}^{s-\frac12}}{2\gamma^s}
 \end{align}
+where $\boldsymbol{\epsilon}^s = \frac{q\Delta t\ve E^s}{2m}$
+is the change of coordinate velocity due to the electric field in half a time step.
+It is assumed that the vectors $u^{s\pm\frac12} \mp \boldsymbol{\epsilon}^{s\pm\frac12}$
+share the same length.
 Vay's method uses:
 \begin{align}
   \bar{\ve v}^s_v \equiv
   \frac{ \ve v^{s-\frac12}  + \ve v^{s+\frac12}}{2}
 \end{align}
-And lastly Higuera-Cary method uses:
+and, Higuera-Cary method uses:
 \begin{align}
   \bar{\ve v}^s_{hc} \equiv \ve v \left( \frac{\ve u^{s-\frac12} + \ve u^{s+\frac12}}{2} \right)
 \end{align}
 
-The choises for $\bar{\ve v}^s$ seems to be very similar but
-the methods have different properties which are important for physical accuracy.
-As the underlying physical system is Hamiltonian
-the solutions residue on a symplectic manifold in phase space~\cite{goldstein_classical_2014}.
-Symplectic integrators are those which solutions are on the symplectic manifold.
-Kolmogrov-Arnold-Moser theorem provides them with guarantee
-that the long term evolutions stay physically accurate\footnote{
-  Defining what symplectic manifold
-  and what physicaslly accurate long term evolution of Hamiltonian system
-  means is outside of the scope of this theses.
+The choices for $\bar{\ve v}^s$ appear very similar;
+however, the methods possess distinct properties that are crucial for physical accuracy.
+Since the underlying physical system is Hamiltonian,
+the solutions lie on a symplectic manifold in phase space~\cite{goldstein_classical_2014}.
+Symplectic integrators are those whose solutions remain on this symplectic manifold.
+The Kolmogorov–Arnold–Moser theorem guarantees that their long-term evolution
+preserves physical accuracy\footnote{
+  Defining what a symplectic manifold is
+  and what constitutes a physically accurate long-term evolution of a Hamiltonian system
+  lies outside the scope of this thesis.
 }.
-Unfortunately there is no known explicit sympletic integrator
-for charged particle motion in arbitrary electromagnetic fields~\cite{higuera_structure-preserving_2017}.
-However, integrators can be phase space volume-preserving
-which prevents attractors and repellers in the integrated system.
+Unfortunately, no explicit symplectic integrator is currently known for charged-particle motion
+in arbitrary electromagnetic fields~\cite{higuera_structure-preserving_2017}.
+Nevertheless, integrators can be designed to be phase-space volume-preserving,
+which prevents the emergence of attractors and repellers in the integrated system.
 
-The Boris pusher is volume-preserving while Vay's method is not.
-Conversly Vay's method computes the $\ve E \times \ve B$ drift correctly while The Boris pusher does not.
-Higuera-Cary method on the other hand posses both of these properties.
-What is common between these is that they all conserve energy in absent of electric field
-and that they are second order accurate in time.
-Computationally the Boris pusher is the simplest while Vay's and Higuera-Cary methods
-have similar complexity.
+The Boris pusher is volume-preserving, whereas Vay’s method is not.
+Conversely, Vay’s method computes the $\ve E \times \ve B$ drift correctly,
+while the Boris pusher does not.
+The Higuera–Cary method, on the other hand, possesses both of these properties.
+A common feature among all three methods is that
+they conserve energy in the absence of an electric field and are second-order accurate in time.
+From a computational perspective, the Boris pusher is the fastest,
+whereas Vay’s and Higuera–Cary methods exhibit similar computational const.
 
 \subsection{Boris pusher}
 
-We begin by inserting~\eqref{eq:boris-avg-vel} to~\eqref{eq:particle-update-vel}
-while switching to a notation where we drop superscripts $s$ and change superscripts
-$s+\frac12\rightarrow f$ and $s-\frac12 \rightarrow i$:
+We begin by substituting~\eqref{eq:boris-avg-vel} into~\eqref{eq:particle-update-vel}
+and adopting a notation in which
+we drop the superscript $s$ and replace superscripts
+$s+\frac12$ with $f$ and $s-\frac12$ with $i$:
 \begin{align}
   \label{eq:boris-derivation-1}
   \ve u^f - \ve u^i
   %&= \frac{q\Delta t}{m}\left(\ve E + \frac{\ve u^f + \ve u^i}{2c\gamma}\times\ve B\right) \\
   &= 2\boldsymbol{\epsilon} + \eta(\ve u^f + \ve u^i) \times \hat{\ve B}
 \end{align}
-where we have defined $\boldsymbol{\epsilon} = \frac{q\Delta t\ve E}{2m}$,
+where we define $\boldsymbol{\epsilon} = \frac{q\Delta t\ve E}{2m}$,
 $\eta = \frac{q\Delta t B}{2mv\gamma}$ and the unit vector $\hat{\ve B} = \ve BB^{-1}$.
+Note that the same Lorentz factor is shared between $u^f$ and $u^i$
+because we assume they have the same length.
 We want to find a way to evaluate~\eqref{eq:boris-derivation-1}
-without using implicit methods, i.e. we want to find a way to evaluate the RHS
-without actually needing $\ve u^f$.
+without using implicit methods; that is,
+we seek to evaluate the right-hand side without explicitly requiring $\ve u^f$.
 
-We will define vectors $\ve u_+ = \ve u^f - \boldsymbol{\epsilon}$
+We define the vectors $\ve u_+ = \ve u^f - \boldsymbol{\epsilon}$
 and $\ve u_- = \ve u^i + \boldsymbol{\epsilon}$,
-thus equation \eqref{eq:boris-derivation-1} can be written as:
+thus equation \eqref{eq:boris-derivation-1} can be rewritten as:
 \begin{align}
+  \label{eq:dirty-fix}
   \ve u_+ - \ve u_- &= \eta(\ve u_+ + \ve u_-) \times \hat{\ve B}
 \end{align}
-We note that the above equation does not contain any components along $\hat{\ve B}$.
-Denoting vector components in the plane perpendicular to $\hat{\ve B}$ with prime
+We note that the above equation~\eqref{eq:dirty-fix} contains no components along $\hat{\ve B}$.
+Denoting vector components in the plane perpendicular to $\hat{\ve B}$ with a prime,
 we can write:
 \begin{align}
   \label{eq:boris-derivation-2}
   \ve u_+ - \ve u_- = \ve u'_+ - \ve u'_- &= \eta(\ve u'_+ + \ve u'_-) \times \hat{\ve B}
 \end{align}
-We can deduce that vectors $\ve u'_+ - \ve u'_-$ and $\ve u'_+ + \ve u'_-$
-are perpendicular to each other
-and by taking dot product of the equation with $\ve u'_+ + \ve u'_-$
-we can deduce that $u'_+ = u'_-$.
-Denoting angle between vectors $\ve u'_+$ and $\ve u'_-$ with $\theta$
-we can draw diagram of the vectors which can be seen in the figure~\ref{fig:boris}
-to which we have added helper vectors $\ve h$, $\ve L_0$, $\ve L_1$ and $\ve u'_- \times \ve b$
-such that $\ve L_0$ and $\ve L_1$ are perependicular to each other,
-$\ve b = b \hat{\ve B}$
+We can deduce that the vectors $\ve u'_+ - \ve u'_-$ and $\ve u'_+ + \ve u'_-$
+are perpendicular to each other.
+By taking the dot product of the equation~\eqref{eq:boris-derivation-2} with $\ve u'_+ + \ve u'_-$
+we find that $u'_+ = u'_-$.
+Let $\theta$ denote the angle between the vectors $\ve u'_+$ and $\ve u'_-$.
+A diagram illustrating these vectors is shown in figure~\ref{fig:boris},
+where we have added helper vectors $\ve h$, $\ve L_0$, $\ve L_1$ and $\ve u'_- \times \ve b$,
+such that $\ve L_0$ and $\ve L_1$ are perpendicular to each other,
+$\ve b = b \hat{\ve B}$,
 and that $\ve L_0 + \ve L_1 = \ve u'_- + \ve u'_- \times \ve b$.
-Using these definitions we can note that $b = \tan\frac{\theta}{2} = \frac{h}{L_1}$
+Using these definitions we note that $b = \tan\frac{\theta}{2} = \frac{h}{L_1}$
 and $L_0 = L_1 b^2$.
-
 
 \input{chapters/boris}
 
-We can now try to express $\ve u'_+ - \ve u'_-$
-using another way than in~\eqref{eq:boris-derivation-2}.
-Particularly we can write:
+We now attempt to express $\ve u'_+ - \ve u'_-$
+in a different form than in~\eqref{eq:boris-derivation-2}.
+Specifically, we can write:
 \begin{equation}
 \begin{split}
   \ve u'_+ - \ve u'_- &= 2h \hat{\ve L}_1 \times \hat{\ve B}
@@ -491,7 +502,7 @@ Particularly we can write:
 \end{split}
 \end{equation}
 where $\hat{\ve L}_1$ is the unit vector along $\ve L_1$.
-We can now go back to $\ve u^f$ and $\ve u^i$ to obtain the Boris pusher update equation:
+We now return to $\ve u^f$ and $\ve u^i$ to obtain the Boris pusher update equation:
 \begin{equation}
 \begin{split}
   \ve u^f &= \ve u^i + 2 \boldsymbol{\epsilon}
@@ -501,101 +512,117 @@ We can now go back to $\ve u^f$ and $\ve u^i$ to obtain the Boris pusher update 
             + \left(\ve u^i + \frac{q\Delta t \ve E}{2m}\right) \times \ve b\right)\times \ve b
 \end{split}
 \end{equation}
-Only thing left is to determine the angle $\theta$ between $\ve u_+$ and $\ve u_-$
-in order to calculate $\ve b$. To do this we use physical argument.
-Namely that the angle should correspond to the gyrotation due to the magnetic field.
-Thus using the cyclotrone frequency~\eqref{eq:cyclotron-frequency}:
+The only remaining step is to determine the angle $\theta$ between $\ve u_+$ and $\ve u_-$
+in order to calculate $\ve b$. To do this, we use physical argument:
+the angle should correspond to the gyrotation induced by the magnetic field.
+Thus, using the cyclotron frequency from~\eqref{eq:cyclotron-frequency}:
 \begin{align}
   \theta \approx \Delta t \omega_B = \frac{qB\Delta t}{mc\gamma}
 \end{align}
-Assuming that the time step is small:
+Under the assumption of a sufficiently small time step:
 \begin{align}
   b  = \tan\frac\theta 2 = \frac\theta 2 + O(\Delta t^3) = \frac{qB\Delta t}{2mc\gamma} + O(\Delta t^3)
 \end{align}
 
 \section{Current deposition}
-
-The moving particles generate current according to the equation~\eqref{eq:current-density}
-which is deposited to the Yee mesh.
-As stated in the physical model section~\ref{sec:pic-physical-model}
-if this deposition is charge conserving and the equations~\eqref{eq:gauss-law}
-and~\eqref{eq:gauss-law-for-B} are satisfied initially then they are satisfied at all later times.
-For example similarly that was done in section~\ref{sec:field-interpolator}
-we could interpolate velocities of particles to neighboring grid locations.
+The moving particles generate a current according to equation~\eqref{eq:current-density},
+which is deposited onto the Yee mesh.
+As stated in section ~\ref{sec:pic-physical-model},
+if this deposition is charge-conserving and equations~\eqref{eq:gauss-law} and~\eqref{eq:gauss-law-for-B}
+are satisfied initially,
+then they remain satisfied at all later times.
+For example, similar to the approach in section~\ref{sec:field-interpolator},
+we could interpolate particle velocities to neighboring grid locations.
 However, this scheme is not charge
 conserving~\cite{hockney_computer_1981,langdon_plasma_1991,blinne_new_2003}.
-For current depositer to be charge conserving it should fulfill the continuity equation
-for the charge density which is derived by taking time derivative
-of the Gauss's law~\eqref{eq:gauss-law}:
+For a current deposition method to be charge-conserving,
+it must satisfy the continuity equation for charge density,
+which is derived by taking the time derivative of Gauss’s law~\eqref{eq:gauss-law}:
 \begin{align}
   \label{eq:current-density-continuation}
   \frac{\partial \rho}{\partial t} + \nabla \cdot \ve J = 0
 \end{align}
 
-There exists several different charge conserving current deposition schemes.
-GPU port of Runko implements so called ZigZag method as steted in~\cite{blinne_new_2003}
-so this section focuses on it and the Villasenor-Buneman method~\cite{villasenor_rigorous_1992}
-as the ZigZag method can be concidered as an optimized version of it.
-Other notable scheme is so called density decomposition by Esirkepov~\cite{esirkepov_exact_2001}.
-Eastood gives general treatment of charge conserving methods
-using finite-element methods is given by Eastwood in~\cite{eastwood_virtual_1991}
-and its extension to curvilinear coordinates in~\cite{eastwood_body-fitted_1995}.
-Both the Villasenor-Buneman method and the density decomposition by Esirkepov can be considered
-as special cases of the Eastwood scheme.
+Several charge-conserving current deposition schemes exist.
+The GPU port of Runko implements the so-called ZigZag method,
+as described in~\cite{blinne_new_2003},
+so this section focuses on that method and the Villasenor–Buneman method~\cite{villasenor_rigorous_1992},
+since the ZigZag method can be considered an optimized version of the latter.
+Another notable scheme is the density decomposition method proposed by
+Esirkepov~\cite{esirkepov_exact_2001}.
+A general treatment of charge-conserving methods using finite-element techniques is provided by
+Eastwood in~\cite{eastwood_virtual_1991},
+with an extension to curvilinear coordinates in~\cite{eastwood_body-fitted_1995}.
+Both the Villasenor–Buneman method and Esirkepov’s density decomposition
+can be regarded as special cases of Eastwood’s scheme.
 
-In Villasenor-Buneman method can only be applied if the particle trjaectory in one time step
-stays within the same Yee mesh cell (see figure~\ref{fig:yee-mesh}).
-If it does not then its movement is split into a multiple shorter moves which each
-stay within one cell. Difference between Villasenor-Buneman method
-and ZigZag method is how this splitting is done.
-In Villasenor-Buneman the movement within one time step is concidered straight
-which is then split at the Yee mesh cell faces.
-In ZigZag method the movement is concidered to happen via so called relay-point.
-The benefit of the relay point is that regardless of particle position and velocity
-the current deposition is calculated the same way,
-while in Villasenor-Buneman method has to be implemented using conditionals
-that check if the particle is crossin zero, one or two cell faces.
+These methods can be considered special cases of Eastwood’s scheme.
+The Villasenor–Buneman method can only be applied if the particle trajectory during one time step
+remains within the same Yee mesh cell (see figure~\ref{fig:yee-mesh}).
+If it does not, the movement is split into multiple shorter segments,
+each confined to a single cell.
+The difference between the Villasenor–Buneman method and the ZigZag method
+lies in how this splitting is performed.
+In the Villasenor–Buneman method,
+the particle’s motion within one time step is assumed to be straight and is split
+at the Yee mesh cell faces.
+In contrast, the ZigZag method assumes the motion occurs via a so-called relay point.
+The advantage of the relay point is that,
+regardless of particle position and velocity,
+the current deposition is calculated in a uniform manner,
+whereas the Villasenor–Buneman method requires conditional checks
+to determine whether the particle crosses zero, one, or two cell faces.
 
-We note that the 3D ZigZag method stated in the original paper
-seems to be defective and not actually charge conserving.
-How the method adds the current for movement which is bounded to a one cell
-is otherwise equal to the Villasenor-Buneman method (equations (35-37))
-but misses the term proportional to $\delta x_0 \delta x_1 \delta x_2$ where
-$\delta x_i$ is the change in particles position in one time step.
-Thus only the diagonal trajectories are affected.
-This agrees what is reported in~\cite{steiniger_ez:_2023}.
-Preliminary testing indicates that the 3D ZigZag method can be fixed
-by adding the missing correction terms but subject requires further studies.
+We note that the 3D ZigZag method described in the original paper
+appears to be defective and not truly charge-conserving.
+For particle motion confined to a single cell,
+the method adds current in the same way as the Villasenor–Buneman method
+(equations (35–37) in~\cite{villasenor_rigorous_1992}),
+but it omits the term proportional to $\delta x_0 \delta x_1 \delta x_2$,
+where $\delta x_i$ represents the change in the particle’s position during one time step.
+As a result, only diagonal trajectories are affected.
+This observation is consistent with the findings reported in~\cite{steiniger_ez:_2023}.
+Preliminary tests indicate that the 3D ZigZag method can be corrected by adding the missing terms,
+but this subject requires further studies.
 
 \subsection{Villasenor-Buneman method}
 
-Villasenor-Buneman method assummes that the particles contribute the current to the Yee mesh
-as axis aligned box with uniform charge distribution that is the same size as a one Yee mesh cell.
-Therefore, the particles effective charge density is
+The Villasenor–Buneman method assumes that particles contribute current to the Yee mesh
+as an axis-aligned box with a uniform charge distribution, equal in size to one Yee mesh cell.
+Therefore, the particle’s effective charge density is
 $\rho_q = \frac{q}{\Delta x_0\Delta x_1\Delta x_2}$.
-The charge is conserved on each cell of a discrete grid that is same size as the Yee mesh
-but is staggered half a grid spacings to each direction compared to it.
-When particle moves inside a single Yee mesh cell it generates current through
-exactly eight faces of the new grid. The eight faces with the Yee mesh cell
-can be seen in figure~\ref{fig:yee-mesh-current-deposition}.
-The currents through each face can be integrated in such a way
-that the total current into a single cell in a one time step
-is equal to the change of charge in the cell.
-Thus the continutity equation for charge density~\eqref{eq:current-density-continuation}
-is fulfilled when integrated over a one cell.
+Charge is conserved on each cell of a discrete grid that has the same size as the Yee mesh
+but is staggered by half a grid spacing in each direction.
+When a particle moves inside a single Yee mesh cell,
+it generates current through exactly eight faces of this staggered grid.
+These eight faces, along with the Yee mesh cell,
+are shown in figure~\ref{fig:yee-mesh-current-deposition}.
+The currents through each face can be integrated so that
+the total current into a single cell during one time step equals the change in charge within that cell.
+Thus, the continuity equation for charge density~\eqref{eq:current-density-continuation}
+is satisfied when integrated over a single cell.
 
 \input{chapters/yee-mesh-current-deposition}
 
-Let the particle positions $\ve x^s$ and $\ve x^{s+1}$ be located in the same cell
+Let the particle positions $\ve x^s$ and $\ve x^{s+1}$ lie within the same cell,
 which is spanned between $\ve x_{m,n,l}$ and $\ve x_{m+1,n+1,l+1}$.
-Let $\delta \ve x \equiv \ve x^{s+1} - \ve x^{s}$,
-$r^s_i \equiv \left(\ve x^s - \ve x_{m,n,l}\right)_i$ define local coorinates inside the cell
-and $\bar{\ve r} \equiv \frac{\ve r^{s+1} + \ve r^s}2$.
-Now if we assume that the particle with charge $q$ moves at constant velocity during the one time step
-we can write its trajectory as $\ve r(t) = \bar{\ve r} + t\delta \ve x$
-where $t \in \left[-\frac12, \frac12\right]$
-then the integrals for the total currents in $\hat{\ve e}_0$ direction
-at $\ve x^{E_0}_{m,n+1,l+1}$ can be written as:
+Define:
+\begin{align}
+  \delta \ve x \equiv \ve x^{s+1} - \ve x^{s} \\
+  r^s_i \equiv \left(\ve x^s - \ve x_{m,n,l}\right)_1
+\end{align}
+and let:
+\begin{align}
+  \bar{\ve r} \equiv \frac{\ve r^{s+1} + \ve r^s}2
+\end{align}
+denote the midpoint in local coordinates inside the cell.
+Assuming that the particle with charge $q$ moves at constant velocity during one time step,
+its trajectory can be written as
+\begin{align}
+  \ve r(t) = \bar{\ve r} + t\delta \ve x,\quad t \in \left[-\frac12, \frac12\right].
+\end{align}
+Then, the integrals for the total currents in $\hat{\ve e}_0$ direction
+at $\ve x^{E_0}_{m,n+1,l+1}$ can be expressed as:
 \begin{equation}
   \label{eq:total-current-flux-1}
 \begin{split}
@@ -605,8 +632,8 @@ at $\ve x^{E_0}_{m,n+1,l+1}$ can be written as:
     &= \rho_q\delta x_0\bar{r}_1\bar{r}_2 + \frac{\delta x_0 \delta x_1 \delta x_2}{12}
 \end{split}
 \end{equation}
-where we used the notation from the Yee mesh subsection~\ref{sec:yee-mesh} for the current density.
-Similarly for the three other faces:
+where we use the notation from the Yee mesh subsection~\ref{sec:yee-mesh} for the current density.
+Similarly, for the three other faces:
 \begin{equation}
 \begin{split}
   \label{eq:total-current-flux-2}
@@ -621,10 +648,9 @@ Similarly for the three other faces:
   &= \rho_q\delta x_0\bar{r}_1(1-\bar{r}_2) - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}
 \end{split}
 \end{equation}
-Contributions to the other other components can be obtained from
-equations~\eqref{eq:total-current-flux-1} and~\eqref{eq:total-current-flux-2}
-by cyclic rotation of the indices.
-For components in $\hat{\ve e}_1$ direction:
+Contributions to the other components can be obtained from equations~\eqref{eq:total-current-flux-1}
+and~\eqref{eq:total-current-flux-2} by cclic permutation of the indices.
+For the components in the $\hat{\ve e}_1$:
 \begin{equation}
 \begin{split}
   \label{eq:total-current-flux-3}
@@ -638,7 +664,7 @@ For components in $\hat{\ve e}_1$ direction:
   &= \rho_q\delta x_1(1 - \bar{r}_0)\bar{r}_2 - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}
 \end{split}
 \end{equation}
-and for components in $\hat{\ve e}_2$ direction:
+and for the components in the $\hat{\ve e}_2$ direction:
 \begin{equation}
 \begin{split}
   \label{eq:total-current-flux-4}
@@ -652,37 +678,37 @@ and for components in $\hat{\ve e}_2$ direction:
   &= \rho_q\delta x_2\bar{r}_0(1-\bar{r}_1) - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}
 \end{split}
 \end{equation}
-Scheme of what is integrated can be seen in figure~\ref{fig:vb-integrals}.
+A scheme of what is integrated is shown in figure~\ref{fig:vb-integrals}.
 
 \input{chapters/yee-mesh-current-deposition-old}
 
-To check that the scheme is charge conserving we can calculate
-the total change of charge in the volume spanned from $\ve x_{m+1,n+1,l+1}$ to
-$\ve x_{m+2,n+2,l+2}$ in one time step:
+To verify that the scheme is charge-conserving,
+we calculate the total change in charge within the volume spanned from $\ve x_{m+1,n+1,l+1}$ to
+$\ve x_{m+2,n+2,l+2}$ during one time step:
 \begin{equation}
 \begin{split}
   \Delta q &=
   J_{m+\frac12, n+1, l+1} \Delta x_1\Delta x_2 +
   J_{m+1, n+\frac12, l+1} \Delta x_0\Delta x_2 +
                J_{m+1, n+1, l+\frac12} \Delta x_0\Delta x_1 \\
-  &= \rho_q\left(r^{s+1}_0r^{s+1}_1r^{s+1}_2 - r^{s}_0r^{s}_1r^{s}_2\right)
+  &= \rho_q\left(r^{s+1}_0r^{s+1}_1r^{s+1}_2 - r^{s}_0r^{s}_1r^{s}_2\right).
 \end{split}
 \end{equation}
-which is precicesly the difference between the particle fractions
-protruding into the cell before and after the move.
-Similar check can be performed for the other cells as well.
-We note that due to linearity of the current continuity equation
-this check for one particle is enough to confirm that the whole method is charge conserving.
+This is precicesly the difference between the particle's charge contribution
+into the cell before and after the move.
+A similar check can be performed for the other cells as well.
+We note that, due to the linearity of the current continuity equation,
+this check for a single particle is sufficient to confirm that the entire method is charge conserving.
 
 \subsection{ZigZag method}
 
-As stated earlier inorder to apply Villasenor-Buneman method the particle trajectory
-must be split to subtrajectories which each stay within one Yee mesh cell.
-In ZigZag method these subtrajectories go via a relay point.
-Assuming that the particle position $\ve x^s$ is in the cell spanned between
+As stated earlier, in order to apply the Villasenor–Buneman method,
+the particle trajectory must be split into sub-trajectories, each confined to a single Yee mesh cell.
+In the ZigZag method, these sub-trajectories pass through a relay point.
+Assuming that the particle position $\ve x^s$ lies in the cell spanned between
 $\ve x_{a_0,a_1,a_2}$ and $\ve x_{a_0+1,a_1+1,a_2+1}$,
-and position $\ve x^{s+1}$ is in the cell spanned between
-$\ve x_{b_0,b_1,b_2}$ and $\ve x_{b_0+1,b_1+1,b_2+1}$
+and the position $\ve x^{s+1}$ lies in the cell spanned between
+$\ve x_{b_0,b_1,b_2}$ and $\ve x_{b_0+1,b_1+1,b_2+1}$,
 then the relay point $\ve R$ is defined as:
 \begin{equation}
   R_i =
@@ -691,21 +717,21 @@ then the relay point $\ve R$ is defined as:
     \Delta x_i\max(a_i, b_i) \quad & \text{for } a_i \neq b_i
   \end{cases}
 \end{equation}
-Figure~\ref{fig:zigzags} demonstrates the four different types of movements with the relay point.
+Figure~\ref{fig:zigzags} illustrates the four different types of movements involving the relay point.
 
 \input{chapters/path-splitting}
 
-The benefit of splitting the trajectory like this is that the relay point coordinates
-can be computed without using conditionals using the algorithm~\cite{blinne_new_2003}:
+The benefit of splitting the trajectory in this manner is that the relay point coordinates
+can be computed without conditionals by using the algorithm described in~\cite{blinne_new_2003}.
 \begin{align}
   R_i = \Delta x_i \min\left[
   \min(a_i, b_i) + 1, \max\left\{\max(a_i, b_i), \frac{x^{s}_i+x^{s+1}_i}{2}\right\}
   \right]
 \end{align}
-After the relay point has been determined
-then the Villasenor-Buneman method can be applied for both subtrajectories.
-Compared to the original scheme shown in~\cite{villasenor_rigorous_1992}
-the conditionless ZigZag achives superior performance.
+After the relay point has been determined,
+the Villasenor–Buneman method can be applied to both subtrajectories.
+Compared to the original scheme described in~\cite{villasenor_rigorous_1992},
+the conditionless ZigZag achieves superior performance.
 
 
 %%% Local Variables:
