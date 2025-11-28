@@ -15,7 +15,7 @@ and another by Birdsall and Langdon \cite{langdon_plasma_1991} in 1991,
 the latter remains one of the most complete treatments of PIC to date.
 
 Basic PIC consists of many smaller tasks, for which numerous algorithms exist with varying trade-offs.
-A high-level overview of a single PIC time step is shown in figure~\ref{fig:pic-scheme}.
+A high-level overview of a single PIC time step is shown in Figure~\ref{fig:pic-scheme}.
 In this chapter,
 we describe the tasks illustrated in the figure in more detail
 and discuss the set of algorithms implemented in the GPU port of Runko.
@@ -97,7 +97,7 @@ and magnetic field components $B_i$ are stored at:
     \ve x_{m+\frac12, n+\frac12, l} \quad & i=2
   \end{cases}
 \end{align}
-See figure \ref{fig:yee-mesh} for a schematic picture of the Yee mesh.
+See Figure~\ref{fig:yee-mesh} for a schematic picture of the Yee mesh.
 
 The most common way to solve equations~\eqref{eq:maxwell-faraday} and~\eqref{eq:ampere-maxwell-law}
 numerically is the explicit leapfrog algorithm~\cite{verboncoeur_particle_2005,langdon_plasma_1991}.
@@ -346,7 +346,7 @@ In such cases:
 B-splines are commonly used as the weighing functions $S(x)$.
 Starting from the zeroth-order B-spline, one can construct B-splines with arbitrary high order,
 although typically only the lowest-order splines are used.
-The first four are shown in figure \ref{fig:spline-plot}.
+The first four are shown in Figure~\ref{fig:spline-plot}.
 Choosing the zeroth order B-spline is equivalent to using the value from the nearest grid point,
 while choosing the first-order B-spline corresponds to linear interpolation.
 
@@ -481,7 +481,7 @@ are perpendicular to each other.
 By taking the dot product of the equation~\eqref{eq:boris-derivation-2} with $\ve u'_+ + \ve u'_-$
 we find that $u'_+ = u'_-$.
 Let $\theta$ denote the angle between the vectors $\ve u'_+$ and $\ve u'_-$.
-A diagram illustrating these vectors is shown in figure~\ref{fig:boris},
+A diagram illustrating these vectors is shown in Figure~\ref{fig:boris},
 where we have added helper vectors $\ve h$, $\ve L_0$, $\ve L_1$ and $\ve u'_- \times \ve b$,
 such that $\ve L_0$ and $\ve L_1$ are perpendicular to each other,
 $\ve b = b \hat{\ve B}$,
@@ -558,7 +558,7 @@ can be regarded as special cases of Eastwood’s scheme.
 
 These methods can be considered special cases of Eastwood’s scheme.
 The Villasenor–Buneman method can only be applied if the particle trajectory during one time step
-remains within the same Yee mesh cell (see figure~\ref{fig:yee-mesh}).
+remains within the same Yee mesh cell (see Figure~\ref{fig:yee-mesh}).
 If it does not, the movement is split into multiple shorter segments,
 each confined to a single cell.
 The difference between the Villasenor–Buneman method and the ZigZag method
@@ -596,7 +596,7 @@ but is staggered by half a grid spacing in each direction.
 When a particle moves inside a single Yee mesh cell,
 it generates current through exactly eight faces of this staggered grid.
 These eight faces, along with the Yee mesh cell,
-are shown in figure~\ref{fig:yee-mesh-current-deposition}.
+are shown in Figure~\ref{fig:yee-mesh-current-deposition}.
 The currents through each face can be integrated so that
 the total current into a single cell during one time step equals the change in charge within that cell.
 Thus, the continuity equation for charge density~\eqref{eq:current-density-continuation}
@@ -678,7 +678,7 @@ and for the components in the $\hat{\ve e}_2$ direction:
   &= \rho_q\delta x_2\bar{r}_0(1-\bar{r}_1) - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}
 \end{split}
 \end{equation}
-A scheme of what is integrated is shown in figure~\ref{fig:vb-integrals}.
+A scheme of what is integrated is shown in Figure~\ref{fig:vb-integrals}.
 
 \input{chapters/yee-mesh-current-deposition-old}
 
