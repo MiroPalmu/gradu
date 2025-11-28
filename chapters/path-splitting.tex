@@ -1,0 +1,269 @@
+\begin{figure}[h!]
+\centering
+\begin{minipage}[c][0.2\textheight][c]{0.45\textwidth}
+\begin{tikzpicture}[scale=1]
+
+  \def\CellWidth{2}
+
+  \coordinate (origo) at (0, 0, 0);
+  \coordinate (B1) at (origo);
+  \coordinate (B2) at ($ (B1) + (\CellWidth, 0, 0) $);
+  \coordinate (B3) at ($ (B1) + (0, \CellWidth, 0) $);
+  \coordinate (B4) at ($ (B1) + (\CellWidth, \CellWidth, 0) $);
+
+  \coordinate (F1) at ($ (B1) + (0, 0, -\CellWidth) $);
+  \coordinate (F2) at ($ (B2) + (0, 0, -\CellWidth) $);
+  \coordinate (F3) at ($ (B3) + (0, 0, -\CellWidth) $);
+  \coordinate (F4) at ($ (B4) + (0, 0, -\CellWidth) $);
+
+  \coordinate (Shift) at (\CellWidth, 0, 0);
+
+  \coordinate (SB1) at ($ (B1) + (Shift) $);
+  \coordinate (SB2) at ($ (B2) + (Shift) $);
+  \coordinate (SB3) at ($ (B3) + (Shift) $);
+  \coordinate (SB4) at ($ (B4) + (Shift) $);
+
+  \coordinate (SF1) at ($ (F1) + (Shift) $);
+  \coordinate (SF2) at ($ (F2) + (Shift) $);
+  \coordinate (SF3) at ($ (F3) + (Shift) $);
+  \coordinate (SF4) at ($ (F4) + (Shift) $);
+
+  \coordinate (PA) at ($ (0.4 * \CellWidth, 0.13 * \CellWidth, -0.02 * \CellWidth) $);
+  \coordinate (PB) at ($ (SB1) + (0.2 * \CellWidth, 0.5 * \CellWidth, -0.8 * \CellWidth) $);
+
+  \coordinate (relay) at ($ (SB1) + (0, 0.13 * \CellWidth + 0.185 * \CellWidth, -0.41 * \CellWidth) $);
+
+  \draw[->] (PA) -- (PB);
+  \draw[->] (PA) -- (relay);
+  \draw[->] (relay) -- (PB);
+
+  % Yee mesh cell lines
+
+  \draw[] (B1) -- (B2);
+  \draw[] (B1) -- (B3);
+  \draw[] (B2) -- (B4);
+  \draw[] (B3) -- (B4);
+
+  \draw[] (F1) -- (F2);
+  \draw[] (F1) -- (F3);
+  \draw[] (F2) -- (F4);
+  \draw[] (F3) -- (F4);
+
+  \draw[] (B1) -- (F1);
+  \draw[] (B2) -- (F2);
+  \draw[] (B3) -- (F3);
+  \draw[] (B4) -- (F4);
+
+  \draw[] (SB1) -- (SB2);
+  \draw[] (SB1) -- (SB3);
+  \draw[] (SB2) -- (SB4);
+  \draw[] (SB3) -- (SB4);
+
+  \draw[] (SF1) -- (SF2);
+  \draw[] (SF1) -- (SF3);
+  \draw[] (SF2) -- (SF4);
+  \draw[] (SF3) -- (SF4);
+
+  \draw[] (SB1) -- (SF1);
+  \draw[] (SB2) -- (SF2);
+  \draw[] (SB3) -- (SF3);
+  \draw[] (SB4) -- (SF4);
+
+
+\end{tikzpicture}
+\end{minipage}
+\begin{minipage}[c][0.2\textheight][c]{0.45\textwidth}
+\begin{tikzpicture}[scale=1]
+
+  \def\CellWidth{2}
+
+  \coordinate (origo) at (0, 0, 0);
+  \coordinate (B1) at (origo);
+  \coordinate (B2) at ($ (B1) + (\CellWidth, 0, 0) $);
+  \coordinate (B3) at ($ (B1) + (0, \CellWidth, 0) $);
+  \coordinate (B4) at ($ (B1) + (\CellWidth, \CellWidth, 0) $);
+
+  \coordinate (F1) at ($ (B1) + (0, 0, -\CellWidth) $);
+  \coordinate (F2) at ($ (B2) + (0, 0, -\CellWidth) $);
+  \coordinate (F3) at ($ (B3) + (0, 0, -\CellWidth) $);
+  \coordinate (F4) at ($ (B4) + (0, 0, -\CellWidth) $);
+
+  \coordinate (PA) at ($ (0.6 * \CellWidth, 0.2 * \CellWidth, 0.2 * \CellWidth) $);
+  \coordinate (PB) at ($ (B1) + (0.75 * \CellWidth, 0.75 * \CellWidth, -0.2 * \CellWidth) $);
+
+  \coordinate (relay) at ($ (PA)!0.5!(PB) $);
+
+  \draw[->] (PA) -- (PB);
+  \draw[->] (PA) -- (relay);
+  \draw[->] (relay) -- (PB);
+
+  % Yee mesh cell lines
+
+  \draw[] (B1) -- (B2);
+  \draw[] (B1) -- (B3);
+  \draw[] (B2) -- (B4);
+  \draw[] (B3) -- (B4);
+
+  \draw[] (F1) -- (F2);
+  \draw[] (F1) -- (F3);
+  \draw[] (F2) -- (F4);
+  \draw[] (F3) -- (F4);
+
+  \draw[] (B1) -- (F1);
+  \draw[] (B2) -- (F2);
+  \draw[] (B3) -- (F3);
+  \draw[] (B4) -- (F4);
+
+\end{tikzpicture}
+\end{minipage}
+\newline
+\begin{minipage}[c][0.2\textheight][c]{0.45\textwidth}
+\begin{tikzpicture}[scale=1, 3d view={-10}{15}]
+
+  \def\CellWidth{2}
+
+  \coordinate (origo) at (0, 0, 0);
+  \coordinate (B1) at (origo);
+  \coordinate (B2) at ($ (B1) + (\CellWidth, 0, 0) $);
+  \coordinate (B3) at ($ (B1) + (0, \CellWidth, 0) $);
+  \coordinate (B4) at ($ (B1) + (\CellWidth, \CellWidth, 0) $);
+
+  \coordinate (F1) at ($ (B1) + (0, 0, \CellWidth) $);
+  \coordinate (F2) at ($ (B2) + (0, 0, \CellWidth) $);
+  \coordinate (F3) at ($ (B3) + (0, 0, \CellWidth) $);
+  \coordinate (F4) at ($ (B4) + (0, 0, \CellWidth) $);
+
+  \coordinate (Shift) at (\CellWidth, \CellWidth, \CellWidth);
+
+  \coordinate (SB1) at ($ (B1) + (Shift) $);
+  \coordinate (SB2) at ($ (B2) + (Shift) $);
+  \coordinate (SB3) at ($ (B3) + (Shift) $);
+  \coordinate (SB4) at ($ (B4) + (Shift) $);
+
+  \coordinate (SF1) at ($ (F1) + (Shift) $);
+  \coordinate (SF2) at ($ (F2) + (Shift) $);
+  \coordinate (SF3) at ($ (F3) + (Shift) $);
+  \coordinate (SF4) at ($ (F4) + (Shift) $);
+
+  \coordinate (PA) at ($ (0.7 * \CellWidth, 0.5 * \CellWidth, 0.2 * \CellWidth) $);
+  \coordinate (PB) at ($ (SF2) - (0.4 * \CellWidth, 0.4 * \CellWidth, 0.2 * \CellWidth) $);
+
+  \draw[->] (PA) -- (PB);
+  \draw[->] (PA) -- (SB1);
+  \draw[->] (SB1) -- (PB);
+
+  % Yee mesh cell lines
+
+  \draw[] (B1) -- (B2);
+  \draw[] (B1) -- (B3);
+  \draw[] (B2) -- (B4);
+  \draw[] (B3) -- (B4);
+
+  \draw[] (F1) -- (F2);
+  \draw[] (F1) -- (F3);
+  \draw[] (F2) -- (F4);
+  \draw[] (F3) -- (F4);
+
+  \draw[] (B1) -- (F1);
+  \draw[] (B2) -- (F2);
+  \draw[] (B3) -- (F3);
+  \draw[] (B4) -- (F4);
+
+  \draw[] (SB1) -- (SB2);
+  \draw[] (SB1) -- (SB3);
+  \draw[] (SB2) -- (SB4);
+  \draw[] (SB3) -- (SB4);
+
+  \draw[] (SF1) -- (SF2);
+  \draw[] (SF1) -- (SF3);
+  \draw[] (SF2) -- (SF4);
+  \draw[] (SF3) -- (SF4);
+
+  \draw[] (SB1) -- (SF1);
+  \draw[] (SB2) -- (SF2);
+  \draw[] (SB3) -- (SF3);
+  \draw[] (SB4) -- (SF4);
+
+
+\end{tikzpicture}
+\end{minipage}
+\begin{minipage}[c][0.2\textheight][c]{0.45\textwidth}
+\begin{tikzpicture}[scale=1]
+
+  \def\CellWidth{2}
+
+  \coordinate (origo) at (0, 0, 0);
+  \coordinate (B1) at (origo);
+  \coordinate (B2) at ($ (B1) + (\CellWidth, 0, 0) $);
+  \coordinate (B3) at ($ (B1) + (0, \CellWidth, 0) $);
+  \coordinate (B4) at ($ (B1) + (\CellWidth, \CellWidth, 0) $);
+
+  \coordinate (F1) at ($ (B1) + (0, 0, -\CellWidth) $);
+  \coordinate (F2) at ($ (B2) + (0, 0, -\CellWidth) $);
+  \coordinate (F3) at ($ (B3) + (0, 0, -\CellWidth) $);
+  \coordinate (F4) at ($ (B4) + (0, 0, -\CellWidth) $);
+
+  \coordinate (Shift) at (\CellWidth, 0, -\CellWidth);
+
+  \coordinate (SB1) at ($ (B1) + (Shift) $);
+  \coordinate (SB2) at ($ (B2) + (Shift) $);
+  \coordinate (SB3) at ($ (B3) + (Shift) $);
+  \coordinate (SB4) at ($ (B4) + (Shift) $);
+
+  \coordinate (SF1) at ($ (F1) + (Shift) $);
+  \coordinate (SF2) at ($ (F2) + (Shift) $);
+  \coordinate (SF3) at ($ (F3) + (Shift) $);
+  \coordinate (SF4) at ($ (F4) + (Shift) $);
+
+  \coordinate (PA) at ($ (0.6 * \CellWidth, 0.2 * \CellWidth, -0.02 * \CellWidth) $);
+  \coordinate (PB) at ($ (SB1) + (0.75 * \CellWidth, 0.75 * \CellWidth, -0.2 * \CellWidth) $);
+
+  \coordinate (relay) at ($ (SB1) + (0, 0.2 * \CellWidth + 0.325 * \CellWidth, 0) $);
+
+  \draw[->] (PA) -- (PB);
+  \draw[->] (PA) -- (relay);
+  \draw[->] (relay) -- (PB);
+
+  % Yee mesh cell lines
+
+  \draw[] (B1) -- (B2);
+  \draw[] (B1) -- (B3);
+  \draw[] (B2) -- (B4);
+  \draw[] (B3) -- (B4);
+
+  \draw[] (F1) -- (F2);
+  \draw[] (F1) -- (F3);
+  \draw[] (F2) -- (F4);
+  \draw[] (F3) -- (F4);
+
+  \draw[] (B1) -- (F1);
+  \draw[] (B2) -- (F2);
+  \draw[] (B3) -- (F3);
+  \draw[] (B4) -- (F4);
+
+  \draw[] (SB1) -- (SB2);
+  \draw[] (SB1) -- (SB3);
+  \draw[] (SB2) -- (SB4);
+  \draw[] (SB3) -- (SB4);
+
+  \draw[] (SF1) -- (SF2);
+  \draw[] (SF1) -- (SF3);
+  \draw[] (SF2) -- (SF4);
+  \draw[] (SF3) -- (SF4);
+
+  \draw[] (SB1) -- (SF1);
+  \draw[] (SB2) -- (SF2);
+  \draw[] (SB3) -- (SF3);
+  \draw[] (SB4) -- (SF4);
+
+
+\end{tikzpicture}
+\end{minipage}
+\caption{The four types of movements in ZigZag current depositer.}
+\label{fig:zigzags}
+\end{figure}
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "../gradu"
+%%% End:

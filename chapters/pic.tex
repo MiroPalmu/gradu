@@ -1,5 +1,5 @@
-\chapter{Particle-in-Cell}
 
+\chapter{Particle-in-Cell}
 For plasma simulation to include kinetic effects, it somehow has to be able to describe
 evolution of the full distributions function. In PIC this is achieved by sampling
 it with macroparticles then evolving them based on Maxwell's equations.
@@ -20,7 +20,7 @@ a set of algorithms implemented in the GPU port of Runko.
 
 \input{chapters/pic-scheme}
 
-\section{Overview of underlying physics}
+\section{Physical model}\label{sec:pic-physical-model}
 
 In relativistic PIC the equations of motion for a particle
 with three-velocity $\ve u$, coordinate velocity $\ve v(\ve u)$, mass $m$ and charge $q$
@@ -294,10 +294,9 @@ As already noted at the end of Yee mesh subsection \ref{sec:yee-mesh}
 we note that the update equations \eqref{eq:fdtd2-B-update} and \eqref{eq:fdtd2-E-update}
 do not contain any values that would not be present on a Yee mesh.
 
-
 \input{chapters/yee-mesh}
 
-\section{Field interpolator}
+\section{Field interpolator}\label{sec:field-interpolator}
 
 Before the paritcle can be pushed the electromagnetic fields on the discrete Yee mesh
 have to interpolated to the continuous particle locations.
@@ -515,7 +514,198 @@ Assuming that the time step is small:
 \end{align}
 
 \section{Current deposition}
-\section{Current filter}
+
+The moving particles generate current according to the equation~\eqref{eq:current-density}
+which is deposited to the Yee mesh.
+As stated in the physical model section~\ref{sec:pic-physical-model}
+if this deposition is charge conserving and the equations~\eqref{eq:gauss-law}
+and~\eqref{eq:gauss-law-for-B} are satisfied initially then they are satisfied at all later times.
+For example similarly that was done in section~\ref{sec:field-interpolator}
+we could interpolate velocities of particles to neighboring grid locations.
+However, this scheme is not charge
+conserving~\cite{hockney_computer_1981,langdon_plasma_1991,blinne_new_2003}.
+For current depositer to be charge conserving it should fulfill the continuity equation
+for the charge density which is derived by taking time derivative
+of the Gauss's law~\eqref{eq:gauss-law}:
+\begin{align}
+  \label{eq:current-density-continuation}
+  \frac{\partial \rho}{\partial t} + \nabla \cdot \ve J = 0
+\end{align}
+
+There exists several different charge conserving current deposition schemes.
+GPU port of Runko implements so called ZigZag method as steted in~\cite{blinne_new_2003}
+so this section focuses on it and the Villasenor-Buneman method~\cite{villasenor_rigorous_1992}
+as the ZigZag method can be concidered as an optimized version of it.
+Other notable scheme is so called density decomposition by Esirkepov~\cite{esirkepov_exact_2001}.
+Eastood gives general treatment of charge conserving methods
+using finite-element methods is given by Eastwood in~\cite{eastwood_virtual_1991}
+and its extension to curvilinear coordinates in~\cite{eastwood_body-fitted_1995}.
+Both the Villasenor-Buneman method and the density decomposition by Esirkepov can be considered
+as special cases of the Eastwood scheme.
+
+In Villasenor-Buneman method can only be applied if the particle trjaectory in one time step
+stays within the same Yee mesh cell (see figure~\ref{fig:yee-mesh}).
+If it does not then its movement is split into a multiple shorter moves which each
+stay within one cell. Difference between Villasenor-Buneman method
+and ZigZag method is how this splitting is done.
+In Villasenor-Buneman the movement within one time step is concidered straight
+which is then split at the Yee mesh cell faces.
+In ZigZag method the movement is concidered to happen via so called relay-point.
+The benefit of the relay point is that regardless of particle position and velocity
+the current deposition is calculated the same way,
+while in Villasenor-Buneman method has to be implemented using conditionals
+that check if the particle is crossin zero, one or two cell faces.
+
+We note that the 3D ZigZag method stated in the original paper
+seems to be defective and not actually charge conserving.
+How the method adds the current for movement which is bounded to a one cell
+is otherwise equal to the Villasenor-Buneman method (equations (35-37))
+but misses the term proportional to $\delta x_0 \delta x_1 \delta x_2$ where
+$\delta x_i$ is the change in particles position in one time step.
+Thus only the diagonal trajectories are affected.
+This agrees what is reported in~\cite{steiniger_ez:_2023}.
+Preliminary testing indicates that the 3D ZigZag method can be fixed
+by adding the missing correction terms but subject requires further studies.
+
+\subsection{Villasenor-Buneman method}
+
+Villasenor-Buneman method assummes that the particles contribute the current to the Yee mesh
+as axis aligned box with uniform charge distribution that is the same size as a one Yee mesh cell.
+Therefore, the particles effective charge density is
+$\rho_q = \frac{q}{\Delta x_0\Delta x_1\Delta x_2}$.
+The charge is conserved on each cell of a discrete grid that is same size as the Yee mesh
+but is staggered half a grid spacings to each direction compared to it.
+When particle moves inside a single Yee mesh cell it generates current through
+exactly eight faces of the new grid. The eight faces with the Yee mesh cell
+can be seen in figure~\ref{fig:yee-mesh-current-deposition}.
+The currents through each face can be integrated in such a way
+that the total current into a single cell in a one time step
+is equal to the change of charge in the cell.
+Thus the continutity equation for charge density~\eqref{eq:current-density-continuation}
+is fulfilled when integrated over a one cell.
+
+\input{chapters/yee-mesh-current-deposition}
+
+Let the particle positions $\ve x^s$ and $\ve x^{s+1}$ be located in the same cell
+which is spanned between $\ve x_{m,n,l}$ and $\ve x_{m+1,n+1,l+1}$.
+Let $\delta \ve x \equiv \ve x^{s+1} - \ve x^{s}$,
+$r^s_i \equiv \left(\ve x^s - \ve x_{m,n,l}\right)_i$ define local coorinates inside the cell
+and $\bar{\ve r} \equiv \frac{\ve r^{s+1} + \ve r^s}2$.
+Now if we assume that the particle with charge $q$ moves at constant velocity during the one time step
+we can write its trajectory as $\ve r(t) = \bar{\ve r} + t\delta \ve x$
+where $t \in \left[-\frac12, \frac12\right]$
+then the integrals for the total currents in $\hat{\ve e}_0$ direction
+at $\ve x^{E_0}_{m,n+1,l+1}$ can be written as:
+\begin{equation}
+  \label{eq:total-current-flux-1}
+\begin{split}
+  J_{m+\frac12, n + 1, l + 1}\Delta x_1 \Delta x_2 &= \rho_q\int_{r^s_0}^{r^{s+1}_0} r_1(t)r_2(t)dr_0 \\
+    &= \rho_q\int_{-\frac12}^{\frac12} \left(\bar{r}_1 + t\delta x_1\right)
+                             \left(\bar{r}_2 + t\delta x_2\right)\delta x_0dt \\
+    &= \rho_q\delta x_0\bar{r}_1\bar{r}_2 + \frac{\delta x_0 \delta x_1 \delta x_2}{12}
+\end{split}
+\end{equation}
+where we used the notation from the Yee mesh subsection~\ref{sec:yee-mesh} for the current density.
+Similarly for the three other faces:
+\begin{equation}
+\begin{split}
+  \label{eq:total-current-flux-2}
+  J_{m+\frac12, n, l}\Delta x_1 \Delta x_2
+  &= \rho_q\int_{r^s_0}^{r^{s+1}_0} (1 - r_1(t))(1 - r_2(t))dr_0 \\
+  &= \rho_q\delta x_0(1 - \bar{r}_1)(1 - \bar{r}_2) + \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12} \\
+  J_{m+\frac12, n, l+1}\Delta x_1 \Delta x_2
+  &= \rho_q\int_{r^s_0}^{r^{s+1}_0} (1 - r_1(t))r_2(t)dr_0 \\
+  &= \rho_q\delta x_0(1 - \bar{r}_1)\bar{r}_2 - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12} \\
+  J_{m+\frac12, n+1, l}\Delta x_1 \Delta x_2
+  &= \rho_q\int_{r^s_0}^{r^{s+1}_0} r_1(t)(1-r_2(t))dr_0 \\
+  &= \rho_q\delta x_0\bar{r}_1(1-\bar{r}_2) - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}
+\end{split}
+\end{equation}
+Contributions to the other other components can be obtained from
+equations~\eqref{eq:total-current-flux-1} and~\eqref{eq:total-current-flux-2}
+by cyclic rotation of the indices.
+For components in $\hat{\ve e}_1$ direction:
+\begin{equation}
+\begin{split}
+  \label{eq:total-current-flux-3}
+  J_{m+1, n +\frac12, l + 1}\Delta x_0 \Delta x_2
+  &= \rho_q\delta x_1\bar{r}_0\bar{r}_2 + \rho_q\frac{\delta x_0 \delta x_1 \delta x_2}{12} \\
+  J_{m, n+\frac12, l}\Delta x_0 \Delta x_2
+  &= \rho_q\delta x_1(1 - \bar{r}_0)(1 - \bar{r}_2) + \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12} \\
+  J_{m+1, n+\frac12, l}\Delta x_0 \Delta x_2
+  &= \rho_q\delta x_1\bar{r}_0(1-\bar{r}_2) - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12} \\
+  J_{m, n+\frac12, l+1}\Delta x_0 \Delta x_2
+  &= \rho_q\delta x_1(1 - \bar{r}_0)\bar{r}_2 - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}
+\end{split}
+\end{equation}
+and for components in $\hat{\ve e}_2$ direction:
+\begin{equation}
+\begin{split}
+  \label{eq:total-current-flux-4}
+  J_{m+1, n +1, l +\frac12}\Delta x_0 \Delta x_1
+  &= \rho_q\delta x_2\bar{r}_0\bar{r}_1 + \rho_q\frac{\delta x_0 \delta x_1 \delta x_2}{12} \\
+  J_{m, n, l+\frac12}\Delta x_0 \Delta x_1
+  &= \rho_q\delta x_2(1 - \bar{r}_0)(1 - \bar{r}_1) + \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12} \\
+  J_{m, n+1, l+\frac12}\Delta x_0 \Delta x_1
+  &= \rho_q\delta x_2(1 - \bar{r}_0)\bar{r}_1 - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12} \\
+  J_{m+1, n, l+\frac12}\Delta x_0 \Delta x_1
+  &= \rho_q\delta x_2\bar{r}_0(1-\bar{r}_1) - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}
+\end{split}
+\end{equation}
+Scheme of what is integrated can be seen in figure~\ref{fig:vb-integrals}.
+
+\input{chapters/yee-mesh-current-deposition-old}
+
+To check that the scheme is charge conserving we can calculate
+the total change of charge in the volume spanned from $\ve x_{m+1,n+1,l+1}$ to
+$\ve x_{m+2,n+2,l+2}$ in one time step:
+\begin{equation}
+\begin{split}
+  \Delta q &=
+  J_{m+\frac12, n+1, l+1} \Delta x_1\Delta x_2 +
+  J_{m+1, n+\frac12, l+1} \Delta x_0\Delta x_2 +
+               J_{m+1, n+1, l+\frac12} \Delta x_0\Delta x_1 \\
+  &= \rho_q\left(r^{s+1}_0r^{s+1}_1r^{s+1}_2 - r^{s}_0r^{s}_1r^{s}_2\right)
+\end{split}
+\end{equation}
+which is precicesly the difference between the particle fractions
+protruding into the cell before and after the move.
+Similar check can be performed for the other cells as well.
+We note that due to linearity of the current continuity equation
+this check for one particle is enough to confirm that the whole method is charge conserving.
+
+\subsection{ZigZag method}
+
+As stated earlier inorder to apply Villasenor-Buneman method the particle trajectory
+must be split to subtrajectories which each stay within one Yee mesh cell.
+In ZigZag method these subtrajectories go via a relay point.
+Assuming that the particle position $\ve x^s$ is in the cell spanned between
+$\ve x_{a_0,a_1,a_2}$ and $\ve x_{a_0+1,a_1+1,a_2+1}$,
+and position $\ve x^{s+1}$ is in the cell spanned between
+$\ve x_{b_0,b_1,b_2}$ and $\ve x_{b_0+1,b_1+1,b_2+1}$
+then the relay point $\ve R$ is defined as:
+\begin{equation}
+  R_i =
+  \begin{cases}
+    \frac{x^{s}_i+x^{s+1}_i}{2} \quad & \text{for } a_i = b_i \\
+    \Delta x_i\max(a_i, b_i) \quad & \text{for } a_i \neq b_i
+  \end{cases}
+\end{equation}
+Figure~\ref{fig:zigzags} demonstrates the four different types of movements with the relay point.
+
+\input{chapters/path-splitting}
+
+The benefit of splitting the trajectory like this is that the relay point coordinates
+can be computed without using conditionals using the algorithm~\cite{blinne_new_2003}:
+\begin{align}
+  R_i = \Delta x_i \min\left[
+  \min(a_i, b_i) + 1, \max\left\{\max(a_i, b_i), \frac{x^{s}_i+x^{s+1}_i}{2}\right\}
+  \right]
+\end{align}
+After the relay point has been determined
+then the Villasenor-Buneman method can be applied for both subtrajectories.
+Compared to the original scheme shown in~\cite{villasenor_rigorous_1992}
+the conditionless ZigZag achives superior performance.
 
 
 %%% Local Variables:

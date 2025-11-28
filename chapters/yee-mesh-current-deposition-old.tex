@@ -1,0 +1,346 @@
+\begin{figure}[h!]
+\begin{minipage}[c][0.4\textheight][c]{0.45\textwidth}
+\begin{tikzpicture}[scale=1]
+
+  \def\CellWidth{3.75}
+
+  \coordinate (origo) at (0, 0, 0);
+  \coordinate (B1) at (origo);
+  \coordinate (B2) at ($ (B1) + (\CellWidth, 0, 0) $);
+  \coordinate (B3) at ($ (B1) + (0, \CellWidth, 0) $);
+  \coordinate (B4) at ($ (B1) + (\CellWidth, \CellWidth, 0) $);
+
+  \coordinate (F1) at ($ (B1) + (0, 0, \CellWidth) $);
+  \coordinate (F2) at ($ (B2) + (0, 0, \CellWidth) $);
+  \coordinate (F3) at ($ (B3) + (0, 0, \CellWidth) $);
+  \coordinate (F4) at ($ (B4) + (0, 0, \CellWidth) $);
+
+  \def\alphaBegin{0.20}
+  \def\betaBegin{0.22}
+  \def\gammaBegin{0.14}
+
+  \def\alphaEnd{0.45}
+  \def\betaEnd{0.35}
+  \def\gammaEnd{0.3}
+
+  \coordinate (F1End) at (F1);
+  \coordinate (F2End) at ($ (F1)!\alphaEnd!(F2) $);
+  \coordinate (F3End) at ($ (F1)!\betaEnd!(F3) $);
+  \coordinate (F4End) at ($ (F2End) + (F3End) - (F1End) $);
+
+  \coordinate (B1End) at ($ (F1End) - (0, 0, \CellWidth * \gammaEnd) $);
+  \coordinate (B2End) at ($ (F2End) - (0, 0, \CellWidth * \gammaEnd) $);
+  \coordinate (B3End) at ($ (F3End) - (0, 0, \CellWidth * \gammaEnd) $);
+  \coordinate (B4End) at ($ (F4End) - (0, 0, \CellWidth * \gammaEnd) $);
+
+  \coordinate (F1Begin) at (F1);
+  \coordinate (F2Begin) at ($ (F1)!\alphaBegin!(F2) $);
+  \coordinate (F3Begin) at ($ (F1)!\betaBegin!(F3) $);
+  \coordinate (F4Begin) at ($ (F2Begin) + (F3Begin) - (F1Begin) $);
+
+  \coordinate (B1Begin) at ($ (F1Begin) - (0, 0, \CellWidth * \gammaBegin) $);
+  \coordinate (B2Begin) at ($ (F2Begin) - (0, 0, \CellWidth * \gammaBegin) $);
+  \coordinate (B3Begin) at ($ (F3Begin) - (0, 0, \CellWidth * \gammaBegin) $);
+  \coordinate (B4Begin) at ($ (F4Begin) - (0, 0, \CellWidth * \gammaBegin) $);
+
+  \def\IntX{0.80}
+  \def\IntY{0.05}
+  \def\IntZ{0.90}
+
+  \coordinate (IntXF1) at ($ (F1Begin)!\IntX!(F1End) $);
+  \coordinate (IntXF3) at ($ (F3Begin)!\IntX!(F3End) $);
+  \coordinate (IntXB1) at ($ (B1Begin)!\IntX!(B1End) $);
+  \coordinate (IntXB3) at ($ (B3Begin)!\IntX!(B3End) $);
+
+  \coordinate (IntYF1) at ($ (F1Begin)!\IntY!(F1End) $);
+  \coordinate (IntYF2) at ($ (F2Begin)!\IntY!(F2End) $);
+  \coordinate (IntYF3) at ($ (F3Begin)!\IntY!(F3End) $);
+  \coordinate (IntYF4) at ($ (F4Begin)!\IntY!(F4End) $);
+
+  \coordinate (IntZF1) at ($ (F1Begin)!\IntZ!(F1End) $);
+  \coordinate (IntZF2) at ($ (F2Begin)!\IntZ!(F2End) $);
+  \coordinate (IntZB1) at ($ (B1Begin)!\IntZ!(B1End) $);
+  \coordinate (IntZB2) at ($ (B2Begin)!\IntZ!(B2End) $);
+
+  % Cell lines
+  \draw (B1) -- (B2);
+  \draw (B1) -- (B3);
+  \draw (B2) -- (B4);
+  \draw (B3) -- (B4);
+
+  \draw (F1) -- (F2);
+  \draw (F1) -- (F3);
+  \draw (F2) -- (F4);
+  \draw (F3) -- (F4);
+
+  \draw (B1) -- (F1);
+  \draw (B2) -- (F2);
+  \draw (B3) -- (F3);
+  \draw (B4) -- (F4);
+
+  % End box lines
+
+  \draw[red] (B1End) -- (B2End);
+  \draw[red] (B1End) -- (B3End);
+  \draw[red] (B2End) -- (B4End);
+  \draw[red] (B3End) -- (B4End);
+
+  \draw[red] (F1End) -- (F2End);
+  \draw[red] (F1End) -- (F3End);
+  \draw[red] (F2End) -- (F4End);
+  \draw[red] (F3End) -- (F4End);
+
+  \draw[red] (B1End) -- (F1End);
+  \draw[red] (B2End) -- (F2End);
+  \draw[red] (B3End) -- (F3End);
+  \draw[red] (B4End) -- (F4End);
+
+
+  % Begin box lines
+
+  \draw[blue] (B1Begin) -- (B2Begin);
+  \draw[blue] (B1Begin) -- (B3Begin);
+  \draw[blue] (B2Begin) -- (B4Begin);
+  \draw[blue] (B3Begin) -- (B4Begin);
+
+  \draw[blue] (F1Begin) -- (F2Begin);
+  \draw[blue] (F1Begin) -- (F3Begin);
+  \draw[blue] (F2Begin) -- (F4Begin);
+  \draw[blue] (F3Begin) -- (F4Begin);
+
+  \draw[blue] (B1Begin) -- (F1Begin);
+  \draw[blue] (B2Begin) -- (F2Begin);
+  \draw[blue] (B3Begin) -- (F3Begin);
+  \draw[blue] (B4Begin) -- (F4Begin);
+
+
+  % Yee mesh
+
+  \def\FF{0.5}
+
+  \coordinate (YF1B1) at ($ (B1) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+  \coordinate (YF1B2) at ($ (B2) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+  \coordinate (YF1B3) at ($ (B3) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+  \coordinate (YF1B4) at ($ (B4) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+
+  \coordinate (YF1F1) at ($ (F1) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+  \coordinate (YF1F2) at ($ (F2) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+  \coordinate (YF1F3) at ($ (F3) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+  \coordinate (YF1F4) at ($ (F4) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+
+  % Yee mesh cell lines
+
+  \draw[densely dashed] (YF1B1) -- (YF1B2);
+  \draw[densely dashed] (YF1B1) -- (YF1B3);
+  \draw[densely dashed] (YF1B2) -- (YF1B4);
+  \draw[densely dashed] (YF1B3) -- (YF1B4);
+
+  \draw[densely dashed] (YF1F1) -- (YF1F2);
+  \draw[densely dashed] (YF1F1) -- (YF1F3);
+  \draw[densely dashed] (YF1F2) -- (YF1F4);
+  \draw[densely dashed] (YF1F3) -- (YF1F4);
+
+  \draw[densely dashed] (YF1B1) -- (YF1F1);
+  \draw[densely dashed] (YF1B2) -- (YF1F2);
+  \draw[densely dashed] (YF1B3) -- (YF1F3);
+  \draw[densely dashed] (YF1B4) -- (YF1F4);
+
+  \coordinate (alphaAx) at ($ (YF1F1)!0.5!(YF1F2) $);
+  \coordinate (betaAx) at ($ (YF1F1)!0.5!(YF1B1) $);
+  \coordinate (gammaAx) at ($ (YF1F1)!0.5!(YF1F3) $);
+
+  \draw[->] (YF1F1) -- (alphaAx) node[midway, above] {$r_0$};
+  \draw[->] (YF1F1) -- (betaAx) node[above left] {$r_1$};
+  \draw[->] (YF1F1) -- (gammaAx) node[midway, left] {$r_2$};
+
+\end{tikzpicture}
+\end{minipage}
+\begin{minipage}[c][0.4\textheight][c]{0.45\textwidth}
+\begin{tikzpicture}[scale=1]
+
+  \def\CellWidth{3.75}
+
+  \coordinate (origo) at (0, 0, 0);
+  \coordinate (B1) at (origo);
+  \coordinate (B2) at ($ (B1) + (\CellWidth, 0, 0) $);
+  \coordinate (B3) at ($ (B1) + (0, \CellWidth, 0) $);
+  \coordinate (B4) at ($ (B1) + (\CellWidth, \CellWidth, 0) $);
+
+  \coordinate (F1) at ($ (B1) + (0, 0, \CellWidth) $);
+  \coordinate (F2) at ($ (B2) + (0, 0, \CellWidth) $);
+  \coordinate (F3) at ($ (B3) + (0, 0, \CellWidth) $);
+  \coordinate (F4) at ($ (B4) + (0, 0, \CellWidth) $);
+
+  % \def\alphaBegin{0.60}
+  % \def\betaBegin{0.30}
+  % \def\gammaBegin{0.30}
+
+  \def\alphaBegin{0.60}
+  \def\betaBegin{0.30}
+  \def\gammaBegin{0.30}
+
+  \def\alphaEnd{0.45}
+  \def\betaEnd{0.45}
+  \def\gammaEnd{0.50}
+
+  \coordinate (F1End) at (F1);
+  \coordinate (F2End) at ($ (F1)!\alphaEnd!(F2) $);
+  \coordinate (F3End) at ($ (F1)!\betaEnd!(F3) $);
+  \coordinate (F4End) at ($ (F2End) + (F3End) - (F1End) $);
+
+  \coordinate (B1End) at ($ (F1End) - (0, 0, \CellWidth * \gammaEnd) $);
+  \coordinate (B2End) at ($ (F2End) - (0, 0, \CellWidth * \gammaEnd) $);
+  \coordinate (B3End) at ($ (F3End) - (0, 0, \CellWidth * \gammaEnd) $);
+  \coordinate (B4End) at ($ (F4End) - (0, 0, \CellWidth * \gammaEnd) $);
+
+  \coordinate (B4Begin) at (B4End);
+  \coordinate (B2Begin) at ($ (B4End)!\betaBegin!(B2End) $);
+  \coordinate (B3Begin) at ($ (B4End)!\alphaBegin!(B3End) $);
+  \coordinate (B1Begin) at ($ (B2Begin) + (B3Begin) - (B4Begin) $);
+
+  \coordinate (F1Begin) at ($ (B1Begin) + (0, 0, \CellWidth * \gammaBegin) $);
+  \coordinate (F2Begin) at ($ (B2Begin) + (0, 0, \CellWidth * \gammaBegin) $);
+  \coordinate (F3Begin) at ($ (B3Begin) + (0, 0, \CellWidth * \gammaBegin) $);
+  \coordinate (F4Begin) at ($ (B4Begin) + (0, 0, \CellWidth * \gammaBegin) $);
+
+  \def\IntX{0.80}
+  \def\IntY{0.05}
+  \def\IntZ{0.90}
+
+  \coordinate (IntXF1) at ($ (F1Begin)!\IntX!(F1End) $);
+  \coordinate (IntXF3) at ($ (F3Begin)!\IntX!(F3End) $);
+  \coordinate (IntXB1) at ($ (B1Begin)!\IntX!(B1End) $);
+  \coordinate (IntXB3) at ($ (B3Begin)!\IntX!(B3End) $);
+
+  \coordinate (IntYF1) at ($ (F1Begin)!\IntY!(F1End) $);
+  \coordinate (IntYF2) at ($ (F2Begin)!\IntY!(F2End) $);
+  \coordinate (IntYF3) at ($ (F3Begin)!\IntY!(F3End) $);
+  \coordinate (IntYF4) at ($ (F4Begin)!\IntY!(F4End) $);
+
+  \coordinate (IntZF1) at ($ (F1Begin)!\IntZ!(F1End) $);
+  \coordinate (IntZF2) at ($ (F2Begin)!\IntZ!(F2End) $);
+  \coordinate (IntZB1) at ($ (B1Begin)!\IntZ!(B1End) $);
+  \coordinate (IntZB2) at ($ (B2Begin)!\IntZ!(B2End) $);
+
+  % Cell lines
+  \draw (B1) -- (B2);
+  \draw (B1) -- (B3);
+  \draw (B2) -- (B4);
+  \draw (B3) -- (B4);
+
+  \draw (F1) -- (F2);
+  \draw (F1) -- (F3);
+  \draw (F2) -- (F4);
+  \draw (F3) -- (F4);
+
+  \draw (B1) -- (F1);
+  \draw (B2) -- (F2);
+  \draw (B3) -- (F3);
+  \draw (B4) -- (F4);
+
+  % End box lines
+
+  \draw[red] (B1End) -- (B2End);
+  \draw[red] (B1End) -- (B3End);
+  \draw[red] (B2End) -- (B4End);
+  \draw[red] (B3End) -- (B4End);
+
+  \draw[red] (F1End) -- (F2End);
+  \draw[red] (F1End) -- (F3End);
+  \draw[red] (F2End) -- (F4End);
+  \draw[red] (F3End) -- (F4End);
+
+  \draw[red] (B1End) -- (F1End);
+  \draw[red] (B2End) -- (F2End);
+  \draw[red] (B3End) -- (F3End);
+  \draw[red] (B4End) -- (F4End);
+
+
+  % Begin box lines
+
+  \draw[blue] (B1Begin) -- (B2Begin);
+  \draw[blue] (B1Begin) -- (B3Begin);
+  \draw[blue] (B2Begin) -- (B4Begin);
+  \draw[blue] (B3Begin) -- (B4Begin);
+
+  \draw[blue] (F1Begin) -- (F2Begin);
+  \draw[blue] (F1Begin) -- (F3Begin);
+  \draw[blue] (F2Begin) -- (F4Begin);
+  \draw[blue] (F3Begin) -- (F4Begin);
+
+  \draw[blue] (B1Begin) -- (F1Begin);
+  \draw[blue] (B2Begin) -- (F2Begin);
+  \draw[blue] (B3Begin) -- (F3Begin);
+  \draw[blue] (B4Begin) -- (F4Begin);
+
+  % Integration plane edges
+
+  \draw[<-,densely dashed] (F1Begin) -- (F1End);
+  \draw[<-,densely dashed] (F2Begin) -- (F2End);
+  \draw[<-,densely dashed] (F3Begin) -- (F3End);
+  \draw[<-,densely dashed] (B1Begin) -- (B1End);
+
+  % Integration planes
+
+  \draw[opacity=0,fill=orange,fill opacity=0.4] (IntXF1) -- (IntXB1) -- (IntXB3) -- (IntXF3) -- cycle;
+  \draw[opacity=0,fill=orange,fill opacity=0.4] (IntYF1) -- (IntYF3) -- (IntYF4) -- (IntYF2) -- cycle;
+  \draw[opacity=0,fill=orange,fill opacity=0.4] (IntZF1) -- (IntZF2) -- (IntZB2) -- (IntZB1) -- cycle;
+
+  % Yee mesh on on the original configuration
+
+  \def\FF{0.5}
+
+  \coordinate (YF1B1) at ($ (B1) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+  \coordinate (YF1B2) at ($ (B2) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+  \coordinate (YF1B3) at ($ (B3) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+  \coordinate (YF1B4) at ($ (B4) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+
+  \coordinate (YF1F1) at ($ (F1) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+  \coordinate (YF1F2) at ($ (F2) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+  \coordinate (YF1F3) at ($ (F3) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+  \coordinate (YF1F4) at ($ (F4) + (-\FF * \CellWidth, -\FF * \CellWidth, \FF * \CellWidth) $);
+
+  % Yee mesh on on the original configuration cell lines
+
+  \draw[densely dashed] (YF1B1) -- (YF1B2);
+  \draw[densely dashed] (YF1B1) -- (YF1B3);
+  \draw[densely dashed] (YF1B2) -- (YF1B4);
+  \draw[densely dashed] (YF1B3) -- (YF1B4);
+
+  \draw[densely dashed] (YF1F1) -- (YF1F2);
+  \draw[densely dashed] (YF1F1) -- (YF1F3);
+  % \draw[densely dashed] (YF1F2) -- (YF1F4);
+  % \draw[densely dashed] (YF1F3) -- (YF1F4);
+
+  \draw[densely dashed] (YF1B1) -- (YF1F1);
+  \draw[densely dashed] (YF1B2) -- (YF1F2);
+  \draw[densely dashed] (YF1B3) -- (YF1F3);
+  % \draw[densely dashed] (YF1B4) -- (YF1F4);
+
+  \coordinate (alphaAx) at ($ (YF1F1)!0.5!(YF1F2) $);
+  \coordinate (betaAx) at ($ (YF1F1)!0.5!(YF1B1) $);
+  \coordinate (gammaAx) at ($ (YF1F1)!0.5!(YF1F3) $);
+
+  \draw[->] (YF1F1) -- (alphaAx) node[midway, above] {$r_0$};
+  \draw[->] (YF1F1) -- (betaAx) node[above left] {$r_1$};
+  \draw[->] (YF1F1) -- (gammaAx) node[midway, left] {$r_2$};
+
+\end{tikzpicture}
+\end{minipage}
+\caption{Scheme for the current integrals in Villasenor-Buneman method.
+  Dashed cell is the Yee mesh cell and the solid cell is the staggered grid
+  on which the charge is conserved.
+  Left:
+  The blue and red boxes denotes the overlap of a particle charge before and after its movement.
+  Right:
+  The initial overlap is moved where it ends up after the particle has moved.
+  The orange surfaces despict the integrated areas in derivation of Villasenor-Buneman method.
+}
+\label{fig:vb-integrals}
+\end{figure}
+
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "../gradu"
+%%% End:

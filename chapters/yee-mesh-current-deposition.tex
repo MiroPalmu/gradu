@@ -1,0 +1,78 @@
+\begin{figure}[h!]
+\centering
+\begin{tikzpicture}[scale=1, 3d view={-10}{30}]
+
+  \def\CellWidth{3}
+
+  \coordinate (origo) at (0, 0, 0);
+  \coordinate (B1) at (origo);
+  \coordinate (B2) at ($ (B1) + (\CellWidth, 0, 0) $);
+  \coordinate (B3) at ($ (B1) + (0, \CellWidth, 0) $);
+  \coordinate (B4) at ($ (B1) + (\CellWidth, \CellWidth, 0) $);
+
+  \coordinate (F1) at ($ (B1) + (0, 0, \CellWidth) $);
+  \coordinate (F2) at ($ (B2) + (0, 0, \CellWidth) $);
+  \coordinate (F3) at ($ (B3) + (0, 0, \CellWidth) $);
+  \coordinate (F4) at ($ (B4) + (0, 0, \CellWidth) $);
+
+  \def\Opacity{0.1}
+
+  \draw[densely dashed,fill=blue, fill opacity=\Opacity] (origo) -- ++(\CellWidth, 0, 0) -- ++(0, \CellWidth, 0) -- ++(-\CellWidth, 0, 0) -- cycle;
+  \draw[densely dashed,fill=blue, fill opacity=\Opacity] (origo) -- ++(\CellWidth, 0, 0) -- ++(0, -\CellWidth, 0) -- ++(-\CellWidth, 0, 0) -- cycle;
+  \draw[densely dashed,fill=blue, fill opacity=\Opacity] (origo) -- ++(-\CellWidth, 0, 0) -- ++(0, \CellWidth, 0) -- ++(\CellWidth, 0, 0) -- cycle;
+  \draw[densely dashed,fill=blue, fill opacity=\Opacity] (origo) -- ++(-\CellWidth, 0, 0) -- ++(0, -\CellWidth, 0) -- ++(\CellWidth, 0, 0) -- cycle;
+
+  \draw[densely dashed,fill=blue, fill opacity=\Opacity] (origo) -- ++( 0,\CellWidth, 0) -- ++( 0,0, \CellWidth) -- ++( 0,-\CellWidth, 0) -- cycle;
+  \draw[densely dashed,fill=blue, fill opacity=\Opacity] (origo) -- ++( 0,\CellWidth, 0) -- ++( 0,0, -\CellWidth) -- ++( 0,-\CellWidth, 0) -- cycle;
+  \draw[densely dashed,fill=blue, fill opacity=\Opacity] (origo) -- ++( 0,-\CellWidth, 0) -- ++( 0,0, \CellWidth) -- ++( 0,\CellWidth, 0) -- cycle;
+  \draw[densely dashed,fill=blue, fill opacity=\Opacity] (origo) -- ++( 0,-\CellWidth, 0) -- ++( 0,0, -\CellWidth) -- ++( 0,\CellWidth, 0) -- cycle;
+
+  \draw[densely dashed,fill=blue, fill opacity=\Opacity] (origo) -- ++( 0, 0,\CellWidth) -- ++( \CellWidth, 0,0) -- ++( 0, 0,-\CellWidth) -- cycle;
+  \draw[densely dashed,fill=blue, fill opacity=\Opacity] (origo) -- ++( 0, 0,\CellWidth) -- ++( -\CellWidth, 0,0) -- ++( 0, 0,-\CellWidth) -- cycle;
+  \draw[densely dashed,fill=blue, fill opacity=\Opacity] (origo) -- ++( 0, 0,-\CellWidth) -- ++( \CellWidth, 0,0) -- ++( 0, 0,\CellWidth) -- cycle;
+  \draw[densely dashed,fill=blue, fill opacity=\Opacity] (origo) -- ++( 0, 0,-\CellWidth) -- ++( -\CellWidth, 0,0) -- ++( 0, 0,\CellWidth) -- cycle;
+
+  % Yee mesh
+
+  \def\FF{0.5}
+
+  \coordinate (YF1B1) at ($ (B1) + (-\FF * \CellWidth, -\FF * \CellWidth, -\FF * \CellWidth) $);
+  \coordinate (YF1B2) at ($ (B2) + (-\FF * \CellWidth, -\FF * \CellWidth, -\FF * \CellWidth) $);
+  \coordinate (YF1B3) at ($ (B3) + (-\FF * \CellWidth, -\FF * \CellWidth, -\FF * \CellWidth) $);
+  \coordinate (YF1B4) at ($ (B4) + (-\FF * \CellWidth, -\FF * \CellWidth, -\FF * \CellWidth) $);
+
+  \coordinate (YF1F1) at ($ (F1) + (-\FF * \CellWidth, -\FF * \CellWidth, -\FF * \CellWidth) $);
+  \coordinate (YF1F2) at ($ (F2) + (-\FF * \CellWidth, -\FF * \CellWidth, -\FF * \CellWidth) $);
+  \coordinate (YF1F3) at ($ (F3) + (-\FF * \CellWidth, -\FF * \CellWidth, -\FF * \CellWidth) $);
+  \coordinate (YF1F4) at ($ (F4) + (-\FF * \CellWidth, -\FF * \CellWidth, -\FF * \CellWidth) $);
+
+  % Yee mesh cell lines
+
+  \draw[] (YF1B1) -- (YF1B2);
+  \draw[] (YF1B1) -- (YF1B3);
+  \draw[] (YF1B2) -- (YF1B4);
+  \draw[] (YF1B3) -- (YF1B4);
+
+  \draw[] (YF1F1) -- (YF1F2);
+  \draw[] (YF1F1) -- (YF1F3);
+  \draw[] (YF1F2) -- (YF1F4);
+  \draw[] (YF1F3) -- (YF1F4);
+
+  \draw[] (YF1B1) -- (YF1F1);
+  \draw[] (YF1B2) -- (YF1F2);
+  \draw[] (YF1B3) -- (YF1F3);
+  \draw[] (YF1B4) -- (YF1F4);
+
+\end{tikzpicture}
+\caption{In Villasenor-Buneman method a particle generates current flux through eight faces
+  which are shown in blue. The Yee mesh cell in which the particle trajectory is confined
+  is drawn with solid lines.
+}
+\label{fig:yee-mesh-current-deposition}
+\end{figure}
+
+
+%%% Local Variables:
+%%% mode: LaTeX
+%%% TeX-master: "../gradu"
+%%% End:
