@@ -154,6 +154,21 @@ symmetric and diluted cases of filamentation instability can be solved exactly:
 
 \section{Numerical validation}
 
+\begin{figure}
+  \centering
+  \includegraphics{chapters/instability-plot.pdf}
+  \caption{Simulation of the filamentation instability using the GPU port of Runko
+    with different values of $\gamma_b$. Solid curves plot the average value of
+    the magnetic field energy density $\rho_B = \frac{B^2}{8\pi}$
+    normalized by the relativistic plasma enthalphy density, $\gamma_bn_0m_ec^2$,
+    as a function on time $t\omega_p$.
+    From left to right values for $\gamma_b$ are $3$ (blue), $10$ (orange), $30$ (green),
+    and $100$ (red).
+    The dashed lines show the analytic growth rates from the linearized cold-fluid limit.
+  }
+  \label{fig:perp-growth-rates}
+\end{figure}
+
 %%% local Variables:
 %%% mode: LaTeX
 %%% TeX-master: "../gradu"
