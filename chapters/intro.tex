@@ -16,7 +16,7 @@ over interactions between individual particles~\cite{pert_foundations_2021,hazel
 This can occur, for example, when a gas is heated sufficiently for its atoms to become ionized.
 Quasi-neutrality means that the gas is approximately electrically neutral:
 \begin{align}
-  \rho = \sum_s n_s q_s \approx 0
+  \rho = \sum_s n_s q_s \approx 0\,,
 \end{align}
 where the sum is taken over all particle species, $n_s$ denotes the number density
 and $q_s$ is the charge of species $s$.
@@ -28,7 +28,7 @@ It gives rise to a characteristic length scale over which short-range Coulomb in
 This scale is defined by the Debye length, $\lambda_D$ which is given by:
 \begin{align}
   \label{eq:debye-length}
-  \lambda_D^{-2} = \sum_s \frac{n_sq_s^2}{\epsilon_0 k_B T_s}
+  \lambda_D^{-2} = \sum_s \frac{n_sq_s^2}{\epsilon_0 k_B T_s}\,,
 \end{align}
 where $T_s$, $n_s$ and $q_s$ are the temperature, number density and charge of particle species $s$;
 $k_B$ is the Boltzmann constant; and $\epsilon_0$ is the vacuum permittivity.
@@ -39,7 +39,7 @@ $\left(\frac{\lambda_D}{L}\right)^2$~\cite{wiesemann_short_2014,hazeltine_framew
 Thus, we can express the quasi-neutrality condition for a plasma over the length scale $L$
 as the requirement that the Debye length is much smaller than $L$:
 \begin{align}
-  \lambda_D \ll L
+  \lambda_D \ll L\,.
 \end{align}
 However, for the Debye length to be statistically valid, there must be enough particles inside
 the ''Debye sphere'': $N_D = n \frac 43 \pi \lambda_D^3 \gg 1$.
@@ -47,7 +47,7 @@ This requirement is usually expressed in terms of the plasma parameter,
 which is defined (up to a constant factor) as $\Lambda = n\lambda_D^3$ and written as:
 \begin{align}
   \label{eq:plasma-param-condition}
-  \Lambda \gg 1
+  \Lambda \gg 1\,.
 \end{align}
 
 \section{Fundamental frequencies in plasma physics}
@@ -58,7 +58,7 @@ known as the plasma frequency~\cite{wiesemann_short_2014,pert_foundations_2021,h
 For a particle species $s$, the classical plasma frequency is given by:
 \begin{align}
   \label{eq:classical-plasma-frequency}
-  \omega_{ps}^2 = \frac{n_s q_s^2}{\epsilon_0 m_s}
+  \omega_{ps}^2 = \frac{n_s q_s^2}{\epsilon_0 m_s}\,.
 \end{align}
 For electron–ion systems, the electron plasma frequency is much larger than the ion plasma frequency;
 therefore, ion plasma oscillations can usually be neglected.
@@ -68,7 +68,7 @@ the charges gyrate around the field lines at the cyclotron frequency.
 For a particle species $s$, the cyclotrone frequency is given by:
 \begin{align}
   \label{eq:cyclotron-frequency}
-  \omega_B = \frac{q_sB}{m_sc\gamma}
+  \omega_B = \frac{q_sB}{m_sc\gamma}\,,
 \end{align}
 where $B$ is the magnitude of the magnetic field.
 This motion is also known as cyclotron motion.
@@ -92,27 +92,27 @@ and $c$ is the speed of light.
 We assume that the distribution function is normalized such that
 \begin{align}
   \label{eq:number-density}
-  \int f_s(\ve x, \ve p, t) d\ve p = n_s(\ve x, t)
+  \int f_s(\ve x, \ve p, t) d\ve p = n_s(\ve x, t)\,,
 \end{align}
 where $n_s(\ve x, t)$ is the number density of a particle species $s$.
 Summing over all particle species, we obtain the total charge density of the plasma:
 \begin{align}
   \label{eq:charge-density}
-  \rho(\ve x, t) = \sum_s q_s n_s(\ve x, t)
+  \rho(\ve x, t) = \sum_s q_s n_s(\ve x, t)\,.
 \end{align}
 Current density of the plasma is given by:
 \begin{align}
   \label{eq:current-density}
-  \ve J(\ve x, t) = \int \sum_s q_s \ve v f_s(\ve x, \ve p, t) d\ve p
+  \ve J(\ve x, t) = \int \sum_s q_s \ve v f_s(\ve x, \ve p, t) d\ve p\,.
 \end{align}
 With these definitions of charge and current densities,
 we can determine the self-consistent electromagnetic fields using Maxwell’s equations
 (in Gaussian CGS units):
 \begin{align}
   \label{eq:maxwells}
-  \nabla\times\ve E = -\frac1c \frac{\partial\ve B}{\partial t}, \qquad
-  \nabla\times\ve B = \frac{4\pi}c \ve J + \frac1c \frac{\partial\ve E}{\partial t}, \qquad
-  \nabla\cdot\ve E = 4\pi\rho, \qquad
+  \nabla\times\ve E = -\frac1c \frac{\partial\ve B}{\partial t}\,, \qquad
+  \nabla\times\ve B = \frac{4\pi}c \ve J + \frac1c \frac{\partial\ve E}{\partial t}\,, \qquad
+  \nabla\cdot\ve E = 4\pi\rho\,, \qquad
   \nabla\cdot\ve B = 0
 \end{align}
 
@@ -120,7 +120,7 @@ The evolution of the distribution function is governed by the Boltzmann equation
 \begin{align}
   \label{eq:boltzmann}
   \partial_t f_s + \ve v \cdot \nabla f_s + \frac{d\ve p}{dt} \cdot \nabla_{\ve p} f_s
-  = \left(\frac{\partial f_s}{\partial t}\right)_{\text{coll}}
+  = \left(\frac{\partial f_s}{\partial t}\right)_{\text{coll}}\,,
 \end{align}
 where $\left(\frac{\partial f_s}{\partial t}\right)_{\text{coll}}$ is the collision term,
 which accounts for interactions between individual particles.
@@ -132,7 +132,7 @@ When the collision term vanishes, the equation is called the Vlasov equation:
   \label{eq:vlasov}
   \partial_t f_\alpha
   + \mathbf{v} \cdot \nabla f_\alpha
-  + q_\alpha ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f_\alpha = 0
+  + q_\alpha ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f_\alpha = 0\,,
 \end{align}
 where we have defined the vector $\boldsymbol{\beta} = \frac{\ve v}{c}$.
 Maxwell's equations together with the Vlasov equation form the Vlasov-Maxwell system.
@@ -150,7 +150,7 @@ In general, the moment $M(\mathbf{p})$ of the Vlasov equation~\eqref{eq:vlasov} 
 \partial_t f_\alpha
 + \mathbf{v} \cdot \nabla f_\alpha
 + q_\alpha ( \mathbf{E} + \boldsymbol{\beta} \times \mathbf{B}) \cdot \nabla_\mathbf{p} f_\alpha
-\right) d\mathbf{p} = 0
+\right) d\mathbf{p} = 0\,,
 \end{align}
 where the integration is carried out over momentum space.
 In the first two terms, the derivatives can be trivially taken outside the integrand,
@@ -163,13 +163,13 @@ After integration by parts and noting
 that physical distributions vanish at infinity, we can write the third term as:
 \begin{align}
 \int M \mathbf{a_\alpha} \cdot \nabla_\mathbf{p} f_\alpha d\mathbf{p}
-&= - \int a^i \partial_{p_i} M f d\mathbf{p}
+&= - \int a^i \partial_{p_i} M f d\mathbf{p}\,.
 \end{align}
 Overall we obtain:
 \begin{align}\label{eq:general-moment-of-vlasov}
   \partial_t \int M f_\alpha d\mathbf{p}
 + \partial_i \int M v^i f_\alpha d\mathbf{p}
-= \int a^i \partial_{p_i} M f_\alpha d\mathbf{p}
+= \int a^i \partial_{p_i} M f_\alpha d\mathbf{p}\,.
 \end{align}
 
 A cold-fluid is characterized by a distribution function
@@ -182,13 +182,13 @@ Inserting this and $M = 1$ into equation~\eqref{eq:general-moment-of-vlasov},
 we obtain the continuity equation~\cite{hazeltine_framework_2018}:
 \begin{align}
 \label{eq:continuity-in-cold-limit}
-\partial_t n_\alpha + \nabla \cdot ( \ve V_\alpha n_\alpha ) = 0
+\partial_t n_\alpha + \nabla \cdot ( \ve V_\alpha n_\alpha ) = 0\,.
 \end{align}
 Using the continuity equation for $M = \mathbf{p}$, we obtain:
 \begin{align}
 \label{eq:momentum-transport-in-cold-limit}
 \partial_t \mathbf{P}_\alpha + (\mathbf{V}_\alpha \cdot \nabla) \mathbf{P}_\alpha
-&= q_\alpha (\mathbf{E} + c^{-1}\mathbf{V}_\alpha \times \mathbf{B})
+&= q_\alpha (\mathbf{E} + c^{-1}\mathbf{V}_\alpha \times \mathbf{B})\,.
 \end{align}
 
 \section{Linearization of the cold-fluid limit}
@@ -207,11 +207,11 @@ Denoting equilibrium solutions with the subscript $0$ and small perturbations wi
 we can write (dropping particle species labels for brevity):
 \begin{align}
   \label{eq:preturbed-variables}
-  n &= n_0 + n_1 \\
-  \ve V &= \ve V_0 + \ve V_1 \\
-  \ve E &= \ve E_1 \\
-  \ve B &= \ve B_1 \\
-  \ve P &= m\gamma[\ve V_0 + \ve V_1](\ve V_0 + \ve V_1)
+  n &= n_0 + n_1\,, \\
+  \ve V &= \ve V_0 + \ve V_1\,, \\
+  \ve E &= \ve E_1\,, \\
+  \ve B &= \ve B_1\,, \\
+  \ve P &= m\gamma[\ve V_0 + \ve V_1](\ve V_0 + \ve V_1)\,,
 \end{align}
 where $\gamma[\ve V]$ denotes the Lorentz factor corresponding to the coordinate velocity $\ve V$.
 We use the Fourier representation for the perturbations,
@@ -225,24 +225,24 @@ we obtain the linearized continuity equation
 and the linearized momentum transport equation~\cite{bret_collective_2004,bret_cfa_2012}:
 \begin{align}
   \label{eq:linearized-cold-fluid-continuity-eq}
-  \hat{n}_1 &= \frac{n_0 \ve k \cdot \hat{\ve V}_1}{\omega - \ve k \cdot \ve V_0} \\
+  \hat{n}_1 &= \frac{n_0 \ve k \cdot \hat{\ve V}_1}{\omega - \ve k \cdot \ve V_0}\,, \\
   \label{eq:linearized-cold-fluid-momentum-transport}
   im\gamma(\ve k \cdot \ve V_0 - \omega)
   (\hat{\ve V}_1 + \frac{\gamma^2}{c^2}(\ve V_0 \cdot \hat{\ve V}_1)\ve V_0)
-  &= q(\hat{\ve E}_1 + \frac 1c \hat{\ve V}_1 \times \ve B_0 + \frac 1c \hat{\ve V}_0 \times \ve B_1)
+  &= q(\hat{\ve E}_1 + \frac 1c \hat{\ve V}_1 \times \ve B_0 + \frac 1c \hat{\ve V}_0 \times \ve B_1)\,.
 \end{align}
 Additionally, we utilize linearity of Maxwell's equations~\eqref{eq:maxwells}
 and combine them to obtain the linearized wave equation:
 \begin{align}
   \label{eq:linearized-wave-eq}
   \ve k \times (\ve k \times \hat{\ve E}_1)
-  + \frac{\omega^2}{c^2}\left(\hat{\ve E} _1 + \frac{4\pi i}{\omega}\hat{\ve J}_1\right) = 0
+  + \frac{\omega^2}{c^2}\left(\hat{\ve E} _1 + \frac{4\pi i}{\omega}\hat{\ve J}_1\right) = 0\,,
 \end{align}
 where $\hat{\ve J}_1$ in the cold-fluid limit is read from:
 \begin{align}
   \ve J_1 &= \int \sum_s q_s(n_{s0}\hat{\ve V}_{s1} + n_{s1}\hat{\ve V}_{s0})
   \exp(i(\ve k \cdot \ve x - \omega t))d\omega d^3k \\
-  &= \int \hat{\ve J}_1 \exp(i(\ve k \cdot \ve x - \omega t))d\omega d^3k
+  &= \int \hat{\ve J}_1 \exp(i(\ve k \cdot \ve x - \omega t))d\omega d^3k\,.
 \end{align}
 
 \section{Finite difference}
@@ -259,7 +259,7 @@ and $f'_n = \left.\frac{df}{dx}\right\vert_{x=nh}$.
 The second-order accurate centered finite-difference discretizes the derivative as:
 \begin{align}
   \label{eq:centered-fd}
-  f'_n \approx \frac{f_{n + 1} - f_{n - 1}}{2h}
+  f'_n \approx \frac{f_{n + 1} - f_{n - 1}}{2h}\,.
 \end{align}
 The second-order accuracy of the algorithm is observed by Taylor expanding
 the right-hand side of equation \eqref{eq:centered-fd}:
@@ -267,17 +267,17 @@ the right-hand side of equation \eqref{eq:centered-fd}:
   \frac{f_{n + 1} - f_{n - 1}}{2h}
   = \frac{1}{2h} \left(\sum_{k=0}^\infty \frac{h^k}{!k}f^{(k)}_n
   - \sum_{k=0}^\infty \frac{(-h)^k}{!k}f^{(k)}_n \right)
-  = f'_n + O(h^2)
+  = f'_n + O(h^2)\,.
 \end{align}
 A centered second-order derivative can be obtained by applying the centered first-order derivative twice:
 \begin{align}
   \label{eq:second-fd}
-  f''_n \approx \frac{f'_{n + 1} - f'_{n - 1}}{2h} = \frac{f_{n+2} - 2 f_n + f_{n-2}}{4h^2}
+  f''_n \approx \frac{f'_{n + 1} - f'_{n - 1}}{2h} = \frac{f_{n+2} - 2 f_n + f_{n-2}}{4h^2}\,.
 \end{align}
 Similarly to the first derivative, we can see the second-order accuracy from the Taylor expansion:
 \begin{align}
   \label{eq:second-fd-accuracy}
-  \frac{f_{n+2} - 2 f_n + f_{n-2}}{4h^2}  = f''_h + O(h^2)
+  \frac{f_{n+2} - 2 f_n + f_{n-2}}{4h^2}  = f''_h + O(h^2)\,.
 \end{align}
 We note that the central finite-difference second-order derivative \eqref{eq:second-fd}
 does not require the function values $f_{n+1}$ and $f_{n-1}$.
@@ -285,7 +285,7 @@ Thus, it is usually defined on a finer grid with grid points at $\frac{nh}{2}$, 
 This gives us the standard centered finite-difference second-order derivative:
 \begin{align}
   \label{eq:second-fd-correct}
-  f''_n \approx \frac{f_{n+1} - 2 f_n + f_{n-1}}{h^2}
+  f''_n \approx \frac{f_{n+1} - 2 f_n + f_{n-1}}{h^2}\,,
 \end{align}
 which is still second-order accurate because the change only modifies
 the constant coefficients in \eqref{eq:second-fd-accuracy}.
@@ -299,13 +299,13 @@ The stability of the centered finite-difference scheme for the wave equation det
 its accuracy and stability properties. The one-dimensional wave equation is given by:
 \begin{align}
   \label{eq:one-d-wave-eq}
-  \frac{\partial^2 \psi}{\partial t^2} = c^2 \frac{\partial^2 \psi}{\partial x^2}
+  \frac{\partial^2 \psi}{\partial t^2} = c^2 \frac{\partial^2 \psi}{\partial x^2}\,.
 \end{align}
 Inserting the plane wave solution $\psi = e^{i(kx - \omega t)}$
 to the wave equation~\eqref{eq:one-d-wave-eq} gives the physical dispersion relation:
 \begin{align}
   \label{eq:one-d-wave-dispersion-eq}
-  \omega = \pm ck
+  \omega = \pm ck\,.
 \end{align}
 
 We discretize the function $\psi(x, t)$ on a uniform grid $(n \Delta x, m \Delta t)$,
@@ -316,7 +316,7 @@ and solving for $\psi_n^{m + 1}$, we obtain:
 \begin{align}
   \label{eq:fd-intermediate}
   \psi_n^{m + 1} = \left(c\frac{\Delta t}{\Delta x}\right)^2
-  (\psi_{n + 1}^m - 2\psi_n^m + \psi_{n-1}^m) + 2\psi_n^m - \psi_n^{m - 1}
+  (\psi_{n + 1}^m - 2\psi_n^m + \psi_{n-1}^m) + 2\psi_n^m - \psi_n^{m - 1}\,.
 \end{align}
 Inserting the discretized plane wave $\psi_n^m = e^{i(k n \Delta x - \omega m \Delta t)}$
 into equation~\eqref{eq:fd-intermediate} results in a numerical dispersion relation
@@ -324,7 +324,7 @@ that is distinctly different from the physical dispersion relation~\eqref{eq:one
 \begin{align}
   \label{eq:fd-dispersion}
   \frac{\omega}{c} \Delta x =
-  \pm \frac{1}{\hat c}\cos^{-1}\left(\hat{c}^2 (\cos(k\Delta x) - 1) + 1\right)
+  \pm \frac{1}{\hat c}\cos^{-1}\left(\hat{c}^2 (\cos(k\Delta x) - 1) + 1\right)\,,
 \end{align}
 where $\hat{c} \equiv c\frac{\Delta t}{\Delta x}$ is the Courant-Friedrichs-Lewy number,
 or the Courant number for short.
@@ -361,7 +361,7 @@ The condition for stability, $\hat c = c\frac{\Delta t}{\Delta x} \le 1$,
 is called the Courant-Friedrichs-Lewy condition.
 In multiple dimensions, the condition is given by~\cite{verboncoeur_particle_2005}:
 \begin{align}
-  \Delta t \le \frac{1}{c}\left( \sum_i \frac{1}{(\Delta x_i)^2} \right)^{-1/2}
+  \Delta t \le \frac{1}{c}\left( \sum_i \frac{1}{(\Delta x_i)^2} \right)^{-1/2}\,.
 \end{align}
 Figure \ref{fig:cfl-plot} shows one period of
 the numerical dispersion relation given in equation~\eqref{eq:fd-dispersion}.

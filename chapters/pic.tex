@@ -29,9 +29,9 @@ with three-velocity $\ve u$, coordinate velocity $\ve v(\ve u)$, mass $m$, and c
 are~\cite{verboncoeur_particle_2005,vay_modeling_2014}:
 \begin{align}
   \label{eq:newton-lorentz-vel}
-  \frac{d\ve x}{dt} &= \ve v(\ve u) = \frac{\ve u}{\gamma} \\
+  \frac{d\ve x}{dt} &= \ve v(\ve u) = \frac{\ve u}{\gamma}\,, \\
   \label{eq:newton-lorentz}
-  m\frac{d\ve u}{dt} &= \ve F = q\left(\ve E + \frac{\ve v(\ve u)}{c} \times \ve B\right)
+  m\frac{d\ve u}{dt} &= \ve F = q\left(\ve E + \frac{\ve v(\ve u)}{c} \times \ve B\right)\,,
 \end{align}
 where $\gamma = \sqrt{1 + \frac{\ve u^2}{c^2}}$ is the Lorentz factor,
 and the force $\ve F$ is given by the Lorentz force.
@@ -40,13 +40,13 @@ Electric and magnetic fields, $\ve E$ and $\ve B$, are evolved according to
 Maxwell's equations~\eqref{eq:maxwells}:
 \begin{align}
   \label{eq:maxwell-faraday}
-  \frac{\partial\ve B}{\partial t} &= -c \nabla\times\ve E \\
+  \frac{\partial\ve B}{\partial t} &= -c \nabla\times\ve E\,, \\
   \label{eq:ampere-maxwell-law}
-  \frac{\partial\ve E}{\partial t} &= c \nabla\times\ve B - 4\pi \ve J \\
+  \frac{\partial\ve E}{\partial t} &= c \nabla\times\ve B - 4\pi \ve J\,, \\
   \label{eq:gauss-law}
-  \nabla\cdot\ve E &= 4\pi\rho \\
+  \nabla\cdot\ve E &= 4\pi\rho\,, \\
   \label{eq:gauss-law-for-B}
-  \nabla\cdot\ve B &= 0
+  \nabla\cdot\ve B &= 0\,.
 \end{align}
 When charge conserving current deposition scheme is used
 and the initial conditions satisfy Gauss's laws \eqref{eq:gauss-law} and \eqref{eq:gauss-law-for-B},
@@ -71,7 +71,7 @@ In a Yee mesh, the vertices are located at:
 \begin{align}
   \label{eq:yee-vertex-locations}
   \ve x_{m,n,l}
-  = m \Delta x_0 \hat{\ve e}_0 + n \Delta x_1\hat{\ve e}_1 + l \Delta x_2 \hat{\ve e}_2
+  = m \Delta x_0 \hat{\ve e}_0 + n \Delta x_1\hat{\ve e}_1 + l \Delta x_2 \hat{\ve e}_2\,,
 \end{align}
 where $\Delta x_i$ is the grid spacing in the $\hat{\ve e}_i$ direction,
 $\hat{\ve e}_i$ denotes the orthogonal unit vectors, and $m,n,l \in \mathbb{N}$.
@@ -95,7 +95,7 @@ and magnetic field components $B_i$ are stored at:
     \ve x_{m, n+\frac12, l+\frac12} \quad & i=0\\
     \ve x_{m+\frac12, n, l+\frac12} \quad & i=1 \\
     \ve x_{m+\frac12, n+\frac12, l} \quad & i=2
-  \end{cases}
+  \end{cases}\,.
 \end{align}
 See Figure~\ref{fig:yee-mesh} for a schematic picture of the Yee mesh.
 
@@ -116,7 +116,7 @@ Thus, we adopt the following shorthand notation for the components
 of $\ve E(t, \ve x)$ and $\ve B(t, \ve x)$:
 \begin{align}
   \label{eq:shorthad-index-notation}
-  \xi^{T}_{N,M,L} \equiv \xi\left(T\Delta t, \ve x^\xi_{N,M,L} \right)
+  \xi^{T}_{N,M,L} \equiv \xi\left(T\Delta t, \ve x^\xi_{N,M,L} \right)\,,
 \end{align}
 where $\xi$ denotes either $E$ or $B$.
 For example $E^{s}_{n,m,l+\frac12}
@@ -130,7 +130,7 @@ and for the spatial derivative, in the $\hat{\ve e}_i$ direction, $h = \frac12 \
 Thus, we obtain:
 \begin{align}
   \label{eq:yee-temporal-derivative}
-  \Delta t\partial_t\xi^{T}_{N,M,L} &\approx \xi^{T+\frac12}_{N,M,L} - \xi^{T-\frac12}_{N,M,L}\\
+  \Delta t\partial_t\xi^{T}_{N,M,L} &\approx \xi^{T+\frac12}_{N,M,L} - \xi^{T-\frac12}_{N,M,L}\,,\\
   \label{eq:yee-spatial-derivative}
   \begin{bmatrix}
     \Delta x_0 \partial_{x_0} \\
@@ -142,7 +142,7 @@ Thus, we obtain:
     \xi^{T}_{N+\frac12,M,L} - \xi^{T}_{N-\frac12,M,L} \\
     \xi^{T}_{N,M+\frac12,L} - \xi^{T}_{N,M-\frac12,L} \\
     \xi^{T}_{N,M,L+\frac12} - \xi^{T}_{N,M,L-\frac12}
-  \end{bmatrix}
+  \end{bmatrix}\,.
 \end{align}
 
 Note that in the next subsection we will evaluate derivatives $\partial_{\mu}\xi$
@@ -173,7 +173,7 @@ both equations can be written in a form that, at time $T\Delta t$ and position $
     \partial_{x_1}\rho^T_{N,M,L} - \partial_{x_2}\nu^T_{N,M,L} \\
     \partial_{x_2}\mu^T_{N,M,L} - \partial_{x_0}\rho^T_{N,M,L} \\
     \partial_{x_0}\nu^T_{N,M,L} - \partial_{x_1}\mu^T_{N,M,L}
-  \end{bmatrix}
+  \end{bmatrix}\,.
 \end{align}
 Now we apply the second-order accurate centered finite-difference
 derivatives~\eqref{eq:yee-temporal-derivative} and~\eqref{eq:yee-spatial-derivative}
@@ -196,7 +196,7 @@ on the Yee mesh to obtain the update equations:
     - \hat{c}_0\left(\rho^T_{N+\frac12,M,L} - \rho^T_{N-\frac12,M,L}\right) \\
     \hat{c}_0\left(\nu^T_{N+\frac12,M,L} - \nu^T_{N-\frac12,M,L}\right)
     - \hat{c}_1\left(\mu^T_{N,M+\frac12,L} - \mu^T_{N,M-\frac12,L}\right)
-  \end{bmatrix}
+  \end{bmatrix}\,,
   \end{split}
 \end{equation}
 where we have used the one-dimensional Courant numbers for different directions,
@@ -289,7 +289,7 @@ and obtain (with the current density added back in):
     - \hat{c}_0\left(B^{s+\frac12}_{n+\frac12,m+\frac12,l} - B^{s+\frac12}_{n-\frac12,m+\frac12,l}\right) \\
     \hat{c}_0\left(B^{s+\frac12}_{n+\frac12,m,l+\frac12} - B^{s+\frac12}_{n-\frac12,m,l+\frac12}\right)
     - \hat{c}_1\left(B^{s+\frac12}_{n,m+\frac12,l+\frac12} - B^{s+\frac12}_{n,m-\frac12,l+\frac12}\right)
-  \end{bmatrix}
+  \end{bmatrix}\,.
 \end{split}
 \end{equation}
 
@@ -320,7 +320,7 @@ defined on the grid vertices~\eqref{eq:yee-vertex-locations},
 to an arbitrary point $\ve x$:
 \begin{align}
   f(\ve x) =
-  \Delta V \sum_{n,m,l} f_{n,m,l} S'\left(\ve x_{n, m, l}, \ve x\right)
+  \Delta V \sum_{n,m,l} f_{n,m,l} S'\left(\ve x_{n, m, l}, \ve x\right)\,,
 \end{align}
 where $\Delta V = \prod_i \Delta x_i$, $f_{n,m,l} \equiv f(\ve x_{n,m,l})$, and
 and $S'$ is the weighting function, normalized such that at every position\footnote{
@@ -329,18 +329,18 @@ and $S'$ is the weighting function, normalized such that at every position\footn
   \begin{align}
   \int_V \rho dV \approx
   \Delta V\sum_{n,m,l}\rho_{n,m,l} =
-  \Delta V\sum_{n,m,l}\sum_j q_j S'(\ve x_{n,m,l}, \ve x_j) = \sum_j q_j
+  \Delta V\sum_{n,m,l}\sum_j q_j S'(\ve x_{n,m,l}, \ve x_j) = \sum_j q_j\,,
   \end{align}
   where the sum over $j$ runs over all particles, and $\ve x_j$ denotes the particle positions.
 }:
 \begin{align}
-  \Delta V \sum_{n,m,l}S' \left(\ve x_{n, m, l}, \ve x\right) = 1
+  \Delta V \sum_{n,m,l}S' \left(\ve x_{n, m, l}, \ve x\right) = 1\,.
 \end{align}
 The choice of the shape function $S'$ determines the interpolation scheme.
 Typically, the interpolation is performed independently in each spatial direction.
 In such cases:
 \begin{align}
-  S'(\ve X, \ve x) = S(X_0 - x_0)S(X_1 - x_1)S(X_2 - x_2)
+  S'(\ve X, \ve x) = S(X_0 - x_0)S(X_1 - x_1)S(X_2 - x_2)\,.
 \end{align}
 
 B-splines are commonly used as the weighing functions $S(x)$.
@@ -373,10 +373,10 @@ to equations~\eqref{eq:newton-lorentz} and~\eqref{eq:newton-lorentz-vel}
 with $h=\frac12 \Delta t$, we can solve for the update equations:
 \begin{align}
   \label{eq:particle-update-pos}
-  \ve x^{s+1} &= \ve x^{s} + \Delta t \ve v(\ve u^{s+\frac12}) \\
+  \ve x^{s+1} &= \ve x^{s} + \Delta t \ve v(\ve u^{s+\frac12})\,, \\
   \label{eq:particle-update-vel}
   \ve u^{s+\frac12} &= \ve u^{s-\frac12}
-                      + \Delta t\frac{q}{m}\left(\ve E^s + \bar{\ve v}^s\times\ve B^s\right)
+                      + \Delta t\frac{q}{m}\left(\ve E^s + \bar{\ve v}^s\times\ve B^s\right)\,,
 \end{align}
 where the superscripts denote the time step, similar to equation~\eqref{eq:shorthad-index-notation},
 and $\bar{\ve v}^s$ represents some average for coordinate velocity at times $s\Delta t$.
@@ -401,7 +401,7 @@ The Boris pusher uses:
 \begin{align}
   \label{eq:boris-avg-vel}
   \bar{\ve v}^s_b \equiv \frac{\ve v(u^{s+\frac12} - \boldsymbol{\epsilon}^{s+\frac12})
-  + \ve v(u^{s-\frac12} + \boldsymbol{\epsilon}^{s-\frac12}}{2\gamma^s}
+  + \ve v(u^{s-\frac12} + \boldsymbol{\epsilon}^{s-\frac12}}{2\gamma^s}\,,
 \end{align}
 where $\boldsymbol{\epsilon}^s = \frac{q\Delta t\ve E^s}{2m}$
 is the change of coordinate velocity due to the electric field in half a time step.
@@ -414,7 +414,7 @@ Vay's method uses:
 \end{align}
 and, Higuera-Cary method uses:
 \begin{align}
-  \bar{\ve v}^s_{hc} \equiv \ve v \left( \frac{\ve u^{s-\frac12} + \ve u^{s+\frac12}}{2} \right)
+  \bar{\ve v}^s_{hc} \equiv \ve v \left( \frac{\ve u^{s-\frac12} + \ve u^{s+\frac12}}{2} \right)\,.
 \end{align}
 
 The choices for $\bar{\ve v}^s$ appear very similar;
@@ -452,7 +452,7 @@ $s+\frac12$ with $f$ and $s-\frac12$ with $i$:
   \label{eq:boris-derivation-1}
   \ve u^f - \ve u^i
   %&= \frac{q\Delta t}{m}\left(\ve E + \frac{\ve u^f + \ve u^i}{2c\gamma}\times\ve B\right) \\
-  &= 2\boldsymbol{\epsilon} + \eta(\ve u^f + \ve u^i) \times \hat{\ve B}
+  &= 2\boldsymbol{\epsilon} + \eta(\ve u^f + \ve u^i) \times \hat{\ve B}\,,
 \end{align}
 where we define $\boldsymbol{\epsilon} = \frac{q\Delta t\ve E}{2m}$,
 $\eta = \frac{q\Delta t B}{2mv\gamma}$ and the unit vector $\hat{\ve B} = \ve BB^{-1}$.
@@ -467,14 +467,14 @@ and $\ve u_- = \ve u^i + \boldsymbol{\epsilon}$,
 thus equation \eqref{eq:boris-derivation-1} can be rewritten as:
 \begin{align}
   \label{eq:dirty-fix}
-  \ve u_+ - \ve u_- &= \eta(\ve u_+ + \ve u_-) \times \hat{\ve B}
+  \ve u_+ - \ve u_- &= \eta(\ve u_+ + \ve u_-) \times \hat{\ve B}\,.
 \end{align}
 We note that the above equation~\eqref{eq:dirty-fix} contains no components along $\hat{\ve B}$.
 Denoting vector components in the plane perpendicular to $\hat{\ve B}$ with a prime,
 we can write:
 \begin{align}
   \label{eq:boris-derivation-2}
-  \ve u_+ - \ve u_- = \ve u'_+ - \ve u'_- &= \eta(\ve u'_+ + \ve u'_-) \times \hat{\ve B}
+  \ve u_+ - \ve u_- = \ve u'_+ - \ve u'_- &= \eta(\ve u'_+ + \ve u'_-) \times \hat{\ve B}\,.
 \end{align}
 We can deduce that the vectors $\ve u'_+ - \ve u'_-$ and $\ve u'_+ + \ve u'_-$
 are perpendicular to each other.
@@ -498,7 +498,7 @@ Specifically, we can write:
 \begin{split}
   \ve u'_+ - \ve u'_- &= 2h \hat{\ve L}_1 \times \hat{\ve B}
   = \frac{2}{1+b^2}(\ve L_0 + \ve L_1) \times \ve b \\
-  &= \frac{2}{1+b^2}(\ve u'_- + \ve u'_- \times \ve b)\times \ve b
+  &= \frac{2}{1+b^2}(\ve u'_- + \ve u'_- \times \ve b)\times \ve b\,,
 \end{split}
 \end{equation}
 where $\hat{\ve L}_1$ is the unit vector along $\ve L_1$.
@@ -509,7 +509,7 @@ We now return to $\ve u^f$ and $\ve u^i$ to obtain the Boris pusher update equat
             + \frac{2}{1+b^2}(\ve u'_- + \ve u'_- \times \ve b)\times \ve b \\
           &= \ve u^i + \frac{q\Delta t \ve E}{m}
             + \frac{2}{1+b^2}\left(\ve u^i + \frac{q\Delta t \ve E}{2m}
-            + \left(\ve u^i + \frac{q\Delta t \ve E}{2m}\right) \times \ve b\right)\times \ve b
+            + \left(\ve u^i + \frac{q\Delta t \ve E}{2m}\right) \times \ve b\right)\times \ve b\,.
 \end{split}
 \end{equation}
 The only remaining step is to determine the angle $\theta$ between $\ve u_+$ and $\ve u_-$
@@ -517,11 +517,12 @@ in order to calculate $\ve b$. To do this, we use physical argument:
 the angle should correspond to the gyrotation induced by the magnetic field.
 Thus, using the cyclotron frequency from~\eqref{eq:cyclotron-frequency}:
 \begin{align}
-  \theta \approx \Delta t \omega_B = \frac{qB\Delta t}{mc\gamma}
+  \theta \approx \Delta t \omega_B = \frac{qB\Delta t}{mc\gamma}\,.
 \end{align}
 Under the assumption of a sufficiently small time step:
 \begin{align}
-  b  = \tan\frac\theta 2 = \frac\theta 2 + O(\Delta t^3) = \frac{qB\Delta t}{2mc\gamma} + O(\Delta t^3)
+  b  = \tan\frac\theta 2 = \frac\theta 2 + O(\Delta t^3)
+  = \frac{qB\Delta t}{2mc\gamma} + O(\Delta t^3)\,.
 \end{align}
 
 \section{Current deposition}
@@ -540,7 +541,7 @@ it must satisfy the continuity equation for charge density,
 which is derived by taking the time derivative of Gauss’s law~\eqref{eq:gauss-law}:
 \begin{align}
   \label{eq:current-density-continuation}
-  \frac{\partial \rho}{\partial t} + \nabla \cdot \ve J = 0
+  \frac{\partial \rho}{\partial t} + \nabla \cdot \ve J = 0\,.
 \end{align}
 
 Several charge-conserving current deposition schemes exist.
@@ -608,18 +609,18 @@ Let the particle positions $\ve x^s$ and $\ve x^{s+1}$ lie within the same cell,
 which is spanned between $\ve x_{m,n,l}$ and $\ve x_{m+1,n+1,l+1}$.
 Define:
 \begin{align}
-  \delta \ve x \equiv \ve x^{s+1} - \ve x^{s} \\
-  r^s_i \equiv \left(\ve x^s - \ve x_{m,n,l}\right)_1
+  \delta \ve x &\equiv \ve x^{s+1} - \ve x^{s} \\
+  r^s_i &\equiv \left(\ve x^s - \ve x_{m,n,l}\right)_1
 \end{align}
 and let:
 \begin{align}
-  \bar{\ve r} \equiv \frac{\ve r^{s+1} + \ve r^s}2
+  \bar{\ve r} \equiv \frac{\ve r^{s+1} + \ve r^s}2\,.
 \end{align}
 denote the midpoint in local coordinates inside the cell.
 Assuming that the particle with charge $q$ moves at constant velocity during one time step,
 its trajectory can be written as
 \begin{align}
-  \ve r(t) = \bar{\ve r} + t\delta \ve x,\quad t \in \left[-\frac12, \frac12\right].
+  \ve r(t) = \bar{\ve r} + t\delta \ve x\,,\quad t \in \left[-\frac12, \frac12\right]\,.
 \end{align}
 Then, the integrals for the total currents in $\hat{\ve e}_0$ direction
 at $\ve x^{E_0}_{m,n+1,l+1}$ can be expressed as:
@@ -629,7 +630,7 @@ at $\ve x^{E_0}_{m,n+1,l+1}$ can be expressed as:
   J_{m+\frac12, n + 1, l + 1}\Delta x_1 \Delta x_2 &= \rho_q\int_{r^s_0}^{r^{s+1}_0} r_1(t)r_2(t)dr_0 \\
     &= \rho_q\int_{-\frac12}^{\frac12} \left(\bar{r}_1 + t\delta x_1\right)
                              \left(\bar{r}_2 + t\delta x_2\right)\delta x_0dt \\
-    &= \rho_q\delta x_0\bar{r}_1\bar{r}_2 + \frac{\delta x_0 \delta x_1 \delta x_2}{12}
+    &= \rho_q\delta x_0\bar{r}_1\bar{r}_2 + \frac{\delta x_0 \delta x_1 \delta x_2}{12}\,,
 \end{split}
 \end{equation}
 where we use the notation from the Yee mesh subsection~\ref{sec:yee-mesh} for the current density.
@@ -639,13 +640,13 @@ Similarly, for the three other faces:
   \label{eq:total-current-flux-2}
   J_{m+\frac12, n, l}\Delta x_1 \Delta x_2
   &= \rho_q\int_{r^s_0}^{r^{s+1}_0} (1 - r_1(t))(1 - r_2(t))dr_0 \\
-  &= \rho_q\delta x_0(1 - \bar{r}_1)(1 - \bar{r}_2) + \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12} \\
+  &= \rho_q\delta x_0(1 - \bar{r}_1)(1 - \bar{r}_2) + \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}\,,\\
   J_{m+\frac12, n, l+1}\Delta x_1 \Delta x_2
   &= \rho_q\int_{r^s_0}^{r^{s+1}_0} (1 - r_1(t))r_2(t)dr_0 \\
-  &= \rho_q\delta x_0(1 - \bar{r}_1)\bar{r}_2 - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12} \\
+  &= \rho_q\delta x_0(1 - \bar{r}_1)\bar{r}_2 - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}\,, \\
   J_{m+\frac12, n+1, l}\Delta x_1 \Delta x_2
   &= \rho_q\int_{r^s_0}^{r^{s+1}_0} r_1(t)(1-r_2(t))dr_0 \\
-  &= \rho_q\delta x_0\bar{r}_1(1-\bar{r}_2) - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}
+  &= \rho_q\delta x_0\bar{r}_1(1-\bar{r}_2) - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}\,.
 \end{split}
 \end{equation}
 Contributions to the other components can be obtained from equations~\eqref{eq:total-current-flux-1}
@@ -655,11 +656,11 @@ For the components in the $\hat{\ve e}_1$:
 \begin{split}
   \label{eq:total-current-flux-3}
   J_{m+1, n +\frac12, l + 1}\Delta x_0 \Delta x_2
-  &= \rho_q\delta x_1\bar{r}_0\bar{r}_2 + \rho_q\frac{\delta x_0 \delta x_1 \delta x_2}{12} \\
+  &= \rho_q\delta x_1\bar{r}_0\bar{r}_2 + \rho_q\frac{\delta x_0 \delta x_1 \delta x_2}{12}\,, \\
   J_{m, n+\frac12, l}\Delta x_0 \Delta x_2
-  &= \rho_q\delta x_1(1 - \bar{r}_0)(1 - \bar{r}_2) + \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12} \\
+  &= \rho_q\delta x_1(1 - \bar{r}_0)(1 - \bar{r}_2) + \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}\,,\\
   J_{m+1, n+\frac12, l}\Delta x_0 \Delta x_2
-  &= \rho_q\delta x_1\bar{r}_0(1-\bar{r}_2) - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12} \\
+  &= \rho_q\delta x_1\bar{r}_0(1-\bar{r}_2) - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}\,, \\
   J_{m, n+\frac12, l+1}\Delta x_0 \Delta x_2
   &= \rho_q\delta x_1(1 - \bar{r}_0)\bar{r}_2 - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}
 \end{split}
@@ -669,13 +670,13 @@ and for the components in the $\hat{\ve e}_2$ direction:
 \begin{split}
   \label{eq:total-current-flux-4}
   J_{m+1, n +1, l +\frac12}\Delta x_0 \Delta x_1
-  &= \rho_q\delta x_2\bar{r}_0\bar{r}_1 + \rho_q\frac{\delta x_0 \delta x_1 \delta x_2}{12} \\
+  &= \rho_q\delta x_2\bar{r}_0\bar{r}_1 + \rho_q\frac{\delta x_0 \delta x_1 \delta x_2}{12}\,, \\
   J_{m, n, l+\frac12}\Delta x_0 \Delta x_1
-  &= \rho_q\delta x_2(1 - \bar{r}_0)(1 - \bar{r}_1) + \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12} \\
+  &= \rho_q\delta x_2(1 - \bar{r}_0)(1 - \bar{r}_1) + \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}\,,\\
   J_{m, n+1, l+\frac12}\Delta x_0 \Delta x_1
-  &= \rho_q\delta x_2(1 - \bar{r}_0)\bar{r}_1 - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12} \\
+  &= \rho_q\delta x_2(1 - \bar{r}_0)\bar{r}_1 - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}\,, \\
   J_{m+1, n, l+\frac12}\Delta x_0 \Delta x_1
-  &= \rho_q\delta x_2\bar{r}_0(1-\bar{r}_1) - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}
+  &= \rho_q\delta x_2\bar{r}_0(1-\bar{r}_1) - \rho_q\frac{\delta x_0\delta x_1\delta x_2}{12}\,.
 \end{split}
 \end{equation}
 A scheme of what is integrated is shown in Figure~\ref{fig:vb-integrals}.
@@ -691,7 +692,7 @@ $\ve x_{m+2,n+2,l+2}$ during one time step:
   J_{m+\frac12, n+1, l+1} \Delta x_1\Delta x_2 +
   J_{m+1, n+\frac12, l+1} \Delta x_0\Delta x_2 +
                J_{m+1, n+1, l+\frac12} \Delta x_0\Delta x_1 \\
-  &= \rho_q\left(r^{s+1}_0r^{s+1}_1r^{s+1}_2 - r^{s}_0r^{s}_1r^{s}_2\right).
+  &= \rho_q\left(r^{s+1}_0r^{s+1}_1r^{s+1}_2 - r^{s}_0r^{s}_1r^{s}_2\right)\,.
 \end{split}
 \end{equation}
 This is precicesly the difference between the particle's charge contribution
@@ -714,7 +715,7 @@ then the relay point $\ve R$ is defined as:
   R_i =
   \begin{cases}
     \frac{x^{s}_i+x^{s+1}_i}{2} \quad & \text{for } a_i = b_i \\
-    \Delta x_i\max(a_i, b_i) \quad & \text{for } a_i \neq b_i
+    \Delta x_i\max(a_i, b_i) \quad & \text{for } a_i \neq b_i\,.
   \end{cases}
 \end{equation}
 Figure~\ref{fig:zigzags} illustrates the four different types of movements involving the relay point.
@@ -722,11 +723,11 @@ Figure~\ref{fig:zigzags} illustrates the four different types of movements invol
 \input{chapters/path-splitting}
 
 The benefit of splitting the trajectory in this manner is that the relay point coordinates
-can be computed without conditionals by using the algorithm described in~\cite{blinne_new_2003}.
+can be computed without conditionals by using the algorithm described in~\cite{blinne_new_2003}:
 \begin{align}
   R_i = \Delta x_i \min\left[
   \min(a_i, b_i) + 1, \max\left\{\max(a_i, b_i), \frac{x^{s}_i+x^{s+1}_i}{2}\right\}
-  \right]
+  \right]\,.
 \end{align}
 After the relay point has been determined,
 the Villasenor–Buneman method can be applied to both subtrajectories.
