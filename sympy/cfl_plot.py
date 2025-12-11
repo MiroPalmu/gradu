@@ -7,10 +7,10 @@ def setup_figure(columns=1,
                  nrow_fig=1,
                  ncol_fig=1,
                  # control these (in units of [0,1]) to position the figure
-                 axleft=0.12,
-                 axbottom=0.14,
-                 axright=0.96,
-                 axtop=1.07,
+                 axleft=0.14,
+                 axbottom=0.16,
+                 axright=0.98,
+                 axtop=1.00,
                  figsize_scale=1,
                  colorbar=True,
 ):
@@ -32,13 +32,13 @@ def setup_figure(columns=1,
     plt.rc('xtick', top   = True)
     plt.rc('ytick', right = True)
 
-    plt.rc('font',  family='serif',)
+    plt.rc('font',  family='serif')
     plt.rc('text',  usetex=False)
 
     # make labels slightly smaller
-    plt.rc('xtick', labelsize=7)
-    plt.rc('ytick', labelsize=7)
-    plt.rc('axes', labelsize=8)
+    plt.rc('xtick', labelsize=12)
+    plt.rc('ytick', labelsize=12)
+    plt.rc('axes', labelsize=12)
     plt.rc('legend', handlelength=4.0)
 
     gs = plt.GridSpec(nrow_fig, ncol_fig)
@@ -125,9 +125,8 @@ axs[0, 0].plot(K_plot,
                linestyle='solid',
                )
 
-axs[0, 0].set(ylabel=r'$\frac{\omega}{c} \frac{\Delta x}{\pi}$',
-              xlabel=r'$k \frac{\Delta x}{\pi}$',
-              )
+axs[0, 0].set_ylabel(r'$\frac{\omega}{c} \frac{\Delta x}{\pi}$', fontsize=16)
+axs[0, 0].set_xlabel(r'$k \frac{\Delta x}{\pi}$', fontsize=16)
 
 
 p = axs[0, 0].get_position()
@@ -142,8 +141,7 @@ cbar = matplotlib.colorbar.ColorbarBase(baxs,
                                         orientation='horizontal',
                                         ticklocation='top')
 cbar.set_ticks([0, 0.2, 0.4, 0.6, 0.8, 1, np.max(cfl_plot)])
-
-cbar.set_label('$\\frac{c\\Delta t}{\\Delta x}$')
+cbar.set_label('$\\frac{c\\Delta t}{\\Delta x}$', fontsize=16, labelpad=10)
 
 plt.show()
 fig.savefig('cfl-plot.pdf', dpi=300)
