@@ -63,7 +63,7 @@ This is typically achieved using finite-difference time-domain (FDTD)
 discretizations on a Yee mesh~\cite{yee_numerical_1966}.
 In this approach,
 the electromagnetic fields are staggered in both time
-and space to compute derivatives using centered finite differences,
+and space to compute derivatives using centered finite-differences,
 as described in Section~\ref{sec:finite-difference}.
 In this Section, we derive the second-order accurate FDTD
 update equations for the electric and magnetic fields.
@@ -151,7 +151,7 @@ Thus, we obtain:
 
 Note that in the next subsection we will evaluate derivatives $\partial_{\mu}\xi$
 at specific locations where, on the Yee mesh, the field $\xi$ may not be directly defined.
-However, we will use centered finite differences for these derivatives,
+However, we will use centered finite-differences for these derivatives,
 and by construction the Yee mesh provides exactly the components we need.
 
 \subsection{Finite-difference time domain}
