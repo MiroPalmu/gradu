@@ -1,24 +1,15 @@
 \begin{figure}[!ht]
 \centering
-\resizebox{0.7\textwidth}{!}{%
 \begin{circuitikz}
-\draw [ line width=1.6pt , rounded corners = 10.2] (12.0,12.75) rectangle  node {Push particles} (15,11.95);
-\draw [ line width=1.6pt , rounded corners = 10.2] (7.0,12.75) rectangle  node {Deposit current} (10.4,11.95);
-\draw [ line width=1.6pt , rounded corners = 10.2] (6.8,14.8) rectangle  node {Filter current} (9.8,14.0);
-\draw [ line width=1.6pt , rounded corners = 10.2] (10,16.3) rectangle  node {Propagate fields} (13.3,15.5);
-\draw [ line width=1.6pt , rounded corners = 10.2] (13.3,14.80) rectangle  node {Interpolate fields} (16.7,14);
-\draw [ line width=1.6pt ] (11.25,14) circle (1.25cm);
-%\draw [ line width=1.6pt](10,14) to[short] (9.5,13.5);
-%\draw [ line width=1.6pt](10,14) to[short] (10.5,13.5);
-%\draw [ line width=1.6pt](11.25,12.75) to[short] (11.75,13.25);
-%\draw [ line width=1.6pt](11.25,12.75) to[short] (11.75,12.25);
-\draw [ line width=1.6pt](12.5,14) to[short] (12,14.5);
-\draw [ line width=1.6pt](12.5,14) to[short] (13,14.5);
-%\draw [ line width=1.6pt](11.25,15.25) to[short] (10.75,15.75);
-%\draw [ line width=1.6pt](11.25,15.25) to[short] (10.75,14.75);
-\node at (11.25,14) {$\Delta t$};
+\node at (0,3) {Propagate fields};
+\node at (0,2) {Interpolate fields};
+\node at (0,1) {Push particles};
+\node at (0,0) {Deposit current};
+\node at (-2, 1.5) {$\Delta t$};
+
+\draw[->,thick] (-2, 2) -- ++(0, 1.5) -- ++(-1, 0) -- ++(0,-4.2) -- ++(1, 0) -- ++(0, 1.5);
+
 \end{circuitikz}
-}%
 \caption{Overview of the steps in one PIC time step.}
 \label{fig:pic-scheme}
 \end{figure}

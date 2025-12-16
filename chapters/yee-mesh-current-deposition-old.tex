@@ -15,13 +15,13 @@
   \coordinate (F3) at ($ (B3) + (0, 0, \CellWidth) $);
   \coordinate (F4) at ($ (B4) + (0, 0, \CellWidth) $);
 
-  \def\alphaBegin{0.20}
-  \def\betaBegin{0.22}
-  \def\gammaBegin{0.14}
+  \def\alphaBegin{0.27}
+  \def\betaBegin{0.135}
+  \def\gammaBegin{0.30}
 
   \def\alphaEnd{0.45}
-  \def\betaEnd{0.35}
-  \def\gammaEnd{0.3}
+  \def\betaEnd{0.45}
+  \def\gammaEnd{0.50}
 
   \coordinate (F1End) at (F1);
   \coordinate (F2End) at ($ (F1)!\alphaEnd!(F2) $);
@@ -328,11 +328,11 @@
 \end{tikzpicture}
 \end{minipage}
 \caption{
-  Schematic for the current integrals in the Villasenor–Buneman method.
-  The dashed cell represents the Yee mesh cell,
+  Visualization of the current integrals calculated in the Villasenor–Buneman method.
+  The dashed cell represents the Yee mesh cell
   and the solid cell represents the staggered grid on which charge is conserved.
   Left: The blue and red boxes denote particle's contribution to the total charge of the solid cell
-  before and after its movement.
+  before and after its movement, respectively.
   Right: The initial contribution is shown at its new position after the particle has moved.
   The orange surfaces depict the integrated areas used
   in the derivation of the Villasenor–Buneman method.

@@ -88,7 +88,8 @@ This motion is also known as cyclotron motion.
 
 \section{Kinetic plasma description}
 
-As seen from condition~\eqref{eq:plasma-param-condition}, the number of particles in plasma is large.
+As seen from the condition in Equation~\eqref{eq:plasma-param-condition},
+the number of particles in plasma is large.
 This makes modeling a plasma
 using only particles and Coulomb forces between them computationally unfeasible.
 In the kinetic description of plasma,
@@ -138,7 +139,7 @@ The evolution of the distribution function is governed by the Boltzmann equation
 where $\left(\frac{\partial f_s}{\partial t}\right)_{\text{coll}}$ is the collision term,
 which accounts for interactions between individual particles.
 In the case of plasmas, $\frac{d\ve p}{dt}$ is given by the Lorentz force.
-Due to condition \eqref{eq:plasma-param-condition},
+Due to the condition in Equation~\eqref{eq:plasma-param-condition},
 short-range collisions between particles can be neglected, and the collision term vanishes.
 When the collision term vanishes, the equation is called the Vlasov equation:
 \begin{align}
@@ -158,7 +159,7 @@ Fortunately, in the case of beam instabilities,
 taking the cold-fluid limit of the system allows us to investigate these instabilities analytically.
 To do so, we calculate the moments of the Vlasov equation.
 
-In general, the moment $M(\mathbf{p})$ of the Vlasov equation~\eqref{eq:vlasov} is:
+In general, the moment $M(\mathbf{p})$ of the Vlasov equation (see Equation~\eqref{eq:vlasov}) is:
 \begin{align}
 \int M \left(
 \partial_t f_s
@@ -198,7 +199,7 @@ where $\mathbf{P}_s(\mathbf{x}, t) = m_s\gamma_s\mathbf{V}_s(\mathbf{x}, t)$
 is calculated from the bulk velocity $\mathbf{V}_s(\mathbf{x}, t)$ of the fluid,
 and $n_s(\mathbf{x}, t)$
 is its number density~\cite{bret_multidimensional_2010,bret_collective_2004}.
-Inserting this and $M = 1$ into equation~\eqref{eq:general-moment-of-vlasov},
+Inserting this and $M = 1$ into Equation~\eqref{eq:general-moment-of-vlasov},
 we obtain the continuity equation~\cite{hazeltine_framework_2018}:
 \begin{align}
 \label{eq:continuity-in-cold-limit}
@@ -216,8 +217,8 @@ Using the continuity equation for $M = \mathbf{p}$, we obtain:
 Even in the cold-fluid limit,
 solving for the general evolution of the system is challenging,
 so we resort to solving it perturbatively to a certain order.
-In this thesis, linear-order solutions to
-equations~\eqref{eq:continuity-in-cold-limit} and~\eqref{eq:momentum-transport-in-cold-limit}
+In this thesis, linear-order solutions to Equations~\eqref{eq:continuity-in-cold-limit}
+and~\eqref{eq:momentum-transport-in-cold-limit}
 are sufficient. Furthermore, we assume that the initial electromagnetic fields vanish\footnote{
   The analysis could be done with non-zero initial magnetic field for which
   $\ve V_0 \times \ve B_0 = 0$. However, this is unnecessary in context of this thesis.
@@ -242,10 +243,10 @@ Keeping only the linear-order terms, the expression for the momentum simplifies 
 \end{align}
 where we defined $\gamma \equiv \gamma[\ve V_0]$.
 
-Inserting these into equations~\eqref{eq:continuity-in-cold-limit}
+Inserting these into Equations~\eqref{eq:continuity-in-cold-limit}
 and~\eqref{eq:momentum-transport-in-cold-limit},
-we obtain the linearized continuity equation
-and the linearized momentum transport equation~\cite{bret_collective_2004,bret_cfa_2012}:
+we obtain the linearized continuity
+and the linearized momentum transport equations~\cite{bret_collective_2004,bret_cfa_2012}:
 \begin{align}
   \label{eq:linearized-cold-fluid-continuity-eq}
   \hat{n}_1 &= \frac{n_0 \ve k \cdot \hat{\ve V}_1}{\omega - \ve k \cdot \ve V_0}\,, \\
@@ -255,7 +256,7 @@ and the linearized momentum transport equation~\cite{bret_collective_2004,bret_c
   &= q\left(\hat{\ve E}_1
     + \frac 1c \hat{\ve V}_1 \times \ve B_0 + \frac 1c \ve V_0 \times \hat{\ve B}_1 \right)\,.
 \end{align}
-Additionally, we utilize linearity of Maxwell's equations~\eqref{eq:maxwells}
+Additionally, we utilize linearity of Maxwell's equations (see Equation~\eqref{eq:maxwells})
 and combine them to obtain the linearized wave equation:
 \begin{align}
   \label{eq:linearized-wave-eq}
@@ -284,7 +285,7 @@ The second-order accurate centered finite-difference discretizes the derivative 
   f'_n \approx \frac{f_{n + 1} - f_{n - 1}}{2h}\,.
 \end{align}
 The second-order accuracy of the algorithm is observed by Taylor expanding
-the right-hand side of equation \eqref{eq:centered-fd}:
+the right-hand side of Equation~\eqref{eq:centered-fd}:
 \begin{align}
   \frac{f_{n + 1} - f_{n - 1}}{2h}
   = \frac{1}{2h} \left(\sum_{k=0}^\infty \frac{h^k}{!k}f^{(k)}_n
@@ -301,7 +302,7 @@ Similarly to the first derivative, we can see the second-order accuracy from the
   \label{eq:second-fd-accuracy}
   \frac{f_{n+2} - 2 f_n + f_{n-2}}{4h^2}  = f''_n + O(h^2)\,.
 \end{align}
-We note that the central finite-difference second-order derivative \eqref{eq:second-fd}
+We note that the central finite-difference second-order derivative in Equation~\eqref{eq:second-fd}
 does not require the function values $f_{n+1}$ and $f_{n-1}$.
 Thus, it is usually defined on a finer grid with grid points at $\frac{nh}{2}$, where $n \in \mathbb{N}$.
 This gives us the standard centered finite-difference second-order derivative:
@@ -310,7 +311,7 @@ This gives us the standard centered finite-difference second-order derivative:
   f''_n \approx \frac{f_{n+1} - 2 f_n + f_{n-1}}{h^2}\,,
 \end{align}
 which is still second-order accurate because the change only modifies
-the constant coefficients in \eqref{eq:second-fd-accuracy}.
+the constant coefficients in Equation~\eqref{eq:second-fd-accuracy}.
 
 There exist higher-order accurate schemes for calculating the centered finite-difference,
 but they involve a trade-off between improved numerical accuracy and increased computational cost.
@@ -325,7 +326,7 @@ The one-dimensional wave equation for function $\psi(t, x)$ is given by:
   \frac{\partial^2 \psi}{\partial t^2} = c^2 \frac{\partial^2 \psi}{\partial x^2}\,.
 \end{align}
 Inserting the plane wave solution $\psi = e^{i(kx - \omega t)}$
-to the wave equation~\eqref{eq:one-d-wave-eq} gives the physical dispersion relation:
+to Equation~\eqref{eq:one-d-wave-eq} gives the physical dispersion relation:
 \begin{align}
   \label{eq:one-d-wave-dispersion-eq}
   \omega = \pm ck\,.
@@ -333,8 +334,9 @@ to the wave equation~\eqref{eq:one-d-wave-eq} gives the physical dispersion rela
 
 We discretize the function $\psi(x, t)$ on a uniform grid $(n \Delta x, m \Delta t)$,
 where $n,m\in\mathbb{N}$, and denote $\psi^m_n = \psi(n\Delta x, m\Delta t)$.
-Applying the centered finite-difference for second derivatives~\eqref{eq:second-fd-correct}
-to both the temporal and spatial derivatives in the wave equation~\eqref{eq:one-d-wave-eq},
+Applying the centered finite-difference for second derivatives
+(see Equation~\eqref{eq:second-fd-correct})
+to both the temporal and spatial derivatives in Equation~\eqref{eq:one-d-wave-eq},
 and solving for $\psi_n^{m + 1}$, we obtain:
 \begin{align}
   \label{eq:fd-intermediate}
@@ -342,8 +344,9 @@ and solving for $\psi_n^{m + 1}$, we obtain:
   (\psi_{n + 1}^m - 2\psi_n^m + \psi_{n-1}^m) + 2\psi_n^m - \psi_n^{m - 1}\,.
 \end{align}
 Inserting the discretized plane wave $\psi_n^m = e^{i(k n \Delta x - \omega m \Delta t)}$
-into equation~\eqref{eq:fd-intermediate} results in a numerical dispersion relation
-that is distinctly different from the physical dispersion relation~\eqref{eq:one-d-wave-dispersion-eq}:
+into Equation~\eqref{eq:fd-intermediate} results in a numerical dispersion relation
+that is distinctly different from the physical dispersion relation
+(see Equation~\eqref{eq:one-d-wave-dispersion-eq}):
 \begin{align}
   \label{eq:fd-dispersion}
   \frac{\omega}{c} \Delta x =
@@ -352,11 +355,11 @@ that is distinctly different from the physical dispersion relation~\eqref{eq:one
 where $\hat{c} \equiv c\frac{\Delta t}{\Delta x}$ is the Courant-Friedrichs-Lewy number,
 or the Courant number for short~\cite{verboncoeur_particle_2005}.
 The solutions are periodic in $k$ with a period of $\frac{2\pi}{\Delta x}$,
-which means that the finite-difference wave equation~\eqref{eq:fd-intermediate}
+which means that the finite-difference wave equation in Equation~\eqref{eq:fd-intermediate}
 cannot resolve waves beyond a certain wavenumber.
 
-The numerical dispersion relation~\eqref{eq:fd-dispersion}
-reduces to the physical dispersion relation~\eqref{eq:one-d-wave-dispersion-eq}
+The numerical dispersion relation in Equation~\eqref{eq:fd-dispersion}
+reduces to the physical dispersion relation from Equation~\eqref{eq:one-d-wave-dispersion-eq}
 when $\hat{c} = 1$ or when both $\Delta t$ and $\Delta x$ approach zero,
 but not when either one alone approaches zero.
 These limits are summarized in Table~\ref{fig:numerical-dispersion-relation-limits}.
@@ -372,13 +375,13 @@ These limits are summarized in Table~\ref{fig:numerical-dispersion-relation-limi
     $\Delta t \rightarrow 0$ and $\Delta x \rightarrow 0$ & $\omega = \pm ck$ \\ \hline
   \end{tabular}
   \caption{Summary of different limits for the numerical dispersion
-    relation~\eqref{eq:fd-dispersion}~\cite{verboncoeur_particle_2005}.}
+    relation from Equation~\eqref{eq:fd-dispersion}~\cite{verboncoeur_particle_2005}.}
   \label{fig:numerical-dispersion-relation-limits}
 \end{table}
 
 The Courant number $\hat{c}$ is crucial for the stability of solutions to
-the finite-difference wave equation~\eqref{eq:fd-intermediate}.
-For $\hat{c} > 1$, the numerical dispersion relation~\eqref{eq:fd-dispersion}
+the finite-difference wave equation in Equation~\eqref{eq:fd-intermediate}.
+For $\hat{c} > 1$, the numerical dispersion relation in Equation~\eqref{eq:fd-dispersion}
 shows that $\omega$ has a positive imaginary part for some values of $k$,
 which results in an exponentially growing mode for $\phi(t, x)$.
 The condition for stability, $\hat c = c\frac{\Delta t}{\Delta x} \le 1$,
@@ -387,13 +390,13 @@ In multiple dimensions, the condition is given by~\cite{verboncoeur_particle_200
 \begin{align}
   \Delta t \le \frac{1}{c}\left( \sum_i \frac{1}{(\Delta x_i)^2} \right)^{-1/2}\,.
 \end{align}
-Figure \ref{fig:cfl-plot} shows one period of
-the numerical dispersion relation given in equation~\eqref{eq:fd-dispersion}.
+Figure~\ref{fig:cfl-plot} shows one period of
+the numerical dispersion relation given in Equation~\eqref{eq:fd-dispersion}.
 
 \begin{figure}[h!]
   \centering
   \includegraphics[scale=0.7]{chapters/cfl-plot.pdf}
-  \caption{One period of the numerical dispersion relation~\eqref{eq:fd-dispersion}
+  \caption{One period of the numerical dispersion relation given in Equation~\eqref{eq:fd-dispersion}
     for different values of the Courant number $\hat c = \frac{c\Delta t}{\Delta x}$.
     The real parts of $\frac{\omega}{c}\frac{\Delta x}{\pi}$ are shown as continuous lines,
     while the imaginary parts are shown as dashed curves.
