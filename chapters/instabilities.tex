@@ -1,21 +1,21 @@
 \chapter{Electron Beam-Plasma Instabilities}
 
-Beam-plasma system consists of two homogeneous counter-streaming pair plasma populations.
-In this chapter we will give breaf overview of instabilities present in such system,
+Beam-plasma system consists of two homogeneous counter-streaming pair-plasma populations.
+In this chapter, we will give a breaf overview of the instabilities present in such system,
 derive the maximum growth rates in cold-fluid limit and show that these match
-to the measured growth rates from symmetric beam-plasma simulations done with RUNKO.
+to the measured growth rates from symmetric beam-plasma simulations done with Runko.
 In the cold-fluid limit and for symmetric beams
-the fastest growing instability is so called filamentation instability,
+the fastest growing instability is the so-called filamentation instability,
 which unstable modes are fully electromagnetic \cite{bret_collective_2004}.
-This means that matching growth rates demonstrates correctness in RUNKO's
-ability to probe the full set of Vlasov-Maxwell equations.
+This means that matching growth rates demonstrates correctness in Runko's
+ability to probe the full set of electromagnetic Vlasov-Maxwell equations.
 
 \section{Overview}
 
-Beam-plasma systems have been studied since Langmuir first suggested in 1925,
-the existence of oscillations in beam-blasma
+Beam-plasma systems have been studied since Langmuir first suggested in 1925
+an existence of oscillations in beam-blasma
 systems \cite{langmuir_scattering_1925,briggs_electron-stream_1964}.
-Later in 1948 Pierce explained Langmuir's observations by demonstrating
+Later, in 1948 Pierce explained Langmuir's observations by demonstrating
 unstable oscillations can arise in such systems \cite{pierce_possible_1948}.
 This prompted Bohm and Gross to develope the kinetic theory of ''two-stream instability'',
 which contains unstable waves propagating along the beam direction \cite{bohm_theory_1949}.
@@ -23,7 +23,7 @@ It was Fried in 1959 who showed that there exists a second kind of instability,
 in which electromagnetic perturbations perpendicular to the flow are unstable \cite{fried_mechanism_1959}.
 These modes tend to break up an initially homogeneus beam profile into small-scale current filaments,
 which leads to the name ''filamentation instability''.
-Fried's article mentioned closely related work of Weible,
+Fried's article mentioned closely related work of Weibel,
 who demonstrated the instability of
 an anistropic two-temperature Maxwellian plasma  \cite{weibel_spontaneously_1959}.
 In literature these two instabilities have become almost interchangable,
@@ -35,7 +35,7 @@ the stability of oblique modes can be investigated.
 This was proptly done in the cold-fluid limit and it was found that
 the unstable spectrum is two-dimensional as the oblique perturbations are likely to be unstable
 \cite{watson_statistical_1960,bludman_statistical_1960,fainberg_nonlinear_1970}.
-In 21st century Bret et al. have done comprehensive kinetic treatments
+In 21st century, Bret et al. have done comprehensive kinetic treatments
 that have managed to provide a unified vision of the entire unstable spectrum
 including temperature effects
 \cite{bret_collective_2004,bret_electromagnetic_2005,bret_characterization_2005},
@@ -49,12 +49,12 @@ for which many supporting PIC simulations have been performed
 \section{Growth rate in the cold-fluid limit}
 
 As stated at the beginning of the chapter our system consists of two homogeneous
-counter-streaming pair plasma populations. Ions are concidered as a fixed neutralizing background.
-We’ll call the two populations the beam and the background plasma and
-denote their number densities as $n_b$ and $n_p$.
-Similarly we’ll denote their bulk velocities as $\ve V_b$ and $\ve V_p$.
-Initially system is current and charge neutral:
-
+counter-streaming pair-plasma populations.
+Ions are considered as a fixed neutralizing background.
+We call the two populations the beam and the background plasma and
+denote their number densities as $n_b$ and $n_p$, respectively.
+Similarly we denote their bulk velocities as $\ve V_b$ and $\ve V_p$.
+Initially the system is current and charge neutral:
 \begin{align}
   \label{eq:current-neutrality}
   n_{b0}\ve V_{b0} = n_{p0}\ve V_{p0}
@@ -64,18 +64,22 @@ Without loss of generality we can assume in the following discussion
 that the wave vector is in the xy-plane.
 
 Following the symbolic calculator technique from \cite{bret_beam-plasma_2007}
-we’ll solve $\ve V_{b1}$ and $\ve V_{p1}$ from the linearized momentum transport equation
-\eqref{eq:linearized-cold-fluid-momentum-transport} and insert them to the linearized
-continuity equation \eqref{eq:linearized-cold-fluid-continuity-eq} to give us $n_{b1}$ and $n_{p1}$.
-Likewise these are inserted to the linearized wave equation \eqref{eq:linearized-wave-eq}.
-The resulting equation can be manipulated to a matrix form \cite{bret_collective_2004,bret_cfa_2012}:
+we solve $\ve V_{b1}$ and $\ve V_{p1}$ from the linearized momentum transport equation
+(see Equation~\eqref{eq:linearized-cold-fluid-momentum-transport})
+and insert them to the linearized continuity equation
+(see Equation~\eqref{eq:linearized-cold-fluid-continuity-eq})
+to give $n_{b1}$ and $n_{p1}$.
+Likewise, these are inserted to the linearized wave equation
+(see Equation~\eqref{eq:linearized-wave-eq}).
+The resulting equation can be manipulated to
+a matrix form~\cite{bret_collective_2004,bret_cfa_2012}:
 \begin{align}
   \label{eq:dispersion-eq-vec}
   \ve T(\ve k, \omega ) \hat{\ve E}_1 = 0
 \end{align}
 where $\ve T(\ve k, \omega ) \hat{\ve E}_1$ is a matrix-vector product between the matrix
 $\ve T(\ve k, \omega )$ and the electric field perturbation.
-The matric has following form:
+The matrix has the following form:
 \begin{align}
   \ve T(\ve k, \omega ) = \frac{\omega^2}{c^2} \boldsymbol{\epsilon}(\ve k, \omega)
   + \ve k \otimes \ve k - k^2 \mathbb{I}
@@ -90,7 +94,7 @@ is the dielectric tensor:
 \frac{\omega^2}{c^2}\epsilon_{xz} + k_x k_z & 0 & \frac{\omega^2}{c^2}\epsilon_{zz} - k_x^2
 \end{bmatrix}
 \end{align}
-Equation \eqref{eq:dispersion-eq-vec} admits solutions only when determinant of
+Equation~\eqref{eq:dispersion-eq-vec} admits solutions only when determinant of
 $\ve T(\ve k, \omega)$ vanishes which results in two branches:
 \begin{align}
   \epsilon_{yy} = \frac{c^2k^2}{\omega^2}
@@ -112,7 +116,8 @@ we'll first define standard dimensionless variables:
   \ve Z = \frac{\ve k V_{b0}}{\omega_{pp}} \qquad
   \alpha = \frac{n_{b0}}{n_{p0}}
 \end{align}
-Now $x$ can be solved numerically from dispersion relation \eqref{eq:dispersion-eq}.
+Now $x$ can be solved numerically from dispersion relation
+seen in Equation~\eqref{eq:dispersion-eq}.
 Figure~\ref{fig:perp-growth-rates} shows the normalized growth rate (i.e. imaginary part of $x$)
 as a function of $\ve Z$ for two different cases.
 For the diluted case ($\alpha \ll 1$) we can see that the largest growth rate
@@ -123,15 +128,16 @@ corresponding to the filamentation instability.
 \begin{figure}
   \centering
   \includegraphics{chapters/growth-rate.pdf}
-  \caption{Growt rates from dispersion relation \eqref{eq:dispersion-eq} for $\gamma_b = 3$.
+  \caption{Growt rates from dispersion relation seen in Equation~\eqref{eq:dispersion-eq}
+    for $\gamma_b = 3$.
     Left is the symmetric case $\alpha = 1$ and right is the diluted case $\alpha = 0.1$. }
   \label{fig:perp-growth-rates}
 \end{figure}
 
 For the transverse case $k_z = Z_z = 0$ the components of dielectric tensor
 $\boldsymbol{\epsilon}(\ve k, \omega)$ simplify to \cite{bret_cfa_2012}\footnote{
-  Note that in \cite{bret_cfa_2012} powers of $-3$ are missing from equation \eqref{eq:mistake-a}
-  and there is extra $\gamma_p^{-1}$ in \eqref{eq:mistake-b}.
+  Note that in \cite{bret_cfa_2012} powers of $-3$ are missing from Equation~\eqref{eq:mistake-a}
+  and there is extra $\gamma_p^{-1}$ in Equation~\eqref{eq:mistake-b}.
 }:
 \begin{align}
   \epsilon_{xx} &= 1 - \frac{\alpha}{\gamma_b x^2} - \frac{1}{\gamma_p x^2}, \\
@@ -142,7 +148,7 @@ $\boldsymbol{\epsilon}(\ve k, \omega)$ simplify to \cite{bret_cfa_2012}\footnote
   \label{eq:mistake-b}
   \epsilon_{xz} &= \frac{Z_x \alpha}{x^3} \left( \frac 1\gamma_p - \frac 1\gamma_b \right)
 \end{align}
-Inserting these to the dispersion relation \eqref{eq:dispersion-eq}
+Inserting these to the dispersion relation (see Equtaion~\eqref{eq:dispersion-eq})
 and taking the limit $Z_x \rightarrow \infty$ the growth rates for
 symmetric and diluted cases of filamentation instability can be solved exactly:
 \begin{align}
@@ -156,14 +162,14 @@ symmetric and diluted cases of filamentation instability can be solved exactly:
 
 GPU accelerated Runko was used to simulate filamentation instability
 of symmetric beams ($\alpha = 1$) following the setup from~\cite{nattila_runko:_2022}.
-The two counter-streaming pair plasma populations are initialized to
+The two counter-streaming pair-plasma populations are initialized to
 flow along $\hat{\ve e}_0$ with spatial components of a four-velocity
 $\ve u = \pm \gamma_b \hat{\ve e}_0$,
 where $\gamma_b$ is the Lorentz factor is shared between the symmetric beams.
 The plasmas are modeled with 32 particles per cell per species,
 which initial positions are samples from unifrom distribution
 and velocities are sampled from Jüttner-Synge distribution~\cite{zenitani_loading_2015}
-with thermal spread of $k_bT/(mc^2) = 10^5$,
+with thermal spread of $k_bT/(mc^2) = 10^{-5}$,
 where $k_b$ is the Boltzmann constant, $T$ is the temperature,
 $m$ is the mass of the particles and $c$ is the speed of light.
 Initially the electromagnetic fields are zero.
@@ -176,8 +182,13 @@ of Equation~\eqref{eq:filamentation-growth-rate-symmetric}
 Figure~\ref{fig:perp-growth-rates} shows the average values
 of the magnetic field energy density normalized by
 the relativistic plasma enthalphy density as a function of time.
-We note that the analytical growth rate matches matches with the numerical
+We note that the analytical growth rate matches with the numerical
 growth-rates perfectly in the linear growth phase of the instability.
+However, the linear growth phase does not begin immediatly
+as it grows from pure noise and it takes a while before it starts to dominate.
+At some point, non-linear effects stop the linear growth phase and the growth plateaus.
+Qualitatively, the formed fromed filaments stats to collide with each other
+which distrubes the system enough to stop the growth.
 
 \begin{figure}
   \centering
@@ -186,7 +197,7 @@ growth-rates perfectly in the linear growth phase of the instability.
     with different values of $\gamma_b$. Solid curves represent the average value of
     the magnetic field energy density $\rho_B = \frac{B^2}{8\pi}$
     normalized by the relativistic plasma enthalphy density, $\gamma_bn_0m_ec^2$,
-    as a function on time $t\omega_p$.
+    as a function of time $t\omega_p$.
     From left to right values for $\gamma_b$ are $3$ (blue), $10$ (orange), $30$ (green),
     and $100$ (red).
     The dashed lines show the analytic growth rates from the linearized cold-fluid limit.
