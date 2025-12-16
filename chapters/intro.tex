@@ -12,10 +12,11 @@ Runko~\cite{nattila_runko:_2022} to run on GPUs.
 In this chapter, the required background theory is presented,
 and in the following chapter, different aspects of Particle-in-Cell simulation are discussed.
 In the third chapter, the GPU port of Runko is used to simulate
-
-the electron beam–plasma filamentation instability, which is then compared to the analytical result
-inorder to confirm physical accuracy of the port.
-The final chapter contains a discussion of further development avenues for the GPU port of Runko.
+the electron beam–plasma filamentation instability,
+which is then compared to the analytical result
+in order to confirm physical accuracy of the port.
+The final chapter contains conclusions and
+a discussion of further development avenues for the GPU port of Runko.
 
 \section{Plasma}
 
@@ -268,7 +269,7 @@ where $\hat{\ve J}_1$ in the cold-fluid limit is:
   \hat{\ve J}_1 &=\sum_s q_s(n_{s0}\hat{\ve V}_{s1} + \hat{n}_{s1}\ve V_{s0})\,.
 \end{align}
 
-\section{Finite difference}
+\section{Finite-difference}
 \label{sec:finite-difference}
 
 The PIC scheme requires solving Maxwell's equations numerically on a discretized grid.
