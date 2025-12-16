@@ -7,11 +7,11 @@ The electromagnetic fields are represented on a grid through which the particles
 giving rise to the name particle-in-cell.
 
 The PIC scheme was formalised in 1970s
-but has its roots in work by Buneman \cite{buneman_dissipation_1959}
-and Dawson \cite{dawson_one-dimensional_1962} in the late 1950s.
+but has its roots in work by Buneman \citep{buneman_dissipation_1959}
+and Dawson \citep{dawson_one-dimensional_1962} in the late 1950s.
 Later, two classic PIC text books were published:
-one by Hockney and Eastwood \cite{hockney_computer_1981} in 1981
-and another by Birdsall and Langdon \cite{langdon_plasma_1991} in 1991.
+one by Hockney and Eastwood \citep{hockney_computer_1981} in 1981
+and another by Birdsall and Langdon \citep{langdon_plasma_1991} in 1991.
 
 Basic PIC consists of many smaller tasks, for which numerous algorithms exist with varying trade-offs.
 At high-evel a single PIC time step contains four parts:
@@ -24,7 +24,7 @@ and discuss the set of algorithms implemented in the GPU port of Runko.
 In relativistic PIC, the equations of motion for a particle
 with spatial component of a four-velocity $\ve u(\ve v) = \gamma \ve v$,
 coordinate velocity $\ve v$, mass $m$, and charge $q$
-are~\cite{verboncoeur_particle_2005,vay_modeling_2014}:
+are~\citep{verboncoeur_particle_2005,vay_modeling_2014}:
 \begin{align}
   \label{eq:newton-lorentz-vel}
   \frac{d\ve x}{dt} &= \ve v(\ve u) = \frac{\ve u}{\gamma}\,, \\
@@ -53,14 +53,14 @@ When charge conserving current deposition scheme is used
 and the initial conditions satisfy Equations~\eqref{eq:gauss-law}
 and~\eqref{eq:gauss-law-for-B},
 then they are automatically satisfied throughout the rest of the simulation as
-well~\cite{eastwood_virtual_1991}.
+well~\citep{eastwood_virtual_1991}.
 
 \section{Field propagator}
 
 The purpose of the field propagator is to evolve the electric field $\ve E$ and magnetic field $\ve B$
 according to Equations~\eqref{eq:maxwell-faraday} and~\eqref{eq:ampere-maxwell-law}.
 This is typically achieved using finite-difference time-domain (FDTD)
-discretizations on a Yee mesh~\cite{yee_numerical_1966}.
+discretizations on a Yee mesh~\citep{yee_numerical_1966}.
 In this approach,
 the electromagnetic fields are staggered in both time
 and space to compute derivatives using centered finite-differences,
@@ -104,7 +104,7 @@ See Figure~\ref{fig:yee-mesh} for a schematic illustration of the Yee mesh.
 
 The most common way to solve Equations~\eqref{eq:maxwell-faraday}
 and~\eqref{eq:ampere-maxwell-law}
-numerically is the explicit leapfrog algorithm~\cite{verboncoeur_particle_2005,langdon_plasma_1991}.
+numerically is the explicit leapfrog algorithm~\citep{verboncoeur_particle_2005,langdon_plasma_1991}.
 In the leapfrog algorithm, in addition to spatial staggering, the fields are also staggered in time.
 Electric fields and current densities are defined at times $s\Delta t$,
 while magnetic fields are defined at times $\left(s + \frac12\right)\Delta t$,
@@ -322,7 +322,7 @@ it is common practice to first compute $\ve E$ and $\ve B$
 at the Yee mesh vertex locations (see Equation~\eqref{eq:yee-vertex-locations}),
 for example via a simple spatial averaging.
 This approach simplifies the definition and implementation of interpolators
-and helps reduce short-wavelength noise~\cite{langdon_plasma_1991}.
+and helps reduce short-wavelength noise~\citep{langdon_plasma_1991}.
 
 We can now express the interpolation of a generic function $f$,
 defined on the grid vertices (see Equation~\eqref{eq:yee-vertex-locations}),
@@ -333,7 +333,7 @@ to an arbitrary point $\ve x$:
 \end{align}
 where $\Delta V = \prod_i \Delta x_i$, $f_{n,m,l} \equiv f(\ve x_{n,m,l})$,
 and $S'$ is the weighting function, normalized such that at every position\footnote{
-  This normalization follows the convention used in~\cite{langdon_plasma_1991},
+  This normalization follows the convention used in~\citep{langdon_plasma_1991},
   ensuring that the grid contains the same total charge as the particles:
   \begin{align}
   \int_V \rho dV \approx
@@ -402,9 +402,9 @@ However, various pushers have procedures that allow solving Equation~\eqref{eq:p
 in steps, keeping the method explicit.
 
 In this section, we compare properties of the relativistic Boris pusher
-(1960)~\cite{boris_relativistic_1960},
-Vay's method (2008)~\cite{vay_simulation_2008}, and
-Higuera-Cary method (2017)~\cite{higuera_structure-preserving_2017}.
+(1960)~\citep{boris_relativistic_1960},
+Vay's method (2008)~\citep{vay_simulation_2008}, and
+Higuera-Cary method (2017)~\citep{higuera_structure-preserving_2017}.
 Since the GPU port of Runko uses the relativistic Boris pusher,
 we will examine it in more detail.
 From now on we will refer the relativistic Boris pusher as just the Boris pusher for short.
@@ -435,10 +435,10 @@ and, Higuera-Cary method uses:
 The choices for $\bar{\ve v}^s$ appear very similar;
 however, the methods possess distinct properties that are crucial for physical accuracy.
 Since the underlying physical system is Hamiltonian,
-the solutions lie on a symplectic manifold in phase space~\cite{goldstein_classical_2014}.
+the solutions lie on a symplectic manifold in phase space~\citep{goldstein_classical_2014}.
 Symplectic integrators are those whose solutions remain on this symplectic manifold.
 The Kolmogorov–Arnold–Moser theorem guarantees that their long-term evolution
-preserves physical accuracy~\cite{higuera_structure-preserving_2017}\footnote{
+preserves physical accuracy~\citep{higuera_structure-preserving_2017}\footnote{
   Defining what a symplectic manifold is
   and what constitutes a physically accurate long-term evolution of a Hamiltonian system
   lies outside the scope of this thesis.
@@ -552,7 +552,7 @@ then they remain satisfied at all later times.
 For example, similar to the approach in Section~\ref{sec:field-interpolator},
 we could interpolate particle velocities to neighboring grid locations.
 However, this scheme is not charge
-conserving~\cite{hockney_computer_1981,langdon_plasma_1991,blinne_new_2003}.
+conserving~\citep{hockney_computer_1981,langdon_plasma_1991,blinne_new_2003}.
 For a current deposition method to be charge--conserving,
 it must satisfy the continuity equation for charge density,
 which is derived by taking the time derivative of Gauss’s law (see Equation~\eqref{eq:gauss-law}):
@@ -563,14 +563,14 @@ which is derived by taking the time derivative of Gauss’s law (see Equation~\e
 
 Several charge--conserving current deposition schemes exist.
 The GPU port of Runko implements the so-called ZigZag method,
-as described in~\cite{blinne_new_2003},
-so this section focuses on that method and the Villasenor–Buneman method~\cite{villasenor_rigorous_1992},
+as described in~\citep{blinne_new_2003},
+so this section focuses on that method and the Villasenor–Buneman method~\citep{villasenor_rigorous_1992},
 since the ZigZag method can be considered an optimized version of the latter.
 Another notable scheme is the density decomposition method proposed by
-Esirkepov~\cite{esirkepov_exact_2001}.
+Esirkepov~\citep{esirkepov_exact_2001}.
 A general treatment of charge--conserving methods using finite-element techniques is provided by
-Eastwood in~\cite{eastwood_virtual_1991},
-with an extension to curvilinear coordinates in~\cite{eastwood_body-fitted_1995}.
+Eastwood in~\citep{eastwood_virtual_1991},
+with an extension to curvilinear coordinates in~\citep{eastwood_body-fitted_1995}.
 Both the Villasenor–Buneman method and Esirkepov’s density decomposition
 can be regarded as special cases of Eastwood’s scheme.
 
@@ -597,11 +597,11 @@ We note that the 3D ZigZag method described in the original paper is defective
 and not charge--conserving.
 For particle motion confined to a single cell,
 the method adds current in the same way as the Villasenor–Buneman method
-(equations (35–37) in~\cite{villasenor_rigorous_1992}),
+(equations (35–37) in~\citep{villasenor_rigorous_1992}),
 but it omits the term proportional to $\delta x_0 \delta x_1 \delta x_2$,
 where $\delta x_i$ represents the change in the particle’s position during one time step.
 As a result, current deposition from diagonal trajectories is not charge--conserving.
-This observation is consistent with the findings reported in~\cite{steiniger_ez:_2023}.
+This observation is consistent with the findings reported in~\citep{steiniger_ez:_2023}.
 Preliminary tests indicate that the 3D ZigZag method can be corrected by adding the missing terms,
 but this subject requires further studies.
 
@@ -742,7 +742,7 @@ Figure~\ref{fig:zigzags} illustrates the four different types of movements invol
 \input{chapters/path-splitting}
 
 The benefit of splitting the trajectory in this manner is that the relay point coordinates
-can be computed without conditionals by using the algorithm described in~\cite{blinne_new_2003}:
+can be computed without conditionals by using the algorithm described in~\citep{blinne_new_2003}:
 \begin{align}
   R_i = \Delta x_i \min\left[
   \min(a_i, b_i) + 1, \max\left\{\max(a_i, b_i), \frac{x^{s}_i+x^{s+1}_i}{2}\right\}
@@ -750,7 +750,7 @@ can be computed without conditionals by using the algorithm described in~\cite{b
 \end{align}
 After the relay point has been determined,
 the Villasenor–Buneman method can be applied to both subtrajectories.
-Compared to the original scheme described in~\cite{villasenor_rigorous_1992},
+Compared to the original scheme described in~\citep{villasenor_rigorous_1992},
 the conditionless ZigZag achieves superior computational performance.
 
 

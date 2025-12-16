@@ -8,7 +8,7 @@ and show that these agree with the measured growth rates from symmetric
 beam–plasma simulations performed with GPU-accelerated Runko.
 In the cold-fluid limit and for symmetric beams,
 the fastest-growing instability is the so-called filamentation instability,
-whose unstable modes are fully electromagnetic~\cite{bret_collective_2004}.
+whose unstable modes are fully electromagnetic~\citep{bret_collective_2004}.
 Matching these growth rates therefore demonstrates the correctness of Runko’s
 ability to resolve the full set of electromagnetic Vlasov–Maxwell equations.
 
@@ -16,22 +16,22 @@ ability to resolve the full set of electromagnetic Vlasov–Maxwell equations.
 
 Beam-plasma systems have been studied since Langmuir first suggested
 the existence of oscillations in such systems in
-1925~\cite{langmuir_scattering_1925,briggs_electron-stream_1964}.
+1925~\citep{langmuir_scattering_1925,briggs_electron-stream_1964}.
 Later, in 1948, Pierce explained Langmuir's observations by demonstrating
-that unstable oscillations can arise in such systems \cite{pierce_possible_1948}.
+that unstable oscillations can arise in such systems \citep{pierce_possible_1948}.
 This prompted Bohm and Gross to develop the kinetic theory of ''two-stream instability'',
-which contains unstable waves propagating along the beam direction \cite{bohm_theory_1949}.
+which contains unstable waves propagating along the beam direction \citep{bohm_theory_1949}.
 In 1959, Fried showed that a second kind of instability exists,
 in which electromagnetic perturbations perpendicular to the flow
-become unstable~\cite{fried_mechanism_1959}.
+become unstable~\citep{fried_mechanism_1959}.
 These modes tend to break up an initially homogeneous
 beam profile into small-scale current filaments,
 giving rise to the name ''filamentation instability''.
 Fried's article also mentioned closely related work by Weibel,
 who demonstrated the instability of
-an anisotropic, two-temperature Maxwellian plasma~\cite{weibel_spontaneously_1959}.
+an anisotropic, two-temperature Maxwellian plasma~\citep{weibel_spontaneously_1959}.
 In literature, these two instabilities have become almost interchangeable,
-even though they are technically not equivalent~\cite{bret_multidimensional_2010}.
+even though they are technically not equivalent~\citep{bret_multidimensional_2010}.
 In this thesis, we use the term ''filamentation instability'' for clarity.
 
 In addition to the parallel two-stream modes and perpendicular filamentation modes,
@@ -39,12 +39,12 @@ the stability of oblique modes can also be investigated.
 This was proptly done in the cold-fluid limit, where it was found that
 the unstable spectrum is two-dimensional,
 as the oblique perturbations are likely to be unstable
-\cite{watson_statistical_1960,bludman_statistical_1960,fainberg_nonlinear_1970}.
+\citep{watson_statistical_1960,bludman_statistical_1960,fainberg_nonlinear_1970}.
 In 21st century, Bret et al. carried out comprehensive kinetic treatments
 that provided a unified description of the entire unstable spectrum,
 including temperature effects
-\cite{bret_collective_2004,bret_electromagnetic_2005,bret_characterization_2005},
-supported by numerous PIC simulations~\cite{gremillet_linear_2007,
+\citep{bret_collective_2004,bret_electromagnetic_2005,bret_characterization_2005},
+supported by numerous PIC simulations~\citep{gremillet_linear_2007,
   dieckmann_evolution_2006,
   frederiksen_electromagnetic_2008,
   kong_evolution_2009,
@@ -69,7 +69,7 @@ We define the beam to propagate along the x-axis.
 Without loss of generality, we assume in the following discussion
 that the wave vector lies in the xy-plane.
 
-Following the symbolic-calculator technique from \cite{bret_beam-plasma_2007},
+Following the symbolic-calculator technique from \citep{bret_beam-plasma_2007},
 we solve for $\ve V_{b1}$ and $\ve V_{p1}$ from the linearized momentum transport equation
 (see Equation~\eqref{eq:linearized-cold-fluid-momentum-transport})
 and insert them to the linearized continuity equation
@@ -78,7 +78,7 @@ to obtain $n_{b1}$ and $n_{p1}$.
 These are then inserted into the linearized wave equation
 (see Equation~\eqref{eq:linearized-wave-eq}).
 The resulting expression can be rearranged into
-a matrix form~\cite{bret_collective_2004,bret_cfa_2012}:
+a matrix form~\citep{bret_collective_2004,bret_cfa_2012}:
 \begin{align}
   \label{eq:dispersion-eq-vec}
   \ve T(\ve k, \omega ) \hat{\ve E}_1 = 0
@@ -142,8 +142,8 @@ corresponding to the filamentation instability.
 \end{figure}
 
 For the transverse case $k_z = Z_z = 0$, the components of dielectric tensor
-$\boldsymbol{\epsilon}(\ve k, \omega)$ simplify to~\cite{bret_cfa_2012}\footnote{
-  Note that in \cite{bret_cfa_2012} powers of $-3$ are missing from Equation~\eqref{eq:mistake-a}
+$\boldsymbol{\epsilon}(\ve k, \omega)$ simplify to~\citep{bret_cfa_2012}\footnote{
+  Note that in \citep{bret_cfa_2012} powers of $-3$ are missing from Equation~\eqref{eq:mistake-a}
   and there is extra $\gamma_p^{-1}$ in Equation~\eqref{eq:mistake-b}.
 }:
 \begin{align}
@@ -168,14 +168,14 @@ symmetric and diluted cases of filamentation instability can be solved exactly:
 \section{Numerical validation}
 
 GPU-accelerated Runko was used to simulate filamentation instability
-of symmetric beams ($\alpha = 1$) following the setup from~\cite{nattila_runko:_2022}.
+of symmetric beams ($\alpha = 1$) following the setup from~\citep{nattila_runko:_2022}.
 The two counter-streaming pair-plasma populations are initialized to
 flow along $\hat{\ve e}_0$ with spatial components of a four-velocity
 $\ve u = \pm \gamma_b \hat{\ve e}_0$,
 where $\gamma_b$ is the Lorentz factor shared between the symmetric beams.
 The plasmas are modeled with 32 particles per cell per species,
 which initial positions are sampled from a unifrom distribution
-and velocities are sampled from Jüttner-Synge distribution~\cite{zenitani_loading_2015}
+and velocities are sampled from Jüttner-Synge distribution~\citep{zenitani_loading_2015}
 with thermal spread of $k_bT/(mc^2) = 10^{-5}$,
 where $k_b$ is the Boltzmann constant, $T$ is the temperature,
 $m$ is the particle mass, and $c$ is the speed of light.

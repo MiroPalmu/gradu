@@ -17,7 +17,6 @@
 \usetikzlibrary{angles,quotes,calc,patterns,3d,perspective} % For making vector graphics (hard to learn but powerful)
 %\usepackage{wrapfig} % For nice text-wrapping figures (use at own discretion)
 \usepackage{amsmath, amssymb} % For better math
-%\usepackage[square]{natbib} % For bibliography
 \usepackage[footnotesize,bf]{caption} % For more control over figure captions
 \usepackage{blindtext}
 \usepackage{titlesec}
@@ -47,6 +46,10 @@
 }
 
 \newcommand\ve[1]{\mathbf{#1}} % vectors using boldface
+
+\usepackage{natbib} % For bibliography
+\bibliographystyle{aasjournal}
+\setcitestyle{authoryear,open={(},close={)}} %Citation-related commands
 
 \onehalfspacing %line spacing
 %\singlespacing
@@ -140,7 +143,6 @@
 \phantomsection
 
 \addcontentsline{toc}{chapter}{\bibname} % This lines adds the bibliography to the ToC
-\bibliographystyle{abbrv} % numbering alphabetic order
 \bibliography{bibliography}
 
 \end{document}

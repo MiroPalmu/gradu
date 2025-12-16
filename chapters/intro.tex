@@ -8,7 +8,7 @@ to model the underlying physical systems with such accuracy that they can reveal
 One commonly used approach is the Particle-in-Cell (PIC) method, in which particles are represented as computational particles.
 
 This thesis is based on the work carried out by the author to port Particle-in-Cell (PIC) simulation
-Runko~\cite{nattila_runko:_2022} to run on GPUs.
+Runko~\citep{nattila_runko:_2022} to run on GPUs.
 In this chapter, the required background theory is presented,
 and in the following chapter, different aspects of Particle-in-Cell simulation are discussed.
 In the third chapter, the GPU port of Runko is used to simulate
@@ -22,7 +22,7 @@ a discussion of further development avenues for the GPU port of Runko.
 
 Plasma is a quasi-neutral gas containing enough free charges
 that long-range collective electromagnetic interactions dominate
-over interactions between individual particles~\cite{pert_foundations_2021,hazeltine_framework_2018}.
+over interactions between individual particles~\citep{pert_foundations_2021,hazeltine_framework_2018}.
 This can occur, for example, when a gas is heated sufficiently for its atoms to become ionized.
 Quasi-neutrality means that the gas is approximately electrically neutral:
 \begin{align}
@@ -47,7 +47,7 @@ $k_B$ is the Boltzmann constant; and $\epsilon_0$ is the vacuum permittivity.
 For a plasma in thermal equilibrium,
 the scale of number density deviations from quasi-neutrality
 over a length $L$ due to thermal fluctuations is
-$\left(\lambda_D/L\right)^2$~\cite{wiesemann_short_2014,hazeltine_framework_2018}.
+$\left(\lambda_D/L\right)^2$~\citep{wiesemann_short_2014,hazeltine_framework_2018}.
 Thus, we can express the quasi-neutrality condition for a plasma over the length scale $L$
 as the requirement that the Debye length is much smaller than $L$:
 \begin{align}
@@ -57,7 +57,7 @@ However, for the Debye length to be statistically valid, there must be enough pa
 the ''Debye sphere'': $N_D = \frac {4\pi}{3}n \lambda_D^3 \gg 1$.
 This requirement is usually expressed in terms of the plasma parameter,
 which is defined (up to a constant factor) as $\Lambda = n\lambda_D^3$
-and written as~\cite{kilpula_2017}:
+and written as~\citep{kilpula_2017}:
 \begin{align}
   \label{eq:plasma-param-condition}
   \Lambda \gg 1\,.
@@ -67,7 +67,7 @@ and written as~\cite{kilpula_2017}:
 
 There are a few characteristic frequencies that appear frequently in plasma physics.
 In a plasma, a small displacement of charges oscillates around the neutral configuration at a frequency
-known as the plasma frequency~\cite{wiesemann_short_2014,pert_foundations_2021,hazeltine_framework_2018}.
+known as the plasma frequency~\citep{wiesemann_short_2014,pert_foundations_2021,hazeltine_framework_2018}.
 For a particle species $s$, the classical plasma frequency is given by:
 \begin{align}
   \label{eq:classical-plasma-frequency}
@@ -100,7 +100,7 @@ and statistically describing their collective behavior.
 For a particle species $s$, the distribution function $f_s(\ve x, \ve p, t)$ describes
 the number of particles in a phase space region spanned by the time interval $[t, t + dt]$,
 spatial region $[\ve x , \ve x + d\ve x]$ and three-momentum region
-$[\ve p, \ve p + d\ve p]$~\cite{klimontovich_relativistic_1960,DeGroot:1980dk,hazeltine_framework_2018}.
+$[\ve p, \ve p + d\ve p]$~\citep{klimontovich_relativistic_1960,DeGroot:1980dk,hazeltine_framework_2018}.
 The particles lie on a mass-shell defined by the Lorentz factor
 $\gamma^{-1} = \sqrt{1-\frac{v^2}{c^2}}$ where $v$ is the coordinate velocity
 and $c$ is the speed of light.
@@ -199,9 +199,9 @@ $f(\mathbf{x}, \mathbf{p}, t) = n_s(\ve x, t)\delta(\mathbf{p} - \mathbf{P}_s(\m
 where $\mathbf{P}_s(\mathbf{x}, t) = m_s\gamma_s\mathbf{V}_s(\mathbf{x}, t)$
 is calculated from the bulk velocity $\mathbf{V}_s(\mathbf{x}, t)$ of the fluid,
 and $n_s(\mathbf{x}, t)$
-is its number density~\cite{bret_multidimensional_2010,bret_collective_2004}.
+is its number density~\citep{bret_multidimensional_2010,bret_collective_2004}.
 Inserting this and $M = 1$ into Equation~\eqref{eq:general-moment-of-vlasov},
-we obtain the continuity equation~\cite{hazeltine_framework_2018}:
+we obtain the continuity equation~\citep{hazeltine_framework_2018}:
 \begin{align}
 \label{eq:continuity-in-cold-limit}
 \partial_t n_s + \nabla \cdot ( \ve V_s n_s ) = 0\,.
@@ -247,7 +247,7 @@ where we defined $\gamma \equiv \gamma[\ve V_0]$.
 Inserting these into Equations~\eqref{eq:continuity-in-cold-limit}
 and~\eqref{eq:momentum-transport-in-cold-limit},
 we obtain the linearized continuity
-and the linearized momentum transport equations~\cite{bret_collective_2004,bret_cfa_2012}:
+and the linearized momentum transport equations~\citep{bret_collective_2004,bret_cfa_2012}:
 \begin{align}
   \label{eq:linearized-cold-fluid-continuity-eq}
   \hat{n}_1 &= \frac{n_0 \ve k \cdot \hat{\ve V}_1}{\omega - \ve k \cdot \ve V_0}\,, \\
@@ -354,7 +354,7 @@ that is distinctly different from the physical dispersion relation
   \pm \frac{1}{\hat c}\cos^{-1}\left(\hat{c}^2 (\cos(k\Delta x) - 1) + 1\right)\,,
 \end{align}
 where $\hat{c} \equiv c\frac{\Delta t}{\Delta x}$ is the Courant-Friedrichs-Lewy number,
-or the Courant number for short~\cite{verboncoeur_particle_2005}.
+or the Courant number for short~\citep{verboncoeur_particle_2005}.
 The solutions are periodic in $k$ with a period of $\frac{2\pi}{\Delta x}$,
 which means that the finite-difference wave equation in Equation~\eqref{eq:fd-intermediate}
 cannot resolve waves beyond a certain wavenumber.
@@ -376,7 +376,7 @@ These limits are summarized in Table~\ref{fig:numerical-dispersion-relation-limi
     $\Delta t \rightarrow 0$ and $\Delta x \rightarrow 0$ & $\omega = \pm ck$ \\ \hline
   \end{tabular}
   \caption{Summary of different limits for the numerical dispersion
-    relation from Equation~\eqref{eq:fd-dispersion}~\cite{verboncoeur_particle_2005}.}
+    relation from Equation~\eqref{eq:fd-dispersion}~\citep{verboncoeur_particle_2005}.}
   \label{fig:numerical-dispersion-relation-limits}
 \end{table}
 
@@ -387,7 +387,7 @@ shows that $\omega$ has a positive imaginary part for some values of $k$,
 which results in an exponentially growing mode for $\phi(t, x)$.
 The condition for stability, $\hat c = c\frac{\Delta t}{\Delta x} \le 1$,
 is called the Courant-Friedrichs-Lewy condition.
-In multiple dimensions, the condition is given by~\cite{verboncoeur_particle_2005}:
+In multiple dimensions, the condition is given by~\citep{verboncoeur_particle_2005}:
 \begin{align}
   \Delta t \le \frac{1}{c}\left( \sum_i \frac{1}{(\Delta x_i)^2} \right)^{-1/2}\,.
 \end{align}
