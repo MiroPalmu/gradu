@@ -113,7 +113,7 @@ we'll first define standard dimensionless variables:
   \alpha = \frac{n_{b0}}{n_{p0}}
 \end{align}
 Now $x$ can be solved numerically from dispersion relation \eqref{eq:dispersion-eq}.
-Figure~\ref{fig:perp-growth-rates} plots the normalized growth rate (i.e. imaginary part of $x$)
+Figure~\ref{fig:perp-growth-rates} shows the normalized growth rate (i.e. imaginary part of $x$)
 as a function of $\ve Z$ for two different cases.
 For the diluted case ($\alpha \ll 1$) we can see that the largest growth rate
 is the oblique angle regime while for the symmetric case ($\alpha = 1$)
@@ -154,11 +154,39 @@ symmetric and diluted cases of filamentation instability can be solved exactly:
 
 \section{Numerical validation}
 
+GPU accelerated Runko was used to simulate filamentation instability
+of symmetric beams ($\alpha = 1$) following the setup from~\cite{nattila_runko:_2022}.
+The two counter-streaming pair plasma populations are initialized to
+flow along $\hat{\ve e}_0$ with spatial components of a four-velocity
+$\ve u = \pm \gamma_b \hat{\ve e}_0$,
+where $\gamma_b$ is the Lorentz factor is shared between the symmetric beams.
+The plasmas are modeled with 32 particles per cell per species,
+which initial positions are samples from unifrom distribution
+and velocities are sampled from Jüttner-Synge distribution~\cite{zenitani_loading_2015}
+with thermal spread of:
+\begin{align}
+  \frac{k_bT}{mc^2} = 10^5\,,
+\end{align}
+where $k_b$ is the Boltzmann constant, $T$ is the temperature,
+$m$ is the mass of the particles and $c$ is the speed of light.
+Initially the electromagnetic fields are zero.
+The periodic simulation domain conists of a grid of $320\times80\times6$ uniform cells
+and the skin depth is resolved with 10 cells.
+Time step is related to the cell width as: $\Delta t = 0.45 \Delta x$.
+
+For a comparison of the simulation results to the analytical growth rate
+of Equation~\eqref{eq:filamentation-growth-rate-symmetric}
+Figure~\ref{fig:perp-growth-rates} shows the average values
+of the magnetic field energy density normalized by
+the relativistic plasma enthalphy density as a function of time.
+We note that the analytical growth rate matches matches with the numerical
+growth-rates perfectly in the linear growth phase of the instability.
+
 \begin{figure}
   \centering
   \includegraphics{chapters/instability-plot.pdf}
-  \caption{Simulation of the filamentation instability using the GPU port of Runko
-    with different values of $\gamma_b$. Solid curves plot the average value of
+  \caption{Simulation of the filamentation instability using the GPU accelerated Runko
+    with different values of $\gamma_b$. Solid curves represent the average value of
     the magnetic field energy density $\rho_B = \frac{B^2}{8\pi}$
     normalized by the relativistic plasma enthalphy density, $\gamma_bn_0m_ec^2$,
     as a function on time $t\omega_p$.
