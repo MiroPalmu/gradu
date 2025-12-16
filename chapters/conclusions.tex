@@ -1,8 +1,45 @@
 \chapter{Conclusions}
 
-\begin{todo}
-  Write me.
-\end{todo}
+In this thesis we introduced the required background theory
+of plasma physics and finite-difference methods,
+showcased different parts of the PIC method,
+derived the growth rate of filamentation instability
+in the cold-fuild limit,
+and demonstrated the ability of the GPU-accelerated Runko to simulate
+the filamentation instabilitiy correctly.
+
+This thesis concludes the first stage of porting Runko to GPUs,
+in which only the minimal viable set of features were ported
+without focusing on the performance.
+Due to the differences between CPUs and GPUs,
+significant parts of the code did not translate well to GPUs and were rewritten entirely.
+Before speding resources on performance it was a goal to show that
+the GPU port is possible and that it gives correct results.
+
+In the future, focus will be more on
+the performance and how to effectively utilize modern supercomputers.
+Effective utilization of supercomputers would enables Runko
+to performe simulations which push the boundaries of computational astrophysics.
+Currently the main performance bottleneck is in the particle communication.
+Fixing it requires redesining of how the particles are handleded.
+Potential option is to move to tag based particle handling
+as shown in~\cite{hakobyan_entity_2025}.
+Followup work is required to compare the performance of GPU-accelerated Runko
+to other PIC codes.
+
+In addition to the performance optimizations,
+there will be more features added to the GPU-accelerated Runko.
+Currently, its feature set is limited compared to the original one.
+For example, dynamically injecting particles to a running simulation
+and user-defined boundary conditions are not yet possible with the GPU-accelerated Runko.
+Additionally other field propagation, field interpolation, particle pusher,
+and current deposition methods can be implemented when needed.
+Going beyond PIC,
+there are other phsyics which can be added to the PIC simulation.
+One avenue is to implement possibility of running PIC in a curved spacetimes
+(e.g., Schwarzschild or Kerr).
+Other avenue is to implement quantum electrodynamics effects on GPUs
+which were already present on the CPU version of Runko~\cite{nattila_radiative_2024}.
 
 
 %%% Local Variables:
