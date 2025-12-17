@@ -110,7 +110,31 @@
 % language as well, in between the abstract definitions.
 
 \begin{abstract}
-  todo
+  Plasma dynamics are modeled with the Vlasov-Maxwell equations.
+  Due to the multiscale nature of plasmas and their numerous degrees of freedom,
+  the Vlasov-Maxwell equations are highly nonlinear.
+  Therefore, plasma dynamics are often studied using numerical methods.
+  One commonly used approach is the particle‑in‑cell (PIC) method,
+  in which the electromagnetic fields are discretized on a so-called Yee mesh
+  while the particles are free to move continuously in space.
+
+  The PIC method consists of several components.
+  Field propagation evolves the fields in time according to Maxwell's equations.
+  To compute the Lorentz force at the particle locations,
+  the fields must be interpolated from the discrete Yee mesh to the particle positions.
+  With the Lorentz force, the particle velocities are updated,
+  and these updated velocities are then used to update the particle positions.
+  The moving particles generate a current, which must be deposited back onto the Yee mesh.
+
+  This thesis is based on the work carried out by the author to port
+  the PIC simulation framework Runko to GPUs.
+  The thesis presents the components of the PIC method in detail
+  and demonstrates the correctness of Runko's ability to resolve
+  the full set of electromagnetic Vlasov-Maxwell equations.
+  Correctness is demonstrated through simulations of
+  the beam-plasma filamentation instability,
+  whose growth rate is shown to match the analytical growth rate
+  obtained from first-order perturbation theory in the cold-fluid limit.
 \end{abstract}
 
 % Place ToC
