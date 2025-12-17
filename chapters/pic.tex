@@ -15,7 +15,7 @@ and another by Birdsall and Langdon \citep{langdon_plasma_1991} in 1991.
 
 Basic PIC consists of many smaller tasks, for which numerous algorithms exist with varying trade-offs.
 At high-evel a single PIC time step contains four parts:
-field propagation, field interpolation, particle update/push, and current deposition'.
+field propagation, field interpolation, particle update/push, and current deposition.
 In this chapter, we describe these tasks in more detail
 and discuss the set of algorithms implemented in the GPU port of Runko.
 
@@ -299,10 +299,12 @@ and obtain (with the current density added back in):
   \end{bmatrix}\,.
 \end{split}
 \end{equation}
-
 As noted at the end of Subsection~\ref{sec:yee-mesh} on the Yee mesh,
 the update Equations~\eqref{eq:fdtd2-B-update} and~\eqref{eq:fdtd2-E-update}
 do not require any values that are not already present on the Yee mesh.
+
+In the Runko Git repository, implementation of the second-order accurate FDTD
+scheme is located at: \texttt{core/emf/yee\_lattice\_FDTD2.c++}.
 
 \input{chapters/yee-mesh}
 
@@ -313,6 +315,8 @@ must be interpolated to the continuous particle positions.
 Various interpolation schemes exists, offering different levels of accuracy and computational cost.
 Currently the GPU port of Runko uses linear interpolation
 because it is fast and simple to implement.
+In the Runko Git repository, implmementation is located at:
+\texttt{core/emf/yee\_lattice\_interpolate\_linear\_1st.c++}.
 More interpolators can be implemented later when desired.
 
 The interpolation is performed for the fields $\ve E$ and $\ve B$, which are located
@@ -407,6 +411,8 @@ Vay's method (2008)~\citep{vay_simulation_2008}, and
 Higuera-Cary method (2017)~\citep{higuera_structure-preserving_2017}.
 Since the GPU port of Runko uses the relativistic Boris pusher,
 we will examine it in more detail.
+In the Runko Git repository, implementation of the Boris pusher
+is located at: \texttt{core/pic/particle\_boris.c++}.
 From now on we will refer the relativistic Boris pusher as just the Boris pusher for short.
 
 \subsection{Properties}
@@ -566,6 +572,9 @@ The GPU port of Runko implements the so-called ZigZag method,
 as described in~\citep{blinne_new_2003},
 so this section focuses on that method and the Villasenor–Buneman method~\citep{villasenor_rigorous_1992},
 since the ZigZag method can be considered an optimized version of the latter.
+In the Runko Git repository, implementation of the ZigZag method
+is located at: \texttt{core/pic/particle\_current\_zigzag\_1st.c++}.
+
 Another notable scheme is the density decomposition method proposed by
 Esirkepov~\citep{esirkepov_exact_2001}.
 A general treatment of charge--conserving methods using finite-element techniques is provided by

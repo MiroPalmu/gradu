@@ -7,8 +7,18 @@ Today, high-performance computing simulations are performed on supercomputers
 to model the underlying physical systems with such accuracy that they can reveal new physical insights.
 One commonly used approach is the Particle-in-Cell (PIC) method, in which particles are represented as computational particles.
 
-This thesis is based on the work carried out by the author to port Particle-in-Cell (PIC) simulation
-Runko~\citep{nattila_runko:_2022} to run on GPUs.
+This thesis is based on the work carried out by the author to port
+the Particle-in-Cell (PIC) simulation framework Runko~\citep{nattila_runko:_2022} to GPUs.
+The Git repository of Runko is located at:
+\href{https://github.com/hel-astro-lab/runko}{github.com/hel-astro-lab/runko}.
+At the time of writing this thesis,
+the commits related to the GPU port reside on the \texttt{dev-v5} branch.
+All later references to file locations inside the Runko repository
+specifically refer to the repository state at the Git commit
+with the abbreviated hash: \texttt{92d840e}\footnote{
+  The full hash is: \texttt{92d840eb20cba166d394d3b256d50b7335e984e9}.
+}.
+
 In this chapter, the required background theory is presented,
 and in the following chapter, different aspects of Particle-in-Cell simulation are discussed.
 In the third chapter, the GPU port of Runko is used to simulate
