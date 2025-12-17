@@ -5,12 +5,12 @@ the complexity eventually becomes infeasible to handle analytically.
 Consequently, numerical methods are required to study many complex plasma phenomena.
 Today, high-performance computing simulations are performed on supercomputers
 to model the underlying physical systems with such accuracy that they can reveal new physical insights.
-One commonly used approach is the Particle‑in‑Cell (PIC) method,
+One commonly used approach is the particle‑in‑cell (PIC) method,
 in which the electromagnetic fields are discretized on a grid
 while the particles are free to move continuously in space.
 
 This thesis is based on the work carried out by the author to port
-the Particle-in-Cell (PIC) simulation framework Runko~\citep{nattila_runko:_2022} to GPUs.
+the PIC simulation framework Runko~\citep{nattila_runko:_2022} to GPUs.
 The Git repository of Runko is located at:
 \href{https://github.com/hel-astro-lab/runko}{github.com/hel-astro-lab/runko}.
 At the time of writing this thesis,
@@ -22,7 +22,7 @@ with the abbreviated hash: \texttt{92d840e}\footnote{
 }.
 
 In this chapter, the required background theory is presented,
-and in the following chapter, different aspects of Particle-in-Cell simulation are discussed.
+and in the following chapter, different aspects of PIC simulation are discussed.
 In the third chapter, the GPU port of Runko is used to simulate
 the electron beam–plasma filamentation instability,
 which is then compared to the analytical result
