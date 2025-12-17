@@ -2,10 +2,10 @@
 
 In this thesis,
 we introduced the necessary background theory of plasma physics
-and finite‑difference methods,
+and finite-difference methods,
 presented the key components of the PIC method,
 derived the growth rate of the filamentation instability in the cold-fluid limit,
-and demonstrated the ability of the GPU‑accelerated Runko
+and demonstrated the ability of the GPU-accelerated Runko
 to simulate the filamentation instability correctly.
 
 This thesis concludes the first stage of porting Runko to GPUs,
@@ -24,7 +24,7 @@ Efficient use of supercomputers would enable Runko to perform simulations
 that push the boundaries of computational astrophysics.
 Currently, the main performance bottleneck lies in particle communication.
 Addressing this will require redesigning how particles are handled.
-One potential option is to adopt tag‑based particle handling,
+One potential option is to adopt tag-based particle handling,
 as demonstrated in~\citep{hakobyan_entity_2025}.
 Further work is also required to compare the performance of the GPU-accelerated Runko
 with other PIC codes.
@@ -33,9 +33,9 @@ In addition to performance optimizations,
 new features will be added to the GPU-accelerated Runko.
 Currently, its feature set is limited compared to the original version.
 For example, dynamically injecting particles into a running simulation
-and using user‑defined boundary conditions are not yet supported by the GPU implementation.
-Furthermore, alternative field‑propagation schemes, field‑interpolation methods,
-particle pushers, and current‑deposition algorithms can be implemented when needed.
+and using user-defined boundary conditions are not yet supported by the GPU implementation.
+Furthermore, alternative field-propagation schemes, field-interpolation methods,
+particle pushers, and current-deposition algorithms can be implemented when needed.
 
 Beyond the standard PIC framework,
 additional physics modules can also be incorporated into the GPU version.

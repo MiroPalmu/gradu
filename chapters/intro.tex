@@ -5,7 +5,7 @@ the complexity eventually becomes infeasible to handle analytically.
 Consequently, numerical methods are required to study many complex plasma phenomena.
 Today, high-performance computing simulations are performed on supercomputers
 to model the underlying physical systems with such accuracy that they can reveal new physical insights.
-One commonly used approach is the particle‑in‑cell (PIC) method,
+One commonly used approach is the particle-in-cell (PIC) method,
 in which the electromagnetic fields are discretized on a grid
 while the particles are free to move continuously in space.
 
@@ -24,7 +24,7 @@ with the abbreviated hash: \texttt{92d840e}\footnote{
 In this chapter, the required background theory is presented,
 and in the following chapter, different aspects of PIC simulation are discussed.
 In the third chapter, the GPU port of Runko is used to simulate
-the electron beam–plasma filamentation instability,
+the electron beam-plasma filamentation instability,
 which is then compared to the analytical result
 in order to confirm physical accuracy of the port.
 The final chapter contains conclusions and
@@ -85,7 +85,7 @@ For a particle species $s$, the classical plasma frequency is given by:
   \label{eq:classical-plasma-frequency}
   \omega_{\mathrm{p}s}^2 = \frac{n_s q_s^2}{\epsilon_0 m_s}\,.
 \end{align}
-For electron–ion systems, the electron plasma frequency is much larger than the ion plasma frequency;
+For electron-ion systems, the electron plasma frequency is much larger than the ion plasma frequency;
 therefore, ion plasma oscillations can usually be neglected.
 
 If a magnetic field is present in a plasma,
@@ -167,7 +167,7 @@ that describes the dynamics of plasma.
 
 \section{Cold-fluid limit}
 
-Solving the Vlasov–Maxwell system is challenging due to the non-linear nature of plasma dynamics.
+Solving the Vlasov-Maxwell system is challenging due to the non-linear nature of plasma dynamics.
 Fortunately, in the case of beam instabilities,
 taking the cold-fluid limit of the system allows us to investigate these instabilities analytically.
 To do so, we calculate the moments of the Vlasov equation.

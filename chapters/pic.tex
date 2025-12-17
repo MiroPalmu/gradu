@@ -443,7 +443,7 @@ however, the methods possess distinct properties that are crucial for physical a
 Since the underlying physical system is Hamiltonian,
 the solutions lie on a symplectic manifold in phase space~\citep{goldstein_classical_2014}.
 Symplectic integrators are those whose solutions remain on this symplectic manifold.
-The Kolmogorov–Arnold–Moser theorem guarantees that their long-term evolution
+The Kolmogorov-Arnold-Moser theorem guarantees that their long-term evolution
 preserves physical accuracy~\citep{higuera_structure-preserving_2017}\footnote{
   Defining what a symplectic manifold is
   and what constitutes a physically accurate long-term evolution of a Hamiltonian system
@@ -451,17 +451,17 @@ preserves physical accuracy~\citep{higuera_structure-preserving_2017}\footnote{
 }.
 Unfortunately, no explicit symplectic integrator is currently known for charged-particle motion
 in arbitrary electromagnetic fields.
-Nevertheless, integrators can be designed to be phase-space volume--preserving,
+Nevertheless, integrators can be designed to be phase-space volume-preserving,
 which prevents the emergence of attractors and repellers in the integrated system.
 
-The Boris pusher is volume--preserving, whereas Vay’s method is not.
+The Boris pusher is volume-preserving, whereas Vay’s method is not.
 Conversely, Vay’s method computes the $\ve E \times \ve B$ drift correctly,
 while the Boris pusher does not.
-The Higuera–Cary method, on the other hand, possesses both of these properties.
+The Higuera-Cary method, on the other hand, possesses both of these properties.
 A common feature among all three methods is that
 they conserve energy in the absence of an electric field and are second-order accurate in time.
 From a computational perspective, the Boris pusher is the fastest,
-whereas Vay’s and Higuera–Cary methods exhibit similar computational cost.
+whereas Vay’s and Higuera-Cary methods exhibit similar computational cost.
 
 \subsection{Boris pusher}
 
@@ -551,7 +551,7 @@ Under the assumption of a sufficiently small time step:
 The moving particles generate a current according to Equation~\eqref{eq:current-density},
 which is deposited onto the Yee mesh.
 As stated in Section~\ref{sec:pic-physical-model},
-if this deposition is charge--conserving
+if this deposition is charge-conserving
 and Equations~\eqref{eq:gauss-law} and~\eqref{eq:gauss-law-for-B}
 are satisfied initially,
 then they remain satisfied at all later times.
@@ -559,7 +559,7 @@ For example, similar to the approach in Section~\ref{sec:field-interpolator},
 we could interpolate particle velocities to neighboring grid locations.
 However, this scheme is not charge
 conserving~\citep{hockney_computer_1981,langdon_plasma_1991,blinne_new_2003}.
-For a current deposition method to be charge--conserving,
+For a current deposition method to be charge-conserving,
 it must satisfy the continuity equation for charge density,
 which is derived by taking the time derivative of Gauss’s law (see Equation~\eqref{eq:gauss-law}):
 \begin{align}
@@ -567,56 +567,56 @@ which is derived by taking the time derivative of Gauss’s law (see Equation~\e
   \frac{\partial \rho}{\partial t} + \nabla \cdot \ve J = 0\,.
 \end{align}
 
-Several charge--conserving current deposition schemes exist.
+Several charge-conserving current deposition schemes exist.
 The GPU port of Runko implements the so-called ZigZag method,
 as described in~\citep{blinne_new_2003},
-so this section focuses on that method and the Villasenor–Buneman method~\citep{villasenor_rigorous_1992},
+so this section focuses on that method and the Villasenor-Buneman method~\citep{villasenor_rigorous_1992},
 since the ZigZag method can be considered an optimized version of the latter.
 In the Runko Git repository, implementation of the ZigZag method
 is located at: \texttt{core/pic/particle\_current\_zigzag\_1st.c++}.
 
 Another notable scheme is the density decomposition method proposed by
 Esirkepov~\citep{esirkepov_exact_2001}.
-A general treatment of charge--conserving methods using finite-element techniques is provided by
+A general treatment of charge-conserving methods using finite-element techniques is provided by
 Eastwood in~\citep{eastwood_virtual_1991},
 with an extension to curvilinear coordinates in~\citep{eastwood_body-fitted_1995}.
-Both the Villasenor–Buneman method and Esirkepov’s density decomposition
+Both the Villasenor-Buneman method and Esirkepov’s density decomposition
 can be regarded as special cases of Eastwood’s scheme.
 
-The way Villasenor–Buneman method calculates the current from a particle trajectory
+The way Villasenor-Buneman method calculates the current from a particle trajectory
 can only be applied if the trajectory
 remains within the same Yee mesh cell (see Figure~\ref{fig:yee-mesh}).
 If it does not, the movement is split into multiple shorter segments,
 each confined to a single cell.
-The difference between the Villasenor–Buneman method and the ZigZag method
+The difference between the Villasenor-Buneman method and the ZigZag method
 lies in how this splitting is performed.
-In the Villasenor–Buneman method,
+In the Villasenor-Buneman method,
 the particle’s motion within one time step is assumed to be straight and is split
 at the Yee mesh cell faces.
 In contrast, the ZigZag method assumes the motion occurs via a so-called relay point.
 The advantage of the relay point is that,
 regardless of particle position and velocity,
 the current deposition is calculated in a uniform manner,
-whereas the Villasenor–Buneman method requires conditional checks
+whereas the Villasenor-Buneman method requires conditional checks
 to determine whether the particle crosses zero, one, or two cell faces.
 This makes it possible to implement the ZigZag method without conditionals,
 which is important for good performance on parallel hardware (e.g. GPUs).
 
 We note that the 3D ZigZag method described in the original paper is defective
-and not charge--conserving.
+and not charge-conserving.
 For particle motion confined to a single cell,
-the method adds current in the same way as the Villasenor–Buneman method
-(equations (35–37) in~\citep{villasenor_rigorous_1992}),
+the method adds current in the same way as the Villasenor-Buneman method
+(equations (35-37) in~\citep{villasenor_rigorous_1992}),
 but it omits the term proportional to $\delta x_0 \delta x_1 \delta x_2$,
 where $\delta x_i$ represents the change in the particle’s position during one time step.
-As a result, current deposition from diagonal trajectories is not charge--conserving.
+As a result, current deposition from diagonal trajectories is not charge-conserving.
 This observation is consistent with the findings reported in~\citep{steiniger_ez:_2023}.
 Preliminary tests indicate that the 3D ZigZag method can be corrected by adding the missing terms,
 but this subject requires further studies.
 
 \subsection{Villasenor-Buneman method}
 
-The Villasenor–Buneman method assumes that particles contribute current to the Yee mesh
+The Villasenor-Buneman method assumes that particles contribute current to the Yee mesh
 as an axis-aligned box with a uniform charge distribution, equal in size to one Yee mesh cell.
 Therefore, the particle’s effective charge density is
 $\rho_q = \frac{q}{\Delta x_0\Delta x_1\Delta x_2}$.
@@ -711,7 +711,7 @@ A scheme of what is integrated is shown in Figure~\ref{fig:vb-integrals}.
 
 \input{chapters/yee-mesh-current-deposition-old}
 
-To verify that the scheme is charge--conserving,
+To verify that the scheme is charge-conserving,
 we calculate the total change in charge within the volume spanned from $\ve x_{m+1,n+1,l+1}$ to
 $\ve x_{m+2,n+2,l+2}$ during one time step:
 \begin{equation}
@@ -731,7 +731,7 @@ this check for a single particle is sufficient to confirm that the entire method
 
 \subsection{ZigZag method}
 
-As stated earlier, in order to apply the Villasenor–Buneman method,
+As stated earlier, in order to apply the Villasenor-Buneman method,
 the particle trajectory must be split into sub-trajectories, each confined to a single Yee mesh cell.
 In the ZigZag method, these sub-trajectories pass through a relay point.
 Assuming that the particle position $\ve x^s$ lies in the cell spanned between
@@ -758,7 +758,7 @@ can be computed without conditionals by using the algorithm described in~\citep{
   \right]\,.
 \end{align}
 After the relay point has been determined,
-the Villasenor–Buneman method can be applied to both subtrajectories.
+the Villasenor-Buneman method can be applied to both subtrajectories.
 Compared to the original scheme described in~\citep{villasenor_rigorous_1992},
 the conditionless ZigZag achieves superior computational performance.
 
