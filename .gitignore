@@ -10,6 +10,7 @@
 *.fdb_latexmk
 *.fls
 *.synctex.gz
+*.nlo
 auto
 .DS_STORE
 !gradu.pdf
