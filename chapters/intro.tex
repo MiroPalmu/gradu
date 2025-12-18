@@ -1,5 +1,5 @@
 \chapter{Introduction}
-Plasma dynamics has been studied in many contexts, including astrophysics, laser physics, and fusion.
+Plasma dynamics has been studied in many contexts, including astrophysics, laser physics, and fusion~\citep{uzdensky_plasma_2014,umstadter_relativistic_2003,kirkwood_review_2013}.
 The dynamics are highly non-linear, and although there is a wealth of theoretical analysis,
 the complexity eventually becomes infeasible to handle analytically.
 Consequently, numerical methods are required to study many complex plasma phenomena.
@@ -11,14 +11,14 @@ while the particles are free to move continuously in space.
 
 This thesis is based on the work carried out by the author to port
 the PIC simulation framework Runko~\citep{nattila_runko:_2022} to GPUs.
-The Git repository of Runko is located at:
+The Git repository of Runko is located at
 \href{https://github.com/hel-astro-lab/runko}{github.com/hel-astro-lab/runko}.
 At the time of writing this thesis,
 the commits related to the GPU port reside on the \texttt{dev-v5} branch.
 All later references to file locations inside the Runko repository
 specifically refer to the repository state at the Git commit
-with the abbreviated hash: \texttt{92d840e}\footnote{
-  The full hash is: \texttt{92d840eb20cba166d394d3b256d50b7335e984e9}.
+with the abbreviated hash \texttt{92d840e}\footnote{
+  The full hash is \texttt{92d840eb20cba166d394d3b256d50b7335e984e9}.
 }.
 
 In this chapter, the required background theory is presented,
@@ -83,7 +83,7 @@ known as the plasma frequency~\citep{wiesemann_short_2014,pert_foundations_2021,
 For a particle species $s$, the classical plasma frequency is given by:
 \begin{align}
   \label{eq:classical-plasma-frequency}
-  \omega_{\mathrm{p}s}^2 = \frac{n_s q_s^2}{\epsilon_0 m_s}\,.
+  \omega_{\mathrm{p}s} = \sqrt{\frac{n_s q_s^2}{\epsilon_0 m_s}}\,.
 \end{align}
 For electron-ion systems, the electron plasma frequency is much larger than the ion plasma frequency;
 therefore, ion plasma oscillations can usually be neglected.
@@ -91,7 +91,7 @@ therefore, ion plasma oscillations can usually be neglected.
 If a magnetic field is present in a plasma,
 the charges gyrate around the field lines at the cyclotron frequency
 also known as Larmor frequency.
-For a particle species $s$, the cyclotrone frequency is given by:
+For a particle species $s$, the cyclotron frequency is given by:
 \begin{align}
   \label{eq:cyclotron-frequency}
   \omega_B = \frac{q_sB}{m_sc\gamma}\,,
@@ -114,7 +114,7 @@ the number of particles in a phase space region spanned by the time interval $[t
 spatial region $[\ve x , \ve x + d\ve x]$ and three-momentum region
 $[\ve p, \ve p + d\ve p]$~\citep{klimontovich_relativistic_1960,DeGroot:1980dk,hazeltine_framework_2018}.
 The particles lie on a mass-shell defined by the Lorentz factor
-$\gamma^{-1} = \sqrt{1-\frac{v^2}{c^2}}$ where $v$ is the coordinate velocity
+$\gamma^{-1} = \sqrt{1-\frac{v^2}{c^2}}$, where $v$ is the coordinate velocity
 and $c$ is the speed of light.
 We assume that the distribution function is normalized such that
 \begin{align}
@@ -172,7 +172,7 @@ Fortunately, in the case of beam instabilities,
 taking the cold-fluid limit of the system allows us to investigate these instabilities analytically.
 To do so, we calculate the moments of the Vlasov equation.
 
-In general, the moment $M(\mathbf{p})$ of the Vlasov equation (see Equation~\eqref{eq:vlasov}) is:
+In general, the moment $M(\mathbf{p})$ of the Vlasov equation (see Equation~\ref{eq:vlasov}) is:
 \begin{align}
 \int M \left(
 \partial_t f_s
@@ -269,7 +269,7 @@ and the linearized momentum transport equations~\citep{bret_collective_2004,bret
   &= q\left(\hat{\ve E}_1
     + \frac 1c \hat{\ve V}_1 \times \ve B_0 + \frac 1c \ve V_0 \times \hat{\ve B}_1 \right)\,.
 \end{align}
-Additionally, we utilize linearity of Maxwell's equations (see Equation~\eqref{eq:maxwells})
+Additionally, we utilize linearity of Maxwell's equations (see Equation~\ref{eq:maxwells})
 and combine them to obtain the linearized wave equation:
 \begin{align}
   \label{eq:linearized-wave-eq}
@@ -348,7 +348,7 @@ to Equation~\eqref{eq:one-d-wave-eq} gives the physical dispersion relation:
 We discretize the function $\psi(x, t)$ on a uniform grid $(n \Delta x, m \Delta t)$,
 where $n,m\in\mathbb{N}$, and denote $\psi^m_n = \psi(n\Delta x, m\Delta t)$.
 Applying the centered finite-difference for second derivatives
-(see Equation~\eqref{eq:second-fd-correct})
+(see Equation~\ref{eq:second-fd-correct})
 to both the temporal and spatial derivatives in Equation~\eqref{eq:one-d-wave-eq},
 and solving for $\psi_n^{m + 1}$, we obtain:
 \begin{align}
@@ -359,7 +359,7 @@ and solving for $\psi_n^{m + 1}$, we obtain:
 Inserting the discretized plane wave $\psi_n^m = e^{i(k n \Delta x - \omega m \Delta t)}$
 into Equation~\eqref{eq:fd-intermediate} results in a numerical dispersion relation
 that is distinctly different from the physical dispersion relation
-(see Equation~\eqref{eq:one-d-wave-dispersion-eq}):
+(see Equation~\ref{eq:one-d-wave-dispersion-eq}):
 \begin{align}
   \label{eq:fd-dispersion}
   \frac{\omega}{c} \Delta x =
@@ -379,13 +379,12 @@ These limits are summarized in Table~\ref{fig:numerical-dispersion-relation-limi
 
 \begin{table}
   \centering
-  \begin{tabular}{|c|c|}
-    \hline
+  \begin{tabular}{c|c}
     & \textbf{Equation \eqref{eq:fd-dispersion}} \\ \hline
-    $\hat{c} = 1$ & $\omega = \pm ck$ \\ \hline
-    $\Delta t \rightarrow 0$ & $\omega \Delta x = \pm c \sqrt{2(1-\cos(k\Delta x))}$ \\ \hline
-    $\Delta x \rightarrow 0$ & $\cos(\omega \Delta t) = -c^2k^2\frac{(\Delta t)^2}{2} + 1$ \\ \hline
-    $\Delta t \rightarrow 0$ and $\Delta x \rightarrow 0$ & $\omega = \pm ck$ \\ \hline
+    $\hat{c} = 1$ & $\omega = \pm ck$ \\
+    $\Delta t \rightarrow 0$ & $\omega \Delta x = \pm c \sqrt{2(1-\cos(k\Delta x))}$ \\
+    $\Delta x \rightarrow 0$ & $\cos(\omega \Delta t) = -c^2k^2\frac{(\Delta t)^2}{2} + 1$ \\
+    $\Delta t \rightarrow 0$ and $\Delta x \rightarrow 0$ & $\omega = \pm ck$
   \end{tabular}
   \caption{Summary of different limits for the numerical dispersion
     relation from Equation~\eqref{eq:fd-dispersion}~\citep{verboncoeur_particle_2005}.}
@@ -396,7 +395,7 @@ The Courant number $\hat{c}$ is crucial for the stability of solutions to
 the finite-difference wave equation in Equation~\eqref{eq:fd-intermediate}.
 For $\hat{c} > 1$, the numerical dispersion relation in Equation~\eqref{eq:fd-dispersion}
 shows that $\omega$ has a positive imaginary part for some values of $k$,
-which results in an exponentially growing mode for $\phi(t, x)$.
+which results in an exponentially growing mode for $\psi(t, x)$.
 The condition for stability, $\hat c = c\frac{\Delta t}{\Delta x} \le 1$,
 is called the Courant-Friedrichs-Lewy condition.
 In multiple dimensions, the condition is given by~\citep{verboncoeur_particle_2005}:
@@ -410,13 +409,20 @@ the numerical dispersion relation given in Equation~\eqref{eq:fd-dispersion}.
   \centering
   \includegraphics[scale=0.7]{chapters/cfl-plot.pdf}
   \caption{One period of the numerical dispersion relation given in Equation~\eqref{eq:fd-dispersion}
-    for different values of the Courant number $\hat c = \frac{c\Delta t}{\Delta x}$.
+    for different values of the Courant number $\hat c = \frac{c\Delta t}{\Delta x}$
+    ranging from $0$ to $1.1$.
     The real parts of $\frac{\omega}{c}\frac{\Delta x}{\pi}$ are shown as continuous lines,
     while the imaginary parts are shown as dashed curves.
     Courant numbers that satisfy the Courant-Friedrichs-Lewy condition have
     colors ranging from blue to green,
     whereas those that do not satisfy the condition have colors ranging from red to yellow.
     The black curve represents the transition point at $\hat c = 1$.
+    For every plane wave solutions, there exists an another plane wave solutions
+    propagating in the opposite direction.
+    This manifests as symmetry along $\omega = 0$ in the numerical dispersion relation.
+    The symmetry along $k\frac{\Delta x}{\pi} = 1$
+    is a numerical aliasing artifact of the discrete grid,
+    which cannot represent wavelengths $\lambda < 2\Delta x$.
   }
   \label{fig:cfl-plot}
 \end{figure}

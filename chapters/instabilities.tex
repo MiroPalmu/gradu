@@ -14,29 +14,27 @@ ability to resolve the full set of electromagnetic Vlasov-Maxwell equations.
 
 \section{Overview}
 
-Beam-plasma systems have been studied since Langmuir first suggested
-the existence of oscillations in such systems in
-1925~\citep{langmuir_scattering_1925,briggs_electron-stream_1964}.
-Later, in 1948, Pierce explained Langmuir's observations by demonstrating
-that unstable oscillations can arise in such systems \citep{pierce_possible_1948}.
+Beam-plasma systems have been studied since \citet{langmuir_scattering_1925}
+first observed the existence of oscillations in such systems~\citep{briggs_electron-stream_1964}.
+Later, \citet{pierce_possible_1948} explained Langmuir's observations by demonstrating
+that unstable oscillations can arise in such systems.
 This prompted Bohm and Gross to develop the kinetic theory of ''two-stream instability'',
 which contains unstable waves propagating along the beam direction \citep{bohm_theory_1949}.
-In 1959, Fried showed that a second kind of instability exists,
+\citet{fried_mechanism_1959} showed that a second kind of instability exists,
 in which electromagnetic perturbations perpendicular to the flow
-become unstable~\citep{fried_mechanism_1959}.
+become unstable.
 These modes tend to break up an initially homogeneous
 beam profile into small-scale current filaments,
 giving rise to the name ''filamentation instability''.
-Fried's article also mentioned closely related work by Weibel,
-who demonstrated the instability of
-an anisotropic, two-temperature Maxwellian plasma~\citep{weibel_spontaneously_1959}.
+Fried's article also mentioned closely related work by~\citet{weibel_spontaneously_1959},
+which demonstrated the instability of an anisotropic, two-temperature Maxwellian plasma.
 In literature, these two instabilities have become almost interchangeable,
 even though they are technically not equivalent~\citep{bret_multidimensional_2010}.
 In this thesis, we use the term ''filamentation instability'' for clarity.
 
 In addition to the parallel two-stream modes and perpendicular filamentation modes,
 the stability of oblique modes can also be investigated.
-This was proptly done in the cold-fluid limit, where it was found that
+This was promptly done in the cold-fluid limit, where it was found that
 the unstable spectrum is two-dimensional,
 as the oblique perturbations are likely to be unstable
 \citep{watson_statistical_1960,bludman_statistical_1960,fainberg_nonlinear_1970}.
@@ -69,26 +67,26 @@ We define the beam to propagate along the x-axis.
 Without loss of generality, we assume in the following discussion
 that the wave vector lies in the xy-plane.
 
-Following the symbolic-calculator technique from \citep{bret_beam-plasma_2007},
+Following the symbolic-calculator technique from~\citet{bret_beam-plasma_2007},
 we solve for $\ve V_{b1}$ and $\ve V_{p1}$ from the linearized momentum transport equation
-(see Equation~\eqref{eq:linearized-cold-fluid-momentum-transport})
+(see Equation~\ref{eq:linearized-cold-fluid-momentum-transport})
 and insert them to the linearized continuity equation
-(see Equation~\eqref{eq:linearized-cold-fluid-continuity-eq})
+(see Equation~\ref{eq:linearized-cold-fluid-continuity-eq})
 to obtain $n_{b1}$ and $n_{p1}$.
 These are then inserted into the linearized wave equation
-(see Equation~\eqref{eq:linearized-wave-eq}).
+(see Equation~\ref{eq:linearized-wave-eq}).
 The resulting expression can be rearranged into
 a matrix form~\citep{bret_collective_2004,bret_cfa_2012}:
 \begin{align}
   \label{eq:dispersion-eq-vec}
-  \ve T(\ve k, \omega ) \hat{\ve E}_1 = 0
+  \ve T(\ve k, \omega ) \hat{\ve E}_1 = 0\,,
 \end{align}
 where $\ve T(\ve k, \omega ) \hat{\ve E}_1$ is a matrix-vector product between the matrix
 $\ve T(\ve k, \omega )$ and the electric field perturbation $\hat{\ve E}_1$.
 The matrix has the following form:
 \begin{align}
   \ve T(\ve k, \omega ) = \frac{\omega^2}{c^2} \boldsymbol{\epsilon}(\ve k, \omega)
-  + \ve k \otimes \ve k - k^2 \mathbb{I}
+  + \ve k \otimes \ve k - k^2 \mathbb{I}\,,
 \end{align}
 where $\mathbb{I}$ is the unit matrix and $\boldsymbol{\epsilon}(\ve k, \omega)$
 is the dielectric tensor:
@@ -118,8 +116,8 @@ solutions corresponding to the two-stream, the oblique and the filamentation ins
 To investigate the nature of the solutions,
 we first define standard dimensionless variables:
 \begin{align}
-  x = \frac{\omega}{\omega_{pp}} \qquad
-  \ve Z = \frac{\ve k V_{b0}}{\omega_{pp}} \qquad
+  x = \frac{\omega}{\omega_{pp}}\,, \qquad
+  \ve Z = \frac{\ve k V_{b0}}{\omega_{pp}}\,, \qquad
   \alpha = \frac{n_{b0}}{n_{p0}}
 \end{align}
 Now $x$ can be solved numerically from dispersion relation
@@ -135,7 +133,7 @@ corresponding to the filamentation instability.
 \begin{figure}
   \centering
   \includegraphics{chapters/growth-rate.pdf}
-  \caption{Growt rates from dispersion relation seen in Equation~\eqref{eq:dispersion-eq}
+  \caption{Growth rates from dispersion relation seen in Equation~\eqref{eq:dispersion-eq}
     for $\gamma_b = 3$.
     Left is the symmetric case $\alpha = 1$ and right is the diluted case $\alpha = 0.1$. }
   \label{fig:perp-growth-rates}
@@ -155,38 +153,38 @@ $\boldsymbol{\epsilon}(\ve k, \omega)$ simplify to~\citep{bret_cfa_2012}\footnot
   \label{eq:mistake-b}
   \epsilon_{xz} &= \frac{Z_x \alpha}{x^3} \left( \frac 1\gamma_p - \frac 1\gamma_b \right)
 \end{align}
-Inserting these into the dispersion relation (see Equation~\eqref{eq:dispersion-eq})
+Inserting these into the dispersion relation (see Equation~\ref{eq:dispersion-eq})
 and taking the limit $Z_x \rightarrow \infty$, the growth rates for
 symmetric and diluted cases of filamentation instability can be solved exactly:
 \begin{align}
   \label{eq:filamentation-growth-rate-diluted}
   \Im (x) &= \frac{V_b}{c}\sqrt{\frac{\alpha}{\gamma_b}}, \quad \alpha \ll 1 \\
   \label{eq:filamentation-growth-rate-symmetric}
-  &= \frac{V_b}{c}\sqrt{\frac{2}{\gamma_b}}, \quad \alpha = 1
+  \Im (x) &= \frac{V_b}{c}\sqrt{\frac{2}{\gamma_b}}, \quad \alpha = 1
 \end{align}
 
 \section{Numerical validation}
 
 GPU-accelerated Runko was used to simulate filamentation instability
 of symmetric beams ($\alpha = 1$) following the setup from~\citep{nattila_runko:_2022}.
-The two counter-streaming pair-plasma populations are initialized to
+The two counter-streaming pair-plasma populations were initialized to
 flow along $\hat{\ve e}_0$ with spatial components of a four-velocity
 $\ve u = \pm \gamma_b \hat{\ve e}_0$,
 where $\gamma_b$ is the Lorentz factor shared between the symmetric beams.
-The plasmas are modeled with 32 particles per cell per species,
-which initial positions are sampled from a unifrom distribution
-and velocities are sampled from Jüttner-Synge distribution~\citep{zenitani_loading_2015}
+The plasmas were modeled with 32 particles per cell per species,
+which initial positions were sampled from a unifrom distribution
+and velocities were sampled from Jüttner-Synge distribution~\citep{zenitani_loading_2015}
 with thermal spread of $k_bT/(mc^2) = 10^{-5}$,
 where $k_b$ is the Boltzmann constant, $T$ is the temperature,
 $m$ is the particle mass, and $c$ is the speed of light.
-Initially, the electromagnetic fields are set to zero.
-The periodic simulation domain consists of a grid of $320\times80\times6$ uniform cells
-and the skin depth is resolved with 10 cells.
-The time step is related to the cell width as: $\Delta t = 0.45 \Delta x$.
+Initially, the electromagnetic fields were set to zero.
+The periodic simulation domain consisted of a grid of $320\times80\times6$ uniform cells
+and the skin depth was resolved with 10 cells.
+The time step was related to the cell width as: $\Delta t = 0.45 \Delta x$.
 
 For a comparison of the simulation results with the analytical growth rate of
 Equation~\eqref{eq:filamentation-growth-rate-symmetric},
-Figure~\ref{fig:perp-growth-rates} shows the average magnetic-field energy density,
+Figure~\ref{fig:num-growth-rates} shows the average magnetic-field energy density,
 normalized by the relativistic plasma enthalpy density, as a function of time.
 We note that the analytical growth rate matches the numerical growth rates perfectly
 during the linear growth phase of the instability.
@@ -210,7 +208,7 @@ disturbing the system sufficiently to halt further growth.
     are $3$ (blue), $10$ (orange), $30$ (green), and $100$ (red).
     The dashed lines show the analytic growth rates from the linearized cold-fluid limit.
   }
-  \label{fig:perp-growth-rates}
+  \label{fig:num-growth-rates}
 \end{figure}
 
 %%% local Variables:

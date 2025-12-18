@@ -7,11 +7,11 @@ The electromagnetic fields are represented on a grid through which the particles
 giving rise to the name particle-in-cell.
 
 The PIC scheme was formalised in 1970s
-but has its roots in work by Buneman \citep{buneman_dissipation_1959}
-and Dawson \citep{dawson_one-dimensional_1962} in the late 1950s.
+but has its roots in work by \citet{buneman_dissipation_1959}
+and \citet{dawson_one-dimensional_1962}.
 Later, two classic PIC text books were published:
-one by Hockney and Eastwood \citep{hockney_computer_1981} in 1981
-and another by Birdsall and Langdon \citep{langdon_plasma_1991} in 1991.
+one by \citet{hockney_computer_1981}
+and another by \citet{langdon_plasma_1991}.
 
 Basic PIC consists of many smaller tasks, for which numerous algorithms exist with varying trade-offs.
 At high-evel a single PIC time step contains four parts:
@@ -38,7 +38,7 @@ where
 is the Lorentz factor, and the force $\ve F$ is given by the Lorentz force.
 
 Electric and magnetic fields, $\ve E$ and $\ve B$, are evolved according to
-Maxwell's equations (see Equation~\eqref{eq:maxwells}):
+Maxwell's equations (see Equation~\ref{eq:maxwells}):
 \begin{align}
   \label{eq:maxwell-faraday}
   \frac{\partial\ve B}{\partial t} &= -c \nabla\times\ve E\,, \\
@@ -304,7 +304,7 @@ the update Equations~\eqref{eq:fdtd2-B-update} and~\eqref{eq:fdtd2-E-update}
 do not require any values that are not already present on the Yee mesh.
 
 In the Runko Git repository, implementation of the second-order accurate FDTD
-scheme is located at: \texttt{core/emf/yee\_lattice\_FDTD2.c++}.
+scheme is located at \texttt{core/emf/yee\_lattice\_FDTD2.c++}.
 
 \input{chapters/yee-mesh}
 
@@ -315,7 +315,7 @@ must be interpolated to the continuous particle positions.
 Various interpolation schemes exists, offering different levels of accuracy and computational cost.
 Currently the GPU port of Runko uses linear interpolation
 because it is fast and simple to implement.
-In the Runko Git repository, implmementation is located at:
+In the Runko Git repository, implmementation is located at
 \texttt{core/emf/yee\_lattice\_interpolate\_linear\_1st.c++}.
 More interpolators can be implemented later when desired.
 
@@ -323,13 +323,13 @@ The interpolation is performed for the fields $\ve E$ and $\ve B$, which are loc
 on the Yee mesh according to Equations~\eqref{eq:yee-E-locations} and~\eqref{eq:yee-B-locations}.
 While interpolation could be done directly from those locations to the particle locations,
 it is common practice to first compute $\ve E$ and $\ve B$
-at the Yee mesh vertex locations (see Equation~\eqref{eq:yee-vertex-locations}),
+at the Yee mesh vertex locations (see Equation~\ref{eq:yee-vertex-locations}),
 for example via a simple spatial averaging.
 This approach simplifies the definition and implementation of interpolators
 and helps reduce short-wavelength noise~\citep{langdon_plasma_1991}.
 
 We can now express the interpolation of a generic function $f$,
-defined on the grid vertices (see Equation~\eqref{eq:yee-vertex-locations}),
+defined on the grid vertices (see Equation~\ref{eq:yee-vertex-locations}),
 to an arbitrary point $\ve x$:
 \begin{align}
   f(\ve x) =
@@ -337,7 +337,7 @@ to an arbitrary point $\ve x$:
 \end{align}
 where $\Delta V = \prod_i \Delta x_i$, $f_{n,m,l} \equiv f(\ve x_{n,m,l})$,
 and $S'$ is the weighting function, normalized such that at every position\footnote{
-  This normalization follows the convention used in~\citep{langdon_plasma_1991},
+  This normalization follows the convention used in~\citet{langdon_plasma_1991},
   ensuring that the grid contains the same total charge as the particles:
   \begin{align}
   \int_V \rho dV \approx
@@ -405,14 +405,14 @@ other more complex algorithms).
 However, various pushers have procedures that allow solving Equation~\eqref{eq:particle-update-vel}
 in steps, keeping the method explicit.
 
-In this section, we compare properties of the relativistic Boris pusher
-(1960)~\citep{boris_relativistic_1960},
-Vay's method (2008)~\citep{vay_simulation_2008}, and
-Higuera-Cary method (2017)~\citep{higuera_structure-preserving_2017}.
+In this section, we compare properties of
+the relativistic Boris pusher~\citep{boris_relativistic_1970},
+Vay's method~\citep{vay_simulation_2008}, and
+Higuera-Cary method~\citep{higuera_structure-preserving_2017}.
 Since the GPU port of Runko uses the relativistic Boris pusher,
 we will examine it in more detail.
 In the Runko Git repository, implementation of the Boris pusher
-is located at: \texttt{core/pic/particle\_boris.c++}.
+is located at \texttt{core/pic/particle\_boris.c++}.
 From now on we will refer the relativistic Boris pusher as just the Boris pusher for short.
 
 \subsection{Properties}
@@ -433,7 +433,7 @@ Vay's method uses:
   \bar{\ve v}^s_v \equiv
   \frac{ \ve v^{s-\frac12}  + \ve v^{s+\frac12}}{2}
 \end{align}
-and, Higuera-Cary method uses:
+and Higuera-Cary method uses:
 \begin{align}
   \bar{\ve v}^s_{hc} \equiv \ve v \left( \frac{\ve u^{s-\frac12} + \ve u^{s+\frac12}}{2} \right)\,.
 \end{align}
@@ -561,7 +561,7 @@ However, this scheme is not charge
 conserving~\citep{hockney_computer_1981,langdon_plasma_1991,blinne_new_2003}.
 For a current deposition method to be charge-conserving,
 it must satisfy the continuity equation for charge density,
-which is derived by taking the time derivative of Gauss’s law (see Equation~\eqref{eq:gauss-law}):
+which is derived by taking the time derivative of Gauss’s law (see Equation~\ref{eq:gauss-law}):
 \begin{align}
   \label{eq:current-density-continuation}
   \frac{\partial \rho}{\partial t} + \nabla \cdot \ve J = 0\,.
@@ -569,17 +569,17 @@ which is derived by taking the time derivative of Gauss’s law (see Equation~\e
 
 Several charge-conserving current deposition schemes exist.
 The GPU port of Runko implements the so-called ZigZag method,
-as described in~\citep{blinne_new_2003},
+as described in~\citet{blinne_new_2003},
 so this section focuses on that method and the Villasenor-Buneman method~\citep{villasenor_rigorous_1992},
 since the ZigZag method can be considered an optimized version of the latter.
 In the Runko Git repository, implementation of the ZigZag method
-is located at: \texttt{core/pic/particle\_current\_zigzag\_1st.c++}.
+is located at \texttt{core/pic/particle\_current\_zigzag\_1st.c++}.
 
-Another notable scheme is the density decomposition method proposed by
-Esirkepov~\citep{esirkepov_exact_2001}.
-A general treatment of charge-conserving methods using finite-element techniques is provided by
-Eastwood in~\citep{eastwood_virtual_1991},
-with an extension to curvilinear coordinates in~\citep{eastwood_body-fitted_1995}.
+Another notable scheme is the density decomposition method proposed
+by~\citet{esirkepov_exact_2001}.
+A general treatment of charge-conserving methods using finite-element techniques
+is provided by~\citet{eastwood_virtual_1991},
+with an extension to curvilinear coordinates in~\citet{eastwood_body-fitted_1995}.
 Both the Villasenor-Buneman method and Esirkepov’s density decomposition
 can be regarded as special cases of Eastwood’s scheme.
 
@@ -610,7 +610,7 @@ the method adds current in the same way as the Villasenor-Buneman method
 but it omits the term proportional to $\delta x_0 \delta x_1 \delta x_2$,
 where $\delta x_i$ represents the change in the particle’s position during one time step.
 As a result, current deposition from diagonal trajectories is not charge-conserving.
-This observation is consistent with the findings reported in~\citep{steiniger_ez:_2023}.
+This observation is consistent with the findings reported in~\citet{steiniger_ez:_2023}.
 Preliminary tests indicate that the 3D ZigZag method can be corrected by adding the missing terms,
 but this subject requires further studies.
 
@@ -628,7 +628,7 @@ These twelve faces, along with the Yee mesh cell,
 are shown in Figure~\ref{fig:yee-mesh-current-deposition}.
 The currents through each face can be integrated so that
 the total current into a single cell during one time step equals the change in charge within that cell.
-Thus, the continuity equation for charge density (see Equation~\eqref{eq:current-density-continuation})
+Thus, the continuity equation for charge density (see Equation~\ref{eq:current-density-continuation})
 is satisfied when integrated over a single cell.
 
 \input{chapters/yee-mesh-current-deposition}
@@ -751,7 +751,7 @@ Figure~\ref{fig:zigzags} illustrates the four different types of movements invol
 \input{chapters/path-splitting}
 
 The benefit of splitting the trajectory in this manner is that the relay point coordinates
-can be computed without conditionals by using the algorithm described in~\citep{blinne_new_2003}:
+can be computed without conditionals by using the algorithm described in~\citet{blinne_new_2003}:
 \begin{align}
   R_i = \Delta x_i \min\left[
   \min(a_i, b_i) + 1, \max\left\{\max(a_i, b_i), \frac{x^{s}_i+x^{s+1}_i}{2}\right\}
@@ -759,7 +759,7 @@ can be computed without conditionals by using the algorithm described in~\citep{
 \end{align}
 After the relay point has been determined,
 the Villasenor-Buneman method can be applied to both subtrajectories.
-Compared to the original scheme described in~\citep{villasenor_rigorous_1992},
+Compared to the original scheme described in~\citet{villasenor_rigorous_1992},
 the conditionless ZigZag achieves superior computational performance.
 
 
