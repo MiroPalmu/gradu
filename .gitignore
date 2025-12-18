@@ -12,3 +12,4 @@
 *.synctex.gz
 auto
 .DS_STORE
+!gradu.pdf
